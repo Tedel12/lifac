@@ -1,0 +1,431 @@
+{
+  "common": {
+    "loading": "Chargement…",
+    "viewAll": "Voir tout",
+    "learnMore": "En savoir plus",
+    "discoverMore": "Découvrir plus",
+    "register": "S'inscrire",
+    "registerNow": "S'inscrire maintenant",
+    "donate": "Faire un don",
+    "donateNow": "Je donne maintenant",
+    "joinMovement": "Rejoindre le mouvement",
+    "discoverActivities": "Découvrir nos activités",
+    "contact": "Contact",
+    "subscribe": "S'inscrire à la newsletter"
+  },
+  "nav": {
+    "home": "Accueil",
+    "about": "Qui sommes-nous",
+    "activities": "Activités",
+    "events": "Événements",
+    "testimonies": "Témoignages",
+    "resources": "Ressources",
+    "contact": "Contact"
+  },
+  "hero": {
+    "titleLine1": "UNE GÉNÉRATION",
+    "titleLine2": "EN",
+    "titleHighlight": "FEU",
+    "titleLine3": "POUR",
+    "titleLine4": "JÉSUS-CHRIST",
+    "subtitle": "Apporter la lumière de l'Évangile à chaque nation, chaque ville, chaque vie.",
+    "upcomingLabel": "Événement à venir",
+    "upcomingTitle": "NUIT DU SAINT-ESPRIT",
+    "upcomingLocation": "Campus UAC",
+    "countdownDays": "JOURS",
+    "countdownHours": "HEURES",
+    "countdownMinutes": "MINUTES",
+    "countdownSeconds": "SECONDES"
+  },
+  "stats": {
+    "soulsWon": "Âmes Gagnées",
+    "crusades": "Croisades",
+    "schoolsVisited": "Écoles Visitées",
+    "humanitarian": "Actions Humanitaires"
+  },
+  "about": {
+    "kicker": "Qui Sommes-Nous ?",
+    "title": "Une mission divine, un impact réel",
+    "intro": "LiFAC (Light For All Center) est une association à but non lucratif réunissant des chrétiens de diverses églises engagées dans un ministère dans la dynamique de l'évangélisation et de l'action humanitaire.",
+    "longIntro": "La LiFAC est plus qu'une organisation, c'est un mouvement dédié à l'éveil spirituel et à la formation de leaders chrétiens impactants. Nous croyons en une foi vivante, manifestée par une passion dévorante pour le Christ et une action concrète dans la société.",
+    "slogan": "Une génération en feu pour Jésus-Christ.",
+    "vision": {
+      "title": "Notre Vision",
+      "desc": "Voir toutes les nations éclairées et transformées par la lumière de l'Évangile de Jésus-Christ au moyen de la puissance du Saint-Esprit."
+    },
+    "mission": {
+      "title": "Notre Mission",
+      "desc": "Promouvoir le message de Jésus-Christ à travers des événements évangéliques et des initiatives humanitaires, en encourageant l'unité et la collaboration du corps de Christ."
+    },
+    "values": {
+      "title": "Nos Valeurs",
+      "list": [
+        "Amour",
+        "Unité",
+        "Compassion",
+        "Intégrité",
+        "Excellence"
+      ]
+    },
+    "pillars": {
+      "passion": {
+        "title": "PASSION",
+        "desc": "Répandre le feu de l'Évangile à travers chaque ville et chaque village."
+      },
+      "spirit": {
+        "title": "SAINT-ESPRIT",
+        "desc": "Être guidés par la puissance du Saint-Esprit pour transformer les cœurs."
+      },
+      "impact": {
+        "title": "IMPACT",
+        "desc": "Devenir des témoins vivants jusqu'aux extrémités de la terre."
+      }
+    },
+    "coreValues": {
+      "integrity": {
+        "title": "INTÉGRITÉ",
+        "desc": "Vivre en accord avec la Parole de Dieu en tout temps."
+      },
+      "excellence": {
+        "title": "EXCELLENCE",
+        "desc": "Donner le meilleur pour le Royaume de Dieu."
+      },
+      "compassion": {
+        "title": "COMPASSION",
+        "desc": "Répondre aux besoins de ceux qui souffrent."
+      },
+      "unity": {
+        "title": "UNITÉ",
+        "desc": "Collaborer avec le corps du Christ sans barrières."
+      }
+    },
+    "growth": {
+      "title": "Développement & Croissance",
+      "indicator": "Indicateur de Performance",
+      "result": "Résultat Atteint",
+      "goal": "Objectif 2025",
+      "rows": [
+        { "label": "Églises Implantées", "result": "45+", "goal": "60" },
+        { "label": "Leaders Formés", "result": "785", "goal": "1000" },
+        { "label": "Écoles de Vie Chrétienne", "result": "785", "goal": "1200" },
+        { "label": "Pays d'Intervention", "result": "15", "goal": "25" }
+      ]
+    },
+    "verse": "« Allez, faites de toutes les nations des disciples, les baptisant au nom du Père, du Fils et du Saint-Esprit. »",
+    "verseRef": "— Matthieu 28:19"
+  },
+  "activities": {
+    "kicker": "Nos Activités",
+    "title": "Nous allons là où les âmes ont besoin de lumière",
+    "viewAll": "Voir toutes nos activités",
+    "cards": {
+      "crusades": {
+        "title": "Croisades",
+        "desc": "Des croisades puissantes pour annoncer Christ et impacter des milliers de vies."
+      },
+      "evangelism": {
+        "title": "Évangélisation",
+        "desc": "Évangélisation de rue, campus et marchés pour atteindre chaque âme."
+      },
+      "humanitarian": {
+        "title": "Actions Humanitaires",
+        "desc": "Soutien aux orphelins, aux malades et aux communautés dans le besoin."
+      },
+      "prayer": {
+        "title": "Veillées de Prière",
+        "desc": "Veillées de prière et d'adoration pour la grâce et la puissance du Saint-Esprit."
+      },
+      "training": {
+        "title": "Formation & Disciple",
+        "desc": "Former et équiper les leaders pour la mission et le service de Dieu."
+      }
+    }
+  },
+  "events": {
+    "kicker": "Prochains Événements",
+    "title": "Le feu de l'Esprit en action",
+    "subtitle": "Vivez des moments de gloire, de formation et d'impact spirituel sans précédent.",
+    "viewAll": "Voir tous les événements",
+    "types": {
+      "crusades": {
+        "title": "CRUSADES",
+        "desc": "Évangélisation de masse pour gagner des milliers d'âmes au Christ."
+      },
+      "seminars": {
+        "title": "SÉMINAIRES",
+        "desc": "Formations stratégiques pour équiper les leaders de demain."
+      },
+      "vigils": {
+        "title": "VEILLÉES",
+        "desc": "Temps d'intercession intense pour le réveil des nations."
+      }
+    },
+    "upcoming": [
+      { "date": "09 MARS", "title": "NUIT DU SAINT-ESPRIT", "location": "Parakou, Benin", "time": "18h00" },
+      { "date": "23 JUIN", "title": "SOIRÉE D'IMPACT", "location": "Porto-Novo, Benin", "time": "19h00" },
+      { "date": "06 OCT", "title": "CROISADE D'ÉVANGÉLISATION", "location": "Dakar, Sénégal", "time": "18h00" },
+      { "date": "15 DÉC", "title": "CONFÉRENCE LEADERSHIP", "location": "Abidjan, Côte d'Ivoire", "time": "09h00" }
+    ],
+    "table": {
+      "date": "Date",
+      "event": "Événement",
+      "place": "Lieu / Ville"
+    },
+    "readyTitle": "PRÊT POUR LA SUITE ?",
+    "readyDesc": "Ne manquez pas notre prochain grand rassemblement. Réservez votre place et préparez votre cœur.",
+    "infos": "INFOS PRATIQUES",
+    "infosDesc": "Vous avez des questions sur un événement spécifique ou souhaitez organiser une étape de la tournée dans votre ville ?",
+    "offices": "BUREAUX",
+    "officesAddress": "Abomey-Calavi, Bénin",
+    "hotline": "HOTLINE",
+    "hotlineNumber": "+229 61 00 00 00"
+  },
+  "testimonies": {
+    "kicker": "Témoignages",
+    "title": "Des vies transformées",
+    "desc": "Découvrez l'impact réel de nos programmes d'évangélisation et d'action humanitaire à travers les histoires de ceux qui ont été touchés.",
+    "volunteer": "Devenir bénévole",
+    "support": "Soutenir la mission",
+    "quote": "À la croisade de LiFAC, j'ai rencontré Jésus-Christ et ma vie a complètement changé. Aujourd'hui, je vis pour Lui !"
+  },
+  "cta": {
+    "title": "DIEU PEUT T'UTILISER POUR TRANSFORMER DES VIES !",
+    "actions": {
+      "volunteer": "Devenir Volontaire",
+      "donate": "Faire un Don",
+      "participate": "Participer à un Événement",
+      "giveLife": "Donner sa Vie à Jésus"
+    }
+  },
+  "footer": {
+    "tagline": "LiFAC — Light For All Center. Impacter des vies pour Christ et illuminer notre génération.",
+    "quickLinks": "LIENS RAPIDES",
+    "contact": "CONTACTEZ-NOUS",
+    "stayConnected": "RESTONS CONNECTÉS",
+    "joinGroup": "REJOINDRE LE GROUPE",
+    "joinGroupHelp": "Rejoignez notre communauté sur WhatsApp",
+    "newsletter": "S'inscrire à la newsletter",
+    "address": "Abomey-Calavi Canton 1234 Zopah, Bénin",
+    "rights": "© 2025 LiFAC — Light For All Center. Tous droits réservés.",
+    "privacy": "Confidentialité",
+    "terms": "Mentions légales"
+  },
+  "donate": {
+    "kicker": "Soutenir le réveil spirituel",
+    "title": "FAIRE UN DON",
+    "subtitle": "Votre générosité est le carburant de la mission d'évangélisation mondiale.",
+    "whyTitle": "POURQUOI DONNER ?",
+    "whyDesc": "Parce que chaque âme sauvée et chaque vie transformée commence par un acte de foi et de partage.",
+    "investTitle": "INVESTIR DANS L'ÉTERNITÉ",
+    "investDesc": "Vos dons ne sont pas de simples chiffres. Ils permettent la logistique des grandes croisades, l'impression de Bibles et le financement des écoles de leadership. En contribuant, vous devenez un partenaire direct du Saint-Esprit pour le salut des nations.",
+    "modes": {
+      "title": "MODES DE PAIEMENT",
+      "card": { "title": "CARTE BANCAIRE", "desc": "Don sécurisé en ligne via notre plateforme partenaire internationale." },
+      "transfer": { "title": "VIREMENT", "desc": "Pour les dons réguliers ou importants. Coordonnées bancaires disponibles." },
+      "mobile": { "title": "MOBILE MONEY", "desc": "Simple et rapide pour l'Afrique. (Orange, MTN, Moov)." }
+    },
+    "partnersTitle": "NIVEAUX DE PARTENARIAT",
+    "partners": {
+      "type": "Type de Don",
+      "frequency": "Fréquence",
+      "benefits": "Avantages Membre",
+      "rows": [
+        { "type": "Don Ponctuel", "freq": "Une fois", "benefit": "Rapport d'impact du projet soutenu" },
+        { "type": "Partenaire « Flamme »", "freq": "Mensuel", "benefit": "Lettre d'information exclusive & Intentions de prière" },
+        { "type": "Partenaire « Réveil »", "freq": "Annuel", "benefit": "Accès VIP aux événements & Rapport financier détaillé" }
+      ]
+    },
+    "verse": "« Que chacun donne comme il l'a résolu en son cœur, sans tristesse ni contrainte ; car Dieu aime celui qui donne avec joie. »",
+    "verseRef": "— 2 Corinthiens 9:7",
+    "processTitle": "PROCESSUS DE CONTRIBUTION",
+    "process": [
+      { "step": "CHOIX", "desc": "Sélectionnez le projet ou le fonds général." },
+      { "step": "MONTANT", "desc": "Déterminez votre don selon votre cœur." },
+      { "step": "PAIEMENT", "desc": "Utilisez l'une de nos méthodes sécurisées." },
+      { "step": "IMPACT", "desc": "Recevez votre confirmation et l'impact généré." }
+    ],
+    "changeLife": "CHANGEZ UNE VIE AUJOURD'HUI",
+    "changeLifeDesc": "Votre don est une graine qui produira une moisson éternelle."
+  },
+  "languageSwitcher": {
+    "label": "Langue",
+    "fr": "FR",
+    "en": "EN"
+  },
+  "errors": {
+    "notFound": "Page introuvable",
+    "notFoundDesc": "Cette page n'existe pas ou a été déplacée.",
+    "backHome": "Retour à l'accueil",
+    "contactUs": "Nous contacter",
+    "unexpected": "Une erreur est survenue",
+    "unexpectedDesc": "Notre équipe a été notifiée. Vous pouvez réessayer ou revenir à l'accueil.",
+    "retry": "Réessayer"
+  },
+  "campaigns": {
+    "kicker": "Campagnes en cours",
+    "desc": "Soutenez nos projets humanitaires et missionnaires actifs. Chaque don compte.",
+    "viewAll": "Voir toutes les campagnes",
+    "urgent": "Urgent",
+    "beneficiaries": "{count} bénéficiaires",
+    "of": "sur",
+    "donate": "Faire un don",
+    "generalDonate": "Faire un don général",
+    "metaTitle": "Campagnes en cours",
+    "metaDesc": "Découvrez toutes les campagnes humanitaires et missionnaires actives de LiFAC. Soutenez celles qui vous parlent.",
+    "noCampaigns": "Aucune campagne active pour le moment.",
+    "ourProject": "Notre projet",
+    "updates": "Mises à jour",
+    "notFound": "Campagne introuvable",
+    "types": {
+      "HUMANITARIAN": "Humanitaire",
+      "EVANGELISM": "Évangélisation",
+      "EMERGENCY": "Urgence",
+      "CONSTRUCTION": "Construction",
+      "EDUCATION": "Éducation"
+    }
+  },
+  "aboutPage": {
+    "heroSubtitle": "Une Génération en Feu pour Jésus-Christ",
+    "identityTitle": "IDENTITÉ & PASSION",
+    "identitySubtitle": "Ligue pour l'Information et la Formation à l'Action Chrétienne",
+    "identityHeading": "ALLUMER UNE FLAMME",
+    "identityLabel": "NOTRE IDENTITÉ",
+    "identitySloganLabel": "Notre slogan :",
+    "missionTitle": "DOMAINES DE MISSION",
+    "missionEvangelism": "Évangélisation",
+    "missionLeadership": "Formation de Leaders",
+    "missionSocial": "Action Sociale",
+    "missionUnity": "Unité Chrétienne",
+    "figuresTitle": "CHIFFRES CLÉS",
+    "figuresSouls": "Âmes Gagnées",
+    "figuresActions": "Actions Humanitaires",
+    "fieldTitle": "NOS ACTIVITÉS TERRAIN",
+    "fieldEvangelismTitle": "ÉVANGÉLISATION",
+    "fieldEvangelismDesc": "Campagnes de masse et crusades en plein air.",
+    "fieldTrainingTitle": "FORMATION",
+    "fieldTrainingDesc": "Séminaires et formation continue pour leaders.",
+    "fieldHumanitarianTitle": "HUMANITAIRE",
+    "fieldHumanitarianDesc": "Soutien aux orphelins et aux plus démunis.",
+    "joinTitle": "REJOIGNEZ-NOUS",
+    "joinDesc": "Allumons ensemble ce feu pour notre génération."
+  },
+  "activitiesPage": {
+    "metaTitle": "Nos activités",
+    "metaDesc": "Découvrez les 5 piliers de notre ministère : évangélisation en école, marché, croisades éclair, personne-à-personne et grandes croisades.",
+    "title": "Nos activités",
+    "subtitle": "Cinq piliers complémentaires pour atteindre chaque âme, là où elle se trouve.",
+    "schoolsLabel": "Évangélisation en école",
+    "schoolsDesc": "Nous visitons les établissements scolaires pour partager l'Évangile avec les jeunes générations. À travers des sessions interactives, des témoignages et des temps de prière, nous semons des graines de foi dans les cœurs.",
+    "schoolsImpact": "+ de 785 écoles visitées",
+    "marketsLabel": "Évangélisation au marché",
+    "marketsDesc": "Les marchés sont des lieux de rencontre où nous portons la lumière de l'Évangile aux commerçants et aux passants. Distribution de tracts, prière personnelle et échanges authentiques sont au cœur de cette mission.",
+    "marketsImpact": "+ de 350 actions menées",
+    "popUpLabel": "Croisades éclair",
+    "popUpDesc": "Des rassemblements ciblés et concentrés (1 à 2 jours) dans des quartiers ou villages spécifiques. Idéales pour mobiliser une communauté locale autour d'un message d'espérance.",
+    "popUpImpact": "Mensuel dans plusieurs villes",
+    "oneOnOneLabel": "Évangélisation personne-à-personne",
+    "oneOnOneDesc": "Nous croyons à la puissance des conversations individuelles. Nos évangélistes formés rencontrent les gens là où ils sont, écoutent, prient et accompagnent chaque personne dans son cheminement.",
+    "oneOnOneImpact": "Action quotidienne",
+    "crusadesLabel": "Grandes croisades",
+    "crusadesDesc": "Nos rendez-vous d'évangélisation à grande échelle réunissent des milliers de personnes pour des soirées de louange, d'enseignement, de prière et d'appel à la repentance. Des moments de transformation collective.",
+    "crusadesImpact": "+ de 45 croisades organisées",
+    "joinTitle": "Vous souhaitez nous rejoindre ?",
+    "joinDesc": "Que vous vouliez participer à une action, soutenir financièrement ou prier pour notre œuvre, votre engagement fait toute la différence.",
+    "joinVolunteer": "Devenir bénévole",
+    "joinSupport": "Soutenir financièrement"
+  },
+  "contactPage": {
+    "metaTitle": "Contact",
+    "metaDesc": "Contactez l'équipe LiFAC pour toute question, partenariat ou demande de prière.",
+    "title": "Contactez-nous",
+    "subtitle": "Une question, un partenariat, une demande de prière ? Nous sommes à votre écoute.",
+    "addressTitle": "Adresse",
+    "phoneTitle": "Téléphone",
+    "emailTitle": "Email",
+    "hoursTitle": "Horaires",
+    "hoursWeek": "Lun. – Ven. : 8h – 17h",
+    "hoursSat": "Sam. : 9h – 13h",
+    "benin": "Bénin",
+    "sendMessage": "Envoyez-nous un message"
+  },
+  "forms": {
+    "fullName": "Nom complet",
+    "email": "Email",
+    "phone": "Téléphone (optionnel)",
+    "phonePlaceholder": "+229 XX XX XX XX",
+    "subject": "Sujet",
+    "message": "Message",
+    "charLimit": "{count}/2000",
+    "submit": "Envoyer",
+    "sending": "Envoi en cours...",
+    "success": "Message envoyé ! Notre équipe vous répondra rapidement.",
+    "required": "Requis"
+  },
+  "donationForm": {
+    "supporting": "Vous soutenez :",
+    "chooseAmount": "Choisissez un montant",
+    "otherAmount": "Autre montant",
+    "frequency": "Fréquence",
+    "oneTime": "Don ponctuel",
+    "monthly": "Mensuel",
+    "yourInfo": "Vos coordonnées",
+    "fullName": "Nom complet",
+    "email": "Email",
+    "phone": "Téléphone (Bénin)",
+    "message": "Message (optionnel)",
+    "messagePlaceholder": "Une dédicace, une intention de prière...",
+    "anonymous": "Je souhaite que mon don soit anonyme publiquement",
+    "total": "Total à payer",
+    "preparing": "Préparation du paiement...",
+    "donateNow": "Donner maintenant",
+    "securePayment": "Paiement sécurisé via FedaPay (MTN, Moov, Carte)"
+  },
+  "eventsPage": {
+    "kicker": "CALENDRIER DU RÉVEIL",
+    "title": "NOS ÉVÉNEMENTS",
+    "subtitle": "Découvrez les rendez-vous qui marquent notre génération.",
+    "nightTitle": "NUIT DU SAINT-ESPRIT",
+    "nightDesc": "C'est l'événement phare de la LIFAC. Une nuit entière dédiée à l'adoration, à la parole prophétique et aux miracles.",
+    "nightPillar1": "Baptême du Saint-Esprit",
+    "nightPillar2": "Guérisons et délivrances",
+    "nightPillar3": "Restauration des destinées",
+    "typesTitle": "NOS TYPES D'ÉVÉNEMENTS",
+    "atmosphereTitle": "L'ATMOSPHÈRE DU RÉVEIL",
+    "conquerTitle": "CONQUÉRIR LES NATIONS",
+    "conquerDesc": "Nos croisades sont des déploiements stratégiques sur le terrain. Nous transformons les stades et les places publiques en autels d'adoration, suivis de baptêmes de masse et implantation de nouvelles cellules de prière locales.",
+    "mobilizationTitle": "UNE MOBILISATION SANS PRÉCÉDENT",
+    "mobilizationDesc": "La LIFAC attire une foule toujours plus nombreuse, soif de vérité et de puissance divine. Nos événements ne sont pas de simples réunions, mais des tournants décisifs pour des milliers de vies. Chaque événement est une preuve de la faim spirituelle de notre génération.",
+    "trainingTitle": "FORMATIONS & SÉMINAIRES",
+    "equipTitle": "ÉQUIPER LES LEADERS",
+    "equipDesc": "Au-delà de l'émotion, nous mettons l'accent sur l'instruction. Nos séminaires forment des hommes et des femmes capables d'influencer la société.",
+    "course1": "Gestion de projets chrétiens",
+    "course2": "Éthique et Intégrité",
+    "course3": "Stratégies d'évangélisation",
+    "testimony": "« Je suis venue à la Nuit du Saint-Esprit avec un désespoir total. J'en suis repartie avec une vision claire et une paix que je n'avais jamais connue. Ma vie a littéralement changé ce soir-là. »",
+    "joinTagline": "LIFAC World | Rejoignez la Génération en Feu"
+  },
+  "volunteerPage": {
+    "title": "Devenez bénévole",
+    "subtitle": "Rejoignez l'équipe LiFAC en tant que bénévole. Mettez vos compétences au service de la mission d'évangélisation et d'action humanitaire.",
+    "impactTitle": "Impact réel",
+    "impactDesc": "Vos actions concrètes transforment réellement des vies au Bénin.",
+    "flexibilityTitle": "Flexibilité",
+    "flexibilityDesc": "Choisissez vos missions selon vos disponibilités, vos compétences et votre appel personnel.",
+    "formTitle": "Candidature bénévole"
+  },
+  "prayerPage": {
+    "title": "Demande de prière",
+    "subtitle": "Partagez votre demande de prière avec l'équipe LiFAC. Nous croyons en la puissance de l'intercession.",
+    "verse": "« Si deux d'entre vous s'accordent sur la terre pour demander une chose quelconque, elle leur sera accordée par mon Père. »",
+    "privacy": "Notre équipe et notre communauté prieront pour vous. Vos informations restent confidentielles si vous le souhaitez."
+  },
+  "auth": {
+    "login": "Connexion",
+    "loginDesc": "Accédez à votre tableau de bord donateur ou bénévole.",
+    "register": "Créer un compte",
+    "registerDesc": "Pour rejoindre la LiFAC en tant que bénévole, partenaire ou donateur enregistré, contactez l'équipe.",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas encore de compte ?",
+    "haveAccount": "Déjà un accès ?"
+  }
+}

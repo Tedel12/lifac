@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 224 71% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+
+    /* Primary = rouge LiFAC */
+    --primary: 0 72% 51%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 47% 11%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 0 72% 51%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 0 72% 51%;
+
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0b1428;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #DC2626;
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #B91C1C;
+  }
+
+  ::selection {
+    background-color: #DC2626;
+    color: #fff;
+  }
+}
+
+@layer utilities {
+  .container-custom {
+    @apply container mx-auto px-4 lg:px-8;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      #f1f5f9 0%,
+      #e2e8f0 50%,
+      #f1f5f9 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+
+  /* Dégradé "feu sacré" pour les fonds dark de la home */
+  .bg-lifac-fire {
+    background:
+      radial-gradient(ellipse at top right, rgba(220, 38, 38, 0.18), transparent 55%),
+      radial-gradient(ellipse at bottom left, rgba(220, 38, 38, 0.08), transparent 60%),
+      linear-gradient(180deg, #070E1F 0%, #0B1428 50%, #070E1F 100%);
+  }
+
+  .bg-lifac-dark {
+    background:
+      radial-gradient(ellipse at top right, rgba(220, 38, 38, 0.12), transparent 60%),
+      #070E1F;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

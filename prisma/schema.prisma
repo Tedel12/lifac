@@ -1,0 +1,608 @@
+// =====================================================
+// LiFAC - Schéma de base de données Prisma
+// =====================================================
+// Light For All Center - Évangélisation et action humanitaire
+// PostgreSQL 17 + Prisma 6
+// =====================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// =====================================================
+// ENUMS
+// =====================================================
+
+enum Role {
+  ADMIN       // Accès complet (équipe LiFAC)
+  EDITOR      // Création/édition de contenu (campagnes, événements)
+  VOLUNTEER   // Bénévole assigné à des événements
+  DONOR       // Donateur enregistré
+  MEMBER      // Membre simple de la communauté
+}
+
+enum CampaignType {
+  HUMANITARIAN  // Soutien orphelins, malades, urgences
+  EVANGELISM    // Croisades, évangélisation, formation
+  EMERGENCY     // Appels d'urgence ponctuels
+  CONSTRUCTION  // Bâtiments, orphelinats, infrastructures
+  EDUCATION     // Programmes éducatifs et formation
+}
+
+enum CampaignStatus {
+  DRAFT         // En préparation, non visible
+  ACTIVE        // En cours, accepte les dons
+  COMPLETED     // Objectif atteint
+  CLOSED        // Fermée manuellement
+  ARCHIVED      // Archivée pour historique
+}
+
+enum PaymentStatus {
+  PENDING       // En attente de validation FedaPay
+  APPROVED      // Paiement confirmé
+  DECLINED      // Refusé par le canal de paiement
+  CANCELED      // Annulé par le donateur
+  REFUNDED      // Remboursé
+  FAILED        // Erreur technique
+}
+
+enum PaymentMethod {
+  MTN_MOBILE_MONEY    // MTN Mobile Money (Bénin)
+  MOOV_MOBILE_MONEY   // Moov Money (Bénin)
+  CELTIIS_CASH        // Celtiis Cash
+  SBIN                // Sbin
+  CARD                // Carte Visa/Mastercard
+  BANK_TRANSFER       // Virement bancaire
+  OTHER
+}
+
+enum DonationFrequency {
+  ONE_TIME      // Don ponctuel
+  MONTHLY       // Don récurrent mensuel
+  QUARTERLY     // Trimestriel
+  YEARLY        // Annuel
+}
+
+enum EventType {
+  CRUSADE              // Croisade d'évangélisation (grand format)
+  POP_UP_CRUSADE       // Croisade éclair (petit format)
+  SCHOOL_OUTREACH      // Évangélisation en école
+  MARKET_OUTREACH      // Évangélisation au marché
+  ONE_ON_ONE           // Évangélisation personnelle
+  YOUTH_CAMP           // Camp de jeunes
+  TRAINING             // Formation, séminaire
+  HUMANITARIAN_MISSION // Mission humanitaire (orphelinat, hôpital)
+  PRAYER_MEETING       // Réunion de prière
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELED
+}
+
+enum VolunteerStatus {
+  PENDING       // Candidature en attente
+  APPROVED      // Bénévole validé
+  ACTIVE        // Actif sur des missions
+  INACTIVE      // Pause / inactif
+  REJECTED
+}
+
+// =====================================================
+// MODÈLES PRINCIPAUX
+// =====================================================
+
+// ---------- UTILISATEURS ----------
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  phone         String?   // Format Bénin : +229...
+  password      String?   // Hashé avec bcrypt (null si OAuth)
+  role          Role      @default(MEMBER)
+  avatarUrl     String?
+  bio           String?   @db.Text
+
+  // Localisation
+  country       String?   @default("Bénin")
+  city          String?
+  address       String?
+
+  // Métadonnées
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  donations         Donation[]
+  volunteerProfile  Volunteer?
+  organizedEvents   Event[]            @relation("EventOrganizer")
+  testimonies       Testimony[]
+  prayerRequests    PrayerRequest[]
+  contactMessages   ContactMessage[]
+  auditLogs         AuditLog[]
+  sessions          Session[]
+  accounts          Account[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// ---------- AUTHENTIFICATION (NextAuth compatible) ----------
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// ---------- ÉGLISES PARTENAIRES ----------
+model PartnerChurch {
+  id            String   @id @default(uuid())
+  name          String
+  denomination  String?  // Ex: Pentecôtiste, Baptiste, Évangélique...
+  pastorName    String?
+  email         String?
+  phone         String?
+  address       String?
+  city          String?
+  country       String   @default("Bénin")
+  websiteUrl    String?
+  logoUrl       String?
+  description   String?  @db.Text
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  events Event[]
+
+  @@index([city])
+  @@index([country])
+  @@map("partner_churches")
+}
+
+// ---------- CAMPAGNES (DONS / CROWDFUNDING) ----------
+model Campaign {
+  id              String         @id @default(uuid())
+  slug            String         @unique
+  title           String
+  shortDescription String         @db.VarChar(280)
+  description     String         @db.Text
+  type            CampaignType
+  status          CampaignStatus @default(DRAFT)
+
+  // Objectifs financiers (en centimes XOF pour précision)
+  goalAmount      BigInt         // Objectif en centimes
+  currentAmount   BigInt         @default(0)
+  currency        String         @default("XOF")
+
+  // Médias
+  coverImageUrl   String?
+  videoUrl        String?
+
+  // Dates
+  startDate       DateTime?
+  endDate         DateTime?
+
+  // Localisation (pour campagnes terrain)
+  location        String?
+  beneficiariesCount Int?       // Nombre de bénéficiaires estimés
+
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+
+  // Tracking
+  viewCount       Int            @default(0)
+  isUrgent        Boolean        @default(false)
+  isFeatured      Boolean        @default(false)
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  donations       Donation[]
+  media           Media[]
+  updates         CampaignUpdate[]
+  testimonies     Testimony[]
+
+  @@index([status])
+  @@index([type])
+  @@index([slug])
+  @@map("campaigns")
+}
+
+// Mises à jour publiées par les admins sur une campagne
+model CampaignUpdate {
+  id          String   @id @default(uuid())
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  title       String
+  content     String   @db.Text
+  imageUrl    String?
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@index([campaignId])
+  @@map("campaign_updates")
+}
+
+// ---------- DONS ----------
+model Donation {
+  id               String            @id @default(uuid())
+
+  // Montant en centimes pour éviter erreurs flottantes
+  amount           BigInt
+  currency         String            @default("XOF")
+
+  // Statut
+  status           PaymentStatus     @default(PENDING)
+  paymentMethod    PaymentMethod?
+  frequency        DonationFrequency @default(ONE_TIME)
+
+  // Référence interne (notre identifiant)
+  reference        String            @unique
+
+  // Identifiants FedaPay
+  fedapayId        String?           @unique // ID transaction FedaPay
+  fedapayCustomerId String?
+  paymentLink      String?           // URL de redirection
+
+  // Donateur (peut être anonyme)
+  isAnonymous      Boolean           @default(false)
+  donorId          String?
+  donor            User?             @relation(fields: [donorId], references: [id], onDelete: SetNull)
+  // Si anonyme ou non-utilisateur, on stocke directement
+  donorName        String?
+  donorEmail       String?
+  donorPhone       String?
+
+  // Lien à une campagne (peut être null pour don général)
+  campaignId       String?
+  campaign         Campaign?         @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+
+  // Reçu fiscal
+  receiptNumber    String?           @unique
+  receiptUrl       String?
+  receiptSentAt    DateTime?
+
+  // Message du donateur (intention de prière, dédicace)
+  message          String?           @db.Text
+
+  // Métadonnées techniques
+  ipAddress        String?
+  userAgent        String?           @db.Text
+  metadata         Json?             // Données complémentaires FedaPay
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  approvedAt       DateTime?
+
+  transactions     PaymentTransaction[]
+
+  @@index([status])
+  @@index([campaignId])
+  @@index([donorId])
+  @@index([reference])
+  @@index([createdAt])
+  @@map("donations")
+}
+
+// Trace technique de chaque tentative de paiement (utile pour debug et audit)
+model PaymentTransaction {
+  id            String        @id @default(uuid())
+  donationId    String
+  donation      Donation      @relation(fields: [donationId], references: [id], onDelete: Cascade)
+
+  fedapayEventId String?
+  eventName     String        // ex: transaction.created, transaction.approved
+  status        PaymentStatus
+  rawPayload    Json          // Payload brut du webhook
+  signature     String?       // Signature HMAC reçue
+  ipAddress     String?
+
+  createdAt     DateTime      @default(now())
+
+  @@index([donationId])
+  @@index([eventName])
+  @@map("payment_transactions")
+}
+
+// ---------- ÉVÉNEMENTS / CROISADES ----------
+model Event {
+  id              String      @id @default(uuid())
+  slug            String      @unique
+  title           String
+  shortDescription String      @db.VarChar(280)
+  description     String      @db.Text
+  type            EventType
+  status          EventStatus @default(UPCOMING)
+
+  // Dates
+  startDate       DateTime
+  endDate         DateTime?
+
+  // Localisation
+  location        String      // Nom du lieu (ex: "Stade municipal d'Abomey-Calavi")
+  address         String?
+  city            String?
+  country         String      @default("Bénin")
+  latitude        Float?
+  longitude       Float?
+
+  // Capacité et inscription
+  maxAttendees    Int?
+  currentAttendees Int        @default(0)
+  requiresRegistration Boolean @default(false)
+
+  // Médias
+  coverImageUrl   String?
+  videoStreamUrl  String?     // YouTube / Facebook Live
+  replayUrl       String?
+
+  // Organisation
+  organizerId     String?
+  organizer       User?       @relation("EventOrganizer", fields: [organizerId], references: [id], onDelete: SetNull)
+
+  partnerChurchId String?
+  partnerChurch   PartnerChurch? @relation(fields: [partnerChurchId], references: [id], onDelete: SetNull)
+
+  // Tracking
+  isFeatured      Boolean     @default(false)
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  registrations   EventRegistration[]
+  volunteerAssignments VolunteerAssignment[]
+  media           Media[]
+  testimonies     Testimony[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([type])
+  @@index([startDate])
+  @@map("events")
+}
+
+model EventRegistration {
+  id          String   @id @default(uuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Participant (peut ne pas avoir de compte)
+  fullName    String
+  email       String?
+  phone       String
+  city        String?
+  message     String?  @db.Text
+
+  // Confirmation
+  confirmed   Boolean  @default(false)
+  attended    Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([phone])
+  @@map("event_registrations")
+}
+
+// ---------- BÉNÉVOLES ----------
+model Volunteer {
+  id            String          @id @default(uuid())
+  userId        String          @unique
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  status        VolunteerStatus @default(PENDING)
+
+  // Profil
+  skills        String[]        // ex: ["musique", "logistique", "traduction"]
+  availability  String?         @db.Text  // Disponibilités déclarées
+  motivation    String?         @db.Text  // Pourquoi rejoindre LiFAC
+
+  // Documents
+  cvUrl         String?
+
+  // Tracking
+  totalMissions Int             @default(0)
+  joinedAt      DateTime        @default(now())
+  approvedAt    DateTime?
+
+  assignments   VolunteerAssignment[]
+
+  @@index([status])
+  @@map("volunteers")
+}
+
+model VolunteerAssignment {
+  id           String    @id @default(uuid())
+  volunteerId  String
+  volunteer    Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  eventId      String
+  event        Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  role         String    // ex: "Accueil", "Logistique", "Prière"
+  notes        String?   @db.Text
+  confirmed    Boolean   @default(false)
+  completed    Boolean   @default(false)
+
+  createdAt    DateTime  @default(now())
+
+  @@unique([volunteerId, eventId])
+  @@index([eventId])
+  @@map("volunteer_assignments")
+}
+
+// ---------- TÉMOIGNAGES ----------
+model Testimony {
+  id           String   @id @default(uuid())
+  authorId     String?
+  author       User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  // Si pas d'utilisateur, infos directes
+  authorName   String
+  authorRole   String?  // ex: "Étudiant, Hope Academy"
+  authorAvatar String?
+
+  title        String?
+  content      String   @db.Text
+  videoUrl     String?
+
+  // Lien optionnel vers une campagne ou un événement
+  campaignId   String?
+  campaign     Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  eventId      String?
+  event        Event?   @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  // Modération
+  isApproved   Boolean  @default(false)
+  isFeatured   Boolean  @default(false)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([isApproved, isFeatured])
+  @@map("testimonies")
+}
+
+// ---------- DEMANDES DE PRIÈRE ----------
+model PrayerRequest {
+  id          String   @id @default(uuid())
+  authorId    String?
+  author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  authorName  String
+  authorEmail String?
+
+  title       String
+  content     String   @db.Text
+  isPublic    Boolean  @default(true)
+  isAnswered  Boolean  @default(false)
+
+  prayerCount Int      @default(0)  // Combien de personnes ont prié
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublic, createdAt])
+  @@map("prayer_requests")
+}
+
+// ---------- MÉDIAS ----------
+model Media {
+  id          String    @id @default(uuid())
+  url         String
+  type        String    // image, video, audio, document
+  filename    String?
+  size        Int?      // En bytes
+  mimeType    String?
+  caption     String?
+  altText     String?
+
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  eventId     String?
+  event       Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  uploadedAt  DateTime  @default(now())
+
+  @@index([campaignId])
+  @@index([eventId])
+  @@map("media")
+}
+
+// ---------- CONTACT ----------
+model ContactMessage {
+  id          String   @id @default(uuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  fullName    String
+  email       String
+  phone       String?
+  subject     String
+  message     String   @db.Text
+
+  isRead      Boolean  @default(false)
+  isReplied   Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+
+  @@index([isRead])
+  @@map("contact_messages")
+}
+
+// ---------- AUDIT LOG (pour la transparence et la conformité) ----------
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  action     String   // ex: "CAMPAIGN_UPDATE", "DONATION_REFUND"
+  entity     String   // ex: "Campaign", "Donation"
+  entityId   String?
+  oldValue   Json?
+  newValue   Json?
+  ipAddress  String?
+  userAgent  String?  @db.Text
+
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ---------- STATISTIQUES GLOBALES (cache pour le hero) ----------
+model GlobalStats {
+  id              String   @id @default(uuid())
+  totalSoulsWon   Int      @default(0)
+  schoolsVisited  Int      @default(0)
+  marketOutreach  Int      @default(0)
+  totalCrusades   Int      @default(0)
+  totalDonations  BigInt   @default(0)  // En centimes XOF
+  totalVolunteers Int      @default(0)
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@map("global_stats")
+}
