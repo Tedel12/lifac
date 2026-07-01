@@ -180,27 +180,28 @@ export async function applyAsVolunteer(
 
   return {
     success: true,
-    message:
-      export type ActionResult =
-        | { success: true; messageKey?: string }
-        | { success: false; errorKey: string; fieldErrors?: FieldErrors };
+    messageKey: "success.volunteer",
+  };
+}
 
-      // ... (skipping to sendContactMessage update)
+export type ActionResult =
+  | { success: true; messageKey?: string }
+  | { success: false; errorKey: string; fieldErrors?: FieldErrors };
 
-      export async function sendContactMessage(
-        input: ContactFormInput
-      ): Promise<ActionResult> {
-        const parsed = contactFormSchema.safeParse(input);
-        if (!parsed.success) {
-          return {
-            success: false,
-            errorKey: "forms.required",
-            fieldErrors: parsed.error.flatten().fieldErrors,
-          };
-        }
-        const data = parsed.data;
+export async function sendContactMessage(
+  input: ContactFormInput
+): Promise<ActionResult> {
+  const parsed = contactFormSchema.safeParse(input);
+  if (!parsed.success) {
+    return {
+      success: false,
+      errorKey: "forms.required",
+      fieldErrors: parsed.error.flatten().fieldErrors,
+    };
+  }
+  const data = parsed.data;
 
-        try {
+  try {
           await prisma.contactMessage.create({
             data: {
               fullName: data.fullName,

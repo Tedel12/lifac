@@ -28,14 +28,17 @@
     "titleHighlight": "FEU",
     "titleLine3": "POUR",
     "titleLine4": "JÉSUS-CHRIST",
-    "subtitle": "Apporter la lumière de l'Évangile à chaque nation, chaque ville, chaque vie.",
+    "subtitle": "Apporter la Lumière à Toutes les Nations.",
     "upcomingLabel": "Événement à venir",
-    "upcomingTitle": "NUIT DU SAINT-ESPRIT",
-    "upcomingLocation": "Campus UAC",
-    "countdownDays": "JOURS",
-    "countdownHours": "HEURES",
-    "countdownMinutes": "MINUTES",
-    "countdownSeconds": "SECONDES"
+    "registerNow": "S'inscrire maintenant",
+    "events": [
+      { "title": "FireCamp 2026", "date": "09 Nov - 14 Nov, 2026", "location": "AD Temple Universitaire", "time": "08h00 - 19h00" },
+      { "title": "Jésus au marché", "date": "Juillet - Août 2026", "location": "Divers", "time": "À définir" },
+      { "title": "Youth Crusade", "date": "Sept - Déc 2026", "location": "Divers", "time": "À définir" },
+      { "title": "Formation Évangélisation", "date": "07 Juil - Août 2026", "location": "AD Ste Rita Cotonou", "time": "19h30" },
+      { "title": "Croisade d'Évangélisation", "date": "Août 2026", "location": "Tokpa Domè", "time": "19h00" },
+      { "title": "NUIT DU SAINT-ESPRIT", "date": "09 Mai 2027", "location": "Campus UAC", "time": "18h00" }
+    ]
   },
   "stats": {
     "soulsWon": "Âmes Gagnées",
@@ -68,6 +71,7 @@
       ]
     },
     "pillars": {
+      "visionTitle": "UNE VISION GLOBALE",
       "passion": {
         "title": "PASSION",
         "desc": "Répandre le feu de l'Évangile à travers chaque ville et chaque village."
@@ -395,6 +399,7 @@
     "conquerDesc": "Nos croisades sont des déploiements stratégiques sur le terrain. Nous transformons les stades et les places publiques en autels d'adoration, suivis de baptêmes de masse et implantation de nouvelles cellules de prière locales.",
     "mobilizationTitle": "UNE MOBILISATION SANS PRÉCÉDENT",
     "mobilizationDesc": "La LIFAC attire une foule toujours plus nombreuse, soif de vérité et de puissance divine. Nos événements ne sont pas de simples réunions, mais des tournants décisifs pour des milliers de vies. Chaque événement est une preuve de la faim spirituelle de notre génération.",
+    "impactParticipants": "Participants / An",
     "trainingTitle": "FORMATIONS & SÉMINAIRES",
     "equipTitle": "ÉQUIPER LES LEADERS",
     "equipDesc": "Au-delà de l'émotion, nous mettons l'accent sur l'instruction. Nos séminaires forment des hommes et des femmes capables d'influencer la société.",

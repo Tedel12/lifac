@@ -28,14 +28,17 @@
     "titleHighlight": "FIRE",
     "titleLine3": "FOR",
     "titleLine4": "JESUS-CHRIST",
-    "subtitle": "Bringing the light of the Gospel to every nation, every city, every life.",
+    "subtitle": "Bringing Light To All Nations.",
     "upcomingLabel": "Upcoming event",
-    "upcomingTitle": "NIGHT OF THE HOLY SPIRIT",
-    "upcomingLocation": "Campus UAC",
-    "countdownDays": "DAYS",
-    "countdownHours": "HOURS",
-    "countdownMinutes": "MINUTES",
-    "countdownSeconds": "SECONDS"
+    "registerNow": "Register Now",
+    "events": [
+      { "title": "FireCamp 2026", "date": "Nov 09 - Nov 14, 2026", "location": "AD Temple Universitaire", "time": "08:00 - 19:00" },
+      { "title": "Jésus au marché", "date": "July - August 2026", "location": "Various", "time": "TBD" },
+      { "title": "Youth Crusade", "date": "Sept - Dec 2026", "location": "Various", "time": "TBD" },
+      { "title": "Formation Evangélisation", "date": "July 07 - August 2026", "location": "AD Ste Rita Cotonou", "time": "19:30" },
+      { "title": "Croisade d'Evangélisation", "date": "August 2026", "location": "Tokpa Domè", "time": "19:00" },
+      { "title": "NIGHT OF THE HOLY SPIRIT", "date": "May 09, 2027", "location": "Campus UAC", "time": "18:00" }
+    ]
   },
   "stats": {
     "soulsWon": "Souls Won",
@@ -68,6 +71,7 @@
       ]
     },
     "pillars": {
+      "visionTitle": "GLOBAL VISION",
       "passion": {
         "title": "PASSION",
         "desc": "Spreading the fire of the Gospel through every city and every village."
@@ -395,6 +399,7 @@
     "conquerDesc": "Our crusades are strategic field deployments. We transform stadiums and public squares into worship altars, followed by mass baptisms and planting of new local prayer cells.",
     "mobilizationTitle": "UNPRECEDENTED MOBILIZATION",
     "mobilizationDesc": "LiFAC attracts an ever-growing crowd, thirsty for truth and divine power. Our events are not just meetings, but turning points for thousands of lives. Each event is proof of our generation's spiritual hunger.",
+    "impactParticipants": "Participants / Year",
     "trainingTitle": "TRAINING & SEMINARS",
     "equipTitle": "EQUIPPING LEADERS",
     "equipDesc": "Beyond emotion, we emphasize instruction. Our seminars train men and women capable of influencing society.",

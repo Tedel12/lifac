@@ -111,7 +111,7 @@ function VisionPillars() {
         <div className="flex items-center gap-3 mb-12">
           <div className="h-8 w-1 bg-lifac-red-600 rounded-full" />
           <h2 className="font-display text-2xl lg:text-3xl font-extrabold">
-            UNE VISION GLOBALE
+            {t("pillars.visionTitle")}
           </h2>
         </div>
 

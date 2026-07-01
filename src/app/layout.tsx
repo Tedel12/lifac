@@ -27,6 +27,11 @@ const APP_URL =
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
+  icons: {
+    icon: "/logo.jpg",
+    shortcut: "/logo.jpg",
+    apple: "/logo.jpg",
+  },
   title: {
     default: "LiFAC — Une génération en feu pour Jésus-Christ",
     template: "%s | LiFAC",

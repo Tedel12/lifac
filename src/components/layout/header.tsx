@@ -56,9 +56,9 @@ export function Header() {
         // Sur les autres pages : sticky navy en permanence
         isHome
           ? scrolled
-            ? "fixed top-0 bg-lifac-navy-950/95 backdrop-blur-md shadow-lg border-b border-white/5 animate-fade-in"
+            ? "fixed top-0 bg-transparent backdrop-blur-md shadow-lg border-b border-white/5 animate-fade-in"
             : "absolute top-0"
-          : "sticky top-0 bg-lifac-navy-950/95 backdrop-blur-md shadow-lg border-b border-white/5"
+          : "sticky top-0 bg-transparent backdrop-blur-md shadow-lg border-b border-white/5"
       )}
     >
       <div className="container mx-auto px-4 lg:px-6">

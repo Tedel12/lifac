@@ -287,7 +287,7 @@ function ImpactNumbers() {
             <div className="font-display text-7xl md:text-8xl lg:text-9xl font-extrabold text-lifac-red-500 leading-none mb-3">
               50K+
             </div>
-            <div className="text-white font-bold text-lg">Participants / An</div>
+            <div className="text-white font-bold text-lg">{t("impactParticipants")}</div>
           </div>
 
           <div>
