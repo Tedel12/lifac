@@ -92,9 +92,9 @@ export function Header() {
 
           <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitcher />
-            <Link href="/register">
+            <Link href="/admin/login">
               <Button variant="outline" size="sm" className="rounded-full">
-                {tc("register").toUpperCase()}
+                LOGIN
               </Button>
             </Link>
             <Link href="/donate">
