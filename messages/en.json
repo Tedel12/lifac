@@ -433,6 +433,18 @@
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have access?"
   },
+  "adminSidebar": {
+    "dashboard": "Dashboard",
+    "schools": "Schools Management",
+    "markets": "Markets",
+    "popCrusade": "Pop-crusade",
+    "oneToOne": "One-to-one",
+    "crusades": "Crusades",
+    "reports": "Reports",
+    "settings": "Settings",
+    "users": "Users",
+    "logout": "Logout"
+  },
   "adminDashboard": {
     "title": "Admin Dashboard",
     "kpi": {
@@ -448,6 +460,14 @@
     "distribution": "Distribution by Module",
     "recentActivities": "Recent Activities",
     "seeAll": "See all",
-    "search": "Search..."
+    "search": "Search...",
+    "updateKpi": "Update",
+    "updateDistribution": "Update",
+    "save": "Save",
+    "cancel": "Cancel",
+    "totalSoulsWon": "Total Souls Won",
+    "schoolsVisited": "Schools Visited",
+    "marketOutreach": "Markets Visited",
+    "totalCrusades": "Total Crusades"
   }
 }

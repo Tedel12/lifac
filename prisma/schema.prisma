@@ -606,3 +606,24 @@ model GlobalStats {
 
   @@map("global_stats")
 }
+
+model ModuleDistribution {
+  id        String   @id @default(uuid())
+  category  String   // Ex: "School", "Markets", etc.
+  value     Int      // Ex: 30 (for 30%)
+  color     String   // Color for the chart
+  updatedAt DateTime @updatedAt
+  
+  @@map("module_distributions")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  type      String   // 'info', 'warning', 'success', 'error'
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}

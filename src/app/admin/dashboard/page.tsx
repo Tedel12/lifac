@@ -1,33 +1,30 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getDashboardStats } from "@/actions/dashboard";
+import { getNotifications } from "@/actions/admin-actions";
+import DashboardContent from "@/components/admin/dashboard-content";
+import { AdminHeaderBar } from "@/components/admin/admin-header-bar";
 
-export default function AdminDashboardPage() {
-  const kpis = [
-    { title: "Activités réalisées", value: "127" },
-    { title: "Écoles visitées", value: "45" },
-    { title: "Marchés visités", value: "32" },
-    { title: "Nombre de croisades", value: "14" },
-    { title: "Attendance total", value: "25 430" },
-    { title: "Décisions pour Christ", value: "17 821" },
-    { title: "Nouveaux convertis", value: "1 250" },
-    { title: "Agents actifs", value: "85" },
+export default async function AdminDashboardPage() {
+  const { globalStats, moduleDistributions } = await getDashboardStats();
+  const notifications = await getNotifications();
+  
+  // Default values if database is empty
+  const defaultDistributions = [
+      { category: "School", value: 30, color: "#EF4444" },
+      { category: "Markets", value: 20, color: "#1E293B" },
+      { category: "Pop-up Crusade", value: 20, color: "#22C55E" },
+      { category: "One-to-one", value: 15, color: "#EAB308" },
+      { category: "Crusade", value: 15, color: "#A855F7" },
   ];
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-lifac-navy-900">Tableau de bord Administrateur</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpis.map((kpi) => (
-          <Card key={kpi.title} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">{kpi.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-lifac-navy-900">{kpi.value}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    <div className="space-y-6">
+        <div className="flex justify-end">
+            <AdminHeaderBar notifications={notifications} />
+        </div>
+        <DashboardContent 
+            initialGlobalStats={globalStats} 
+            initialModuleDistributions={moduleDistributions.length > 0 ? moduleDistributions : defaultDistributions} 
+        />
     </div>
   );
 }

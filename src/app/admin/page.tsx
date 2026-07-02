@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { LogOut, Users, Heart, Calendar, DollarSign } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
-import { logoutAction } from "@/actions/auth";
+import { logoutAdmin } from "@/actions/auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatAmountXof } from "@/lib/fedapay";
@@ -62,7 +62,7 @@ export default async function AdminPage() {
               Connecté en tant que {session.email} ({session.role})
             </p>
           </div>
-          <form action={logoutAction}>
+          <form action={logoutAdmin}>
             <Button type="submit" variant="outline" size="sm">
               <LogOut className="h-4 w-4" />
               Déconnexion

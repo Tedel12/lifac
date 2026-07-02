@@ -119,9 +119,9 @@ export function Header() {
                 </Link>
               </>
             ) : (
-              <Link href="/admin/login">
+              <Link href="/login">
                 <Button variant="outline" size="sm" className="rounded-full">
-                  LOGIN
+                  SE CONNECTER
                 </Button>
               </Link>
             )}

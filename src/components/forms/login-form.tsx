@@ -1,28 +1,36 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
-import { loginAction, type LoginActionResult } from "@/actions/auth";
+import { loginAdmin } from "@/actions/auth";
 
 export function LoginForm() {
   const router = useRouter();
-  const [state, formAction, isPending] = useActionState<
-    LoginActionResult | null,
-    FormData
-  >(loginAction, null);
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (state?.success) {
-      router.push(state.redirectTo);
+  const handleSubmit = async (formData: FormData) => {
+    setIsPending(true);
+    setError(null);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    const result = await loginAdmin(email, password);
+
+    if (result.success) {
+      router.push("/admin/dashboard");
       router.refresh();
+    } else {
+      setError(result.error || "Une erreur est survenue");
     }
-  }, [state, router]);
+    setIsPending(false);
+  };
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form action={handleSubmit} className="space-y-4">
       <div>
         <Label htmlFor="email">Email</Label>
         <Input
@@ -45,23 +53,21 @@ export function LoginForm() {
         />
       </div>
 
-      {state && !state.success && (
+      {error && (
         <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
           <AlertCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
-          <p className="text-sm text-red-700">{state.error}</p>
+          <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
 
       <Button
         type="submit"
-        variant="primary"
-        size="lg"
         className="w-full"
         disabled={isPending}
       >
         {isPending ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="h-4 w-4 animate-spin mr-2" />
             Connexion...
           </>
         ) : (

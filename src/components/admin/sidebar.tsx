@@ -2,23 +2,27 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, School, ShoppingCart, Target, Users, ShieldCheck, FileBarChart, Settings, UserCog, LogOut } from "lucide-react";
+import { useState } from "react";
+import { LayoutDashboard, School, ShoppingCart, Target, Users, ShieldCheck, FileBarChart, Settings, UserCog, LogOut, Menu, X } from "lucide-react";
 import { logoutAdmin } from "@/actions/auth";
-
-const menuItems = [
-  { name: "Tableau de bord", href: "/admin/dashboard", icon: LayoutDashboard },
-  { name: "Écoles", href: "/admin/schools", icon: School },
-  { name: "Marchés", href: "/admin/markets", icon: ShoppingCart },
-  { name: "Pop-croisade", href: "/admin/pop-crusades", icon: Target },
-  { name: "One-to-one", href: "/admin/one-on-one", icon: Users },
-  { name: "Croisades", href: "/admin/crusades", icon: ShieldCheck },
-  { name: "Rapports", href: "/admin/reports", icon: FileBarChart },
-  { name: "Paramètres", href: "/admin/settings", icon: Settings },
-  { name: "Utilisateurs", href: "/admin/users", icon: UserCog },
-];
+import { useTranslations } from "next-intl";
 
 export function AdminSidebar() {
   const router = useRouter();
+  const t = useTranslations("adminSidebar");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const menuItems = [
+    { name: t("dashboard"), href: "/admin/dashboard", icon: LayoutDashboard },
+    { name: t("schools"), href: "/admin/schools", icon: School },
+    { name: t("markets"), href: "/admin/markets", icon: ShoppingCart },
+    { name: t("popCrusade"), href: "/admin/pop-crusades", icon: Target },
+    { name: t("oneToOne"), href: "/admin/one-on-one", icon: Users },
+    { name: t("crusades"), href: "/admin/crusades", icon: ShieldCheck },
+    { name: t("reports"), href: "/admin/reports", icon: FileBarChart },
+    { name: t("settings"), href: "/admin/settings", icon: Settings },
+    { name: t("users"), href: "/admin/users", icon: UserCog },
+  ];
 
   const handleLogout = async () => {
     await logoutAdmin();
@@ -26,27 +30,41 @@ export function AdminSidebar() {
   };
 
   return (
-    <aside className="w-64 bg-lifac-red-600 text-white min-h-screen p-6 flex flex-col">
-      <div className="text-2xl font-bold mb-10 text-white">LiFAC Admin</div>
-      <nav className="flex-1 space-y-2">
-        {menuItems.map((item) => (
-          <Link
-            key={item.name}
-            href={item.href}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-lifac-red-700 transition font-medium"
-          >
-            <item.icon size={20} />
-            {item.name}
-          </Link>
-        ))}
-      </nav>
+    <>
       <button 
-        onClick={handleLogout}
-        className="flex items-center gap-3 p-3 text-white/90 hover:text-white hover:bg-lifac-red-700 rounded-lg transition"
+        onClick={() => setIsOpen(!isOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-lifac-red-600 text-white rounded-md"
       >
-        <LogOut size={20} />
-        Déconnexion
+        {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
-    </aside>
+
+      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-lifac-red-600 text-white p-6 flex flex-col transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+        <div className="text-2xl font-bold mb-10 text-white">Admin</div>
+        <nav className="flex-1 space-y-1">
+          {menuItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-lifac-red-700 transition font-medium text-sm"
+              onClick={() => setIsOpen(false)}
+            >
+              <item.icon size={18} />
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-3 p-2.5 text-white/90 hover:text-white hover:bg-lifac-red-700 rounded-lg transition text-sm"
+        >
+          <LogOut size={18} />
+          {t("logout")}
+        </button>
+      </aside>
+      
+      {isOpen && (
+        <div className="lg:hidden fixed inset-0 z-30 bg-black/50" onClick={() => setIsOpen(false)} />
+      )}
+    </>
   );
 }

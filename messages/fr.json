@@ -433,6 +433,18 @@
     "noAccount": "Pas encore de compte ?",
     "haveAccount": "Déjà un accès ?"
   },
+  "adminSidebar": {
+    "dashboard": "Tableau de bord",
+    "schools": "Gestion des écoles",
+    "markets": "Marchés",
+    "popCrusade": "Pop-croisade",
+    "oneToOne": "One-to-one",
+    "crusades": "Croisades",
+    "reports": "Rapports",
+    "settings": "Paramètres",
+    "users": "Utilisateurs",
+    "logout": "Déconnexion"
+  },
   "adminDashboard": {
     "title": "Tableau de bord Administrateur",
     "kpi": {
@@ -448,6 +460,14 @@
     "distribution": "Répartition par module",
     "recentActivities": "Activités récentes",
     "seeAll": "Voir tout",
-    "search": "Rechercher..."
+    "search": "Rechercher...",
+    "updateKpi": "Mettre à jour",
+    "updateDistribution": "Mettre à jour",
+    "save": "Sauvegarder",
+    "cancel": "Annuler",
+    "totalSoulsWon": "Total âmes gagnées",
+    "schoolsVisited": "Écoles visitées",
+    "marketOutreach": "Marchés visités",
+    "totalCrusades": "Total croisades"
   }
 }
