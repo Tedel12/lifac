@@ -15,7 +15,7 @@
   },
   "nav": {
     "home": "Accueil",
-    "about": "Qui sommes-nous",
+    "about": "À propos",
     "activities": "Activités",
     "events": "Événements",
     "testimonies": "Témoignages",
@@ -432,5 +432,22 @@
     "forgotPassword": "Mot de passe oublié ?",
     "noAccount": "Pas encore de compte ?",
     "haveAccount": "Déjà un accès ?"
+  },
+  "adminDashboard": {
+    "title": "Tableau de bord Administrateur",
+    "kpi": {
+      "activities": "Activités réalisées",
+      "schools": "Écoles visitées",
+      "markets": "Marchés visités",
+      "crusades": "Nombre de croisades",
+      "attendance": "Attendance total",
+      "decisions": "Décisions pour Christ",
+      "converts": "Nouveaux convertis",
+      "agents": "Agents actifs"
+    },
+    "distribution": "Répartition par module",
+    "recentActivities": "Activités récentes",
+    "seeAll": "Voir tout",
+    "search": "Rechercher..."
   }
 }

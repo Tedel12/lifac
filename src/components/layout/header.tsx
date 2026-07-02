@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -9,13 +9,31 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "./logo";
 import { LanguageSwitcher } from "./language-switcher";
 import { cn } from "@/lib/utils";
+import { isAdminAuthenticated, logoutAdmin } from "@/actions/auth";
 
 export function Header() {
   const t = useTranslations("nav");
   const tc = useTranslations("common");
   const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const auth = await isAdminAuthenticated();
+      setIsAuthenticated(auth);
+    };
+    checkAuth();
+  }, [pathname]);
+
+  const handleLogout = async () => {
+    await logoutAdmin();
+    setIsAuthenticated(false);
+    router.push("/");
+  };
+
 
   const isHome = pathname === "/";
   const solid = scrolled || !isHome;
@@ -69,7 +87,7 @@ export function Header() {
           </Link>
 
           {/* Navigation desktop */}
-          <nav className="hidden xl:flex items-center gap-7 ml-10">
+          <nav className="hidden xl:flex items-center gap-4 ml-10">
             {navItems.map((item) => {
               const active = isActive(item.href);
               return (
@@ -92,11 +110,21 @@ export function Header() {
 
           <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitcher />
-            <Link href="/admin/login">
-              <Button variant="outline" size="sm" className="rounded-full">
-                LOGIN
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link href="/admin/dashboard">
+                  <Button variant="outline" size="sm" className="rounded-full">
+                    DASHBOARD
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <Link href="/admin/login">
+                <Button variant="outline" size="sm" className="rounded-full">
+                  LOGIN
+                </Button>
+              </Link>
+            )}
             <Link href="/donate">
               <Button variant="default" size="sm" className="rounded-full">
                 {tc("donate").toUpperCase()}

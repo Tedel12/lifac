@@ -74,7 +74,7 @@ export function Hero() {
             <h1 className="font-display font-extrabold leading-[0.95] tracking-tight drop-shadow-2xl">
               <span className="block text-4xl md:text-5xl lg:text-[60px]">{t("titleLine1")}</span>
               <span className="block text-4xl md:text-5xl lg:text-[60px]">
-                {t("titleLine2")} <span className="text-lifac-red-500">{t("titleHighlight")}</span> {t("titleLine3")} {t("titleLine4")}
+                {t("titleLine2")} <span className="text-lifac-red-500">{t("titleHighlight")}</span> {t("titleLine3")} <br /> {t("titleLine4")}
               </span>
             </h1>
             <p className="text-base md:text-lg text-white/85 leading-relaxed max-w-lg drop-shadow">{t("subtitle")}</p>

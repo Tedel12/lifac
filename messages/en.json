@@ -432,5 +432,22 @@
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have access?"
+  },
+  "adminDashboard": {
+    "title": "Admin Dashboard",
+    "kpi": {
+      "activities": "Activities Executed",
+      "schools": "Schools Visited",
+      "markets": "Markets Visited",
+      "crusades": "Crusades",
+      "attendance": "Total Attendance",
+      "decisions": "Decisions for Christ",
+      "converts": "New Converts",
+      "agents": "Active Agents"
+    },
+    "distribution": "Distribution by Module",
+    "recentActivities": "Recent Activities",
+    "seeAll": "See all",
+    "search": "Search..."
   }
 }
