@@ -34,6 +34,10 @@ export default function DashboardContent({ initialGlobalStats, initialModuleDist
 
   return (
     <div className="space-y-8">
+      <div>
+        <span className="text-2xl font-bold text-lifac-navy-900">{t("welcome")}</span>
+        <p className="text-sm text-gray-500">{t("dashboardOverview")}</p>
+      </div>
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpis.map((kpi) => (

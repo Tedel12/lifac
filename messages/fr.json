@@ -468,6 +468,8 @@
     "totalSoulsWon": "Total âmes gagnées",
     "schoolsVisited": "Écoles visitées",
     "marketOutreach": "Marchés visités",
-    "totalCrusades": "Total croisades"
+    "totalCrusades": "Total croisades",
+    "welcome": "Bienvenue, {name} !",
+    "dashboardOverview": "Voici un aperçu des activités et de l'impact de la LiFAC. Utilisez le menu pour naviguer et gérer les différentes sections."
   }
 }
