@@ -1,11 +1,14 @@
 import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Inter, Poppins, Geist } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -98,7 +101,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${poppins.variable}`}>
+    <html lang={locale} className={cn(inter.variable, poppins.variable, "font-sans", geist.variable)}>
       <body className="min-h-screen flex flex-col font-sans bg-lifac-navy-950">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Header />

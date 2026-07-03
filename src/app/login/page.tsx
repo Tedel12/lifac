@@ -1,4 +1,4 @@
-import { AdminLoginForm } from "@/components/forms/admin-login-form";
+import { LoginForm } from "@/components/forms/admin-login-form";
 
 export const metadata = {
   title: "Connexion | LiFAC",
@@ -15,15 +15,15 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-lifac-navy-950/80" />
         <div className="relative z-10 text-center space-y-4 max-w-lg">
           <h1 className="text-4xl font-bold">Bienvenue sur LiFAC</h1>
-          <p className="text-lg text-white/90">Connectez-vous pour accéder à votre espace administrateur et gérer vos contenus.</p>
+          <p className="text-lg text-white/90">Connectez-vous pour accéder à votre espace et gérer les activités.</p>
         </div>
       </div>
 
       {/* Côté droit : Formulaire */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
-        <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl">
-          <h2 className="text-2xl font-bold text-center text-lifac-navy-900 mb-6">Connexion</h2>
-          <AdminLoginForm />
+      <div className="flex-1 flex items-center justify-center p-8 bg-white">
+        <div className="w-full max-w-md">
+          <h2 className="text-2xl font-bold text-center text-lifac-navy-900 mb-6">CONNEXION</h2>
+          <LoginForm />
         </div>
       </div>
     </div>
