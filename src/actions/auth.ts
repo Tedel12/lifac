@@ -38,3 +38,12 @@ export async function isAdminAuthenticated() {
   const cookieStore = await cookies();
   return cookieStore.get("admin_token")?.value === "authorized";
 }
+
+export async function isUserAuthenticated() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("admin_token")?.value;
+  if (token === "authorized") return { isAuthenticated: true, role: "ADMIN" };
+  if (token === "authorized_agent") return { isAuthenticated: true, role: "VOLUNTEER" };
+  return { isAuthenticated: false, role: null };
+}
+

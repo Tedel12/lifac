@@ -208,6 +208,26 @@ async function main() {
   }
   console.log(`✅ ${testimonies.length} témoignages créés`);
 
+  // -----------------------------------
+  // 6. Écoles
+  // -----------------------------------
+  const schools = [
+    { code: "SCH001", name: "Lycée Béhanzin", address: "Porto-Novo", commune: "Porto-Novo", department: "Ouémé", responsibleName: "Jean Dupont", phone: "+22900000001", estimatedStudents: 500 },
+    { code: "SCH002", name: "Collège Catholique", address: "Cotonou", commune: "Cotonou", department: "Littoral", responsibleName: "Marie Curie", phone: "+22900000002", estimatedStudents: 800 },
+    { code: "SCH003", name: "Lycée Technique", address: "Abomey-Calavi", commune: "Abomey-Calavi", department: "Atlantique", responsibleName: "Paul Martin", phone: "+22900000003", estimatedStudents: 1200 },
+    { code: "SCH004", name: "Collège Moderne", address: "Parakou", commune: "Parakou", department: "Borgou", responsibleName: "Sophie Durand", phone: "+22900000004", estimatedStudents: 600 },
+    { code: "SCH005", name: "Lycée Mathieu Kérékou", address: "Natitingou", commune: "Natitingou", department: "Atacora", responsibleName: "Luc Bernard", phone: "+22900000005", estimatedStudents: 700 },
+  ];
+
+  for (const s of schools) {
+    await prisma.school.upsert({
+      where: { code: s.code },
+      update: {},
+      create: s,
+    });
+  }
+  console.log(`✅ ${schools.length} écoles créées`);
+
   console.log("🎉 Seed terminé avec succès !");
 }
 

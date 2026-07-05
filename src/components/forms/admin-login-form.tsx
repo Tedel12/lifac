@@ -25,7 +25,11 @@ export function LoginForm() {
     }
 
     if (result.success) {
-      router.push("/admin/dashboard");
+      if (role === "ADMIN") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/volunteer/dashboard");
+      }
       router.refresh();
     } else {
       setError(result.error || "Une erreur est survenue");

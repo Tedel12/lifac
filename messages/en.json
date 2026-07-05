@@ -433,18 +433,6 @@
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have access?"
   },
-  "adminSidebar": {
-    "dashboard": "Dashboard",
-    "schools": "Schools Management",
-    "markets": "Markets",
-    "popCrusade": "Pop-crusade",
-    "oneToOne": "One-to-one",
-    "crusades": "Crusades",
-    "reports": "Reports",
-    "settings": "Settings",
-    "users": "Users",
-    "logout": "Logout"
-  },
   "adminDashboard": {
     "title": "Admin Dashboard",
     "kpi": {
@@ -469,5 +457,41 @@
     "schoolsVisited": "Schools Visited",
     "marketOutreach": "Markets Visited",
     "totalCrusades": "Total Crusades"
+  },
+  "adminSidebar": {
+    "dashboard": "Dashboard",
+    "schools": "Schools Management",
+    "markets": "Markets",
+    "popCrusade": "Pop-crusade",
+    "oneToOne": "One-to-one",
+    "crusades": "Crusades",
+    "reports": "Reports",
+    "settings": "Settings",
+    "users": "Users",
+    "logout": "Logout"
+  },
+  "agentSidebar": {
+    "home": "Home",
+    "assignments": "My Assignments",
+    "reports": "Reports",
+    "converts": "New Converts",
+    "prayer": "Intercession",
+    "aiAssistant": "LIFAC AI Assistant",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "adminSchools": {
+    "title": "Schools Management",
+    "add": "Add a school",
+    "search": "Search by name or code...",
+    "allStatus": "All statuses",
+    "filter": "Filter",
+    "actions": {
+        "assign": "Assign",
+        "edit": "Edit",
+        "view": "View",
+        "delete": "Delete"
+    },
+    "assignments": "School assignments"
   }
 }

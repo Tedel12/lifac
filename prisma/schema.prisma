@@ -627,3 +627,32 @@ model Notification {
 
   @@map("notifications")
 }
+
+enum SchoolStatus {
+  NON_CONFIRMEE
+  CONFIRMEE
+  AFFECTEE
+  EN_COURS
+  EXECUTEE
+}
+
+model School {
+  id                String       @id @default(uuid())
+  countryCode       String       @default("BJ") // Code Pays
+  code              String       @unique        // Code école
+  name              String                      // Nom école
+  address           String                      // Adresse
+  commune           String                      // Commune
+  department        String                      // Département
+  responsibleName   String                      // Responsable
+  phone             String                      // Téléphone
+  estimatedStudents Int          @default(0)    // Effectif estimé
+  latitude          Float?                      // Latitude
+  longitude         Float?                      // Longitude
+  status            SchoolStatus @default(NON_CONFIRMEE) // Statut
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@map("schools")
+}
+

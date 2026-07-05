@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "./logo";
 import { LanguageSwitcher } from "./language-switcher";
 import { cn } from "@/lib/utils";
-import { isAdminAuthenticated, logoutAdmin } from "@/actions/auth";
+import { isUserAuthenticated, logoutAdmin } from "@/actions/auth";
 
 export function Header() {
   const t = useTranslations("nav");
@@ -18,21 +18,17 @@ export function Header() {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [auth, setAuth] = useState<{ isAuthenticated: boolean; role: string | null }>({ isAuthenticated: false, role: null });
 
   useEffect(() => {
     const checkAuth = async () => {
-      const auth = await isAdminAuthenticated();
-      setIsAuthenticated(auth);
+      const res = await isUserAuthenticated();
+      setAuth(res);
     };
     checkAuth();
   }, [pathname]);
 
-  const handleLogout = async () => {
-    await logoutAdmin();
-    setIsAuthenticated(false);
-    router.push("/");
-  };
+  const dashboardUrl = auth.role === "ADMIN" ? "/admin/dashboard" : "/volunteer/dashboard";
 
 
   const isHome = pathname === "/";
@@ -110,14 +106,12 @@ export function Header() {
 
           <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitcher />
-            {isAuthenticated ? (
-              <>
-                <Link href="/admin/dashboard">
-                  <Button variant="outline" size="sm" className="rounded-full">
-                    DASHBOARD
-                  </Button>
-                </Link>
-              </>
+            {auth.isAuthenticated ? (
+              <Link href={dashboardUrl}>
+                <Button variant="outline" size="sm" className="rounded-full">
+                  DASHBOARD
+                </Button>
+              </Link>
             ) : (
               <Link href="/login">
                 <Button variant="outline" size="sm" className="rounded-full">
@@ -163,11 +157,19 @@ export function Header() {
               })}
               <li className="pt-3 mt-3 border-t border-white/10 flex flex-col gap-2 px-4">
                 <LanguageSwitcher className="self-start mb-2" />
-                <Link href="/register" onClick={() => setMobileOpen(false)}>
-                  <Button variant="outline" size="default" className="w-full">
-                    {tc("register").toUpperCase()}
-                  </Button>
-                </Link>
+                {auth.isAuthenticated ? (
+                  <Link href={dashboardUrl} onClick={() => setMobileOpen(false)}>
+                    <Button variant="outline" size="default" className="w-full">
+                      DASHBOARD
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/login" onClick={() => setMobileOpen(false)}>
+                    <Button variant="outline" size="default" className="w-full">
+                      {tc("register").toUpperCase()}
+                    </Button>
+                  </Link>
+                )}
                 <Link href="/donate" onClick={() => setMobileOpen(false)}>
                   <Button variant="default" size="default" className="w-full">
                     {tc("donate").toUpperCase()}

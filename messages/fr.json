@@ -445,6 +445,16 @@
     "users": "Utilisateurs",
     "logout": "Déconnexion"
   },
+  "agentSidebar": {
+    "home": "Accueil",
+    "assignments": "Mes affectations",
+    "reports": "Rapports",
+    "converts": "Nouveaux convertis",
+    "prayer": "Intercession",
+    "aiAssistant": "Assistant AI LIFAC",
+    "profile": "Profil",
+    "logout": "Déconnexion"
+  },
   "adminDashboard": {
     "title": "Tableau de bord Administrateur",
     "kpi": {
@@ -469,7 +479,21 @@
     "schoolsVisited": "Écoles visitées",
     "marketOutreach": "Marchés visités",
     "totalCrusades": "Total croisades",
-    "welcome": "Bienvenue, {name} !",
+    "welcome": "Bienvenue !",
     "dashboardOverview": "Voici un aperçu des activités et de l'impact de la LiFAC. Utilisez le menu pour naviguer et gérer les différentes sections."
+  },
+  "adminSchools": {
+    "title": "Gestion des écoles",
+    "add": "Ajouter une école",
+    "search": "Rechercher par nom ou code...",
+    "allStatus": "Tous les statuts",
+    "filter": "Filtrer",
+    "actions": {
+        "assign": "Affecter",
+        "edit": "Modifier",
+        "view": "Consulter",
+        "delete": "Supprimer"
+    },
+    "assignments": "Affections des écoles"
   }
 }
