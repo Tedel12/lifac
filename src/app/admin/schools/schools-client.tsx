@@ -6,8 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { deleteSchool, getSchools } from "@/actions/school-actions";
+import { assignSchoolToAgent } from "@/actions/agent-actions";
 import { SchoolStatus } from "@prisma/client";
 import { SchoolModal } from "@/components/admin/school-modal";
+import { AgentSelectionModal } from "@/components/admin/agent-selection-modal";
 import { useTranslations } from "next-intl";
 
 export default function SchoolsPage({ schools: initialSchools }: { schools: any[] }) {
@@ -16,6 +18,7 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<SchoolStatus | "ALL">("ALL");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
   const [selectedSchool, setSelectedSchool] = useState<any>(null);
   const [isAssignmentsOpen, setIsAssignmentsOpen] = useState(false);
 
@@ -39,6 +42,17 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
     setSelectedSchool(school);
     setIsModalOpen(true);
   };
+
+  const handleAssign = (school: any) => {
+    setSelectedSchool(school);
+    setIsAgentModalOpen(true);
+  };
+
+  const performAssignment = async (agentId: string) => {
+      await assignSchoolToAgent(selectedSchool.id, agentId);
+      setIsAgentModalOpen(false);
+      refreshSchools();
+  }
 
   return (
     <div className="space-y-6">
@@ -96,12 +110,12 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
                         {school.status}
                     </span>
                   </td>
-                    <td className="px-6 py-4 text-center">
+                  <td className="px-6 py-4 text-center">
                     <div className="flex justify-center gap-1">
-                        <Button variant="ghost" size="sm" className="text-emerald-600 text-xs gap-1" onClick={() => handleAssign(school)} title={t("actions.assign")}><UserPlus size={14} /> {t("actions.assign")}</Button>
-                        <Button variant="ghost" size="sm" className="text-blue-600 text-xs gap-1" onClick={() => handleEdit(school)}><Edit size={14} /> {t("actions.edit")}</Button>
-                        <Button variant="ghost" size="sm" className="text-slate-600 text-xs gap-1" title={t("actions.view")}><Eye size={14} /> {t("actions.view")}</Button>
-                        <Button variant="ghost" size="sm" className="text-red-600 text-xs gap-1" onClick={() => handleDelete(school.id)}><Trash2 size={14} /> {t("actions.delete")}</Button>
+                        <Button variant="ghost" size="sm" className="text-emerald-600 text-xs gap-1" onClick={() => handleAssign(school)} title={t("actions.assign")}><UserPlus size={14} /></Button>
+                        <Button variant="ghost" size="sm" className="text-blue-600 text-xs gap-1" onClick={() => handleEdit(school)}><Edit size={14} /></Button>
+                        <Button variant="ghost" size="sm" className="text-slate-600 text-xs gap-1" title={t("actions.view")}><Eye size={14} /></Button>
+                        <Button variant="ghost" size="sm" className="text-red-600 text-xs gap-1" onClick={() => handleDelete(school.id)}><Trash2 size={14} /></Button>
                     </div>
                   </td>
                 </tr>
@@ -116,8 +130,8 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
       </Card>
       
       <div className="relative">
-        <Button variant="outline" onClick={() => setIsAssignmentsOpen(!isAssignmentsOpen)}>
-            <List size={18} className="mr-2" /> {t("assignments")} <ChevronDown size={18} className="ml-2"/>
+        <Button variant="outline" onClick={() => setIsAssignmentsOpen(!isAssignmentsOpen)} className="mr-2 text-black" >
+            <List size={18} className="mr-2 text-black" /> {t("assignments")} <ChevronDown size={18} className="ml-2"/>
         </Button>
         {isAssignmentsOpen && (
             <div className="absolute bottom-full left-0 mb-2 w-64 bg-white border rounded-md shadow-lg p-4">
@@ -132,6 +146,14 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
             onClose={() => setIsModalOpen(false)} 
             school={selectedSchool}
             onUpdate={refreshSchools}
+          />
+      )}
+      {isAgentModalOpen && (
+          <AgentSelectionModal 
+            isOpen={true} 
+            onClose={() => setIsAgentModalOpen(false)} 
+            school={selectedSchool}
+            onAssign={performAssignment}
           />
       )}
     </div>
