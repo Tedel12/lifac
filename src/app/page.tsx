@@ -18,7 +18,7 @@ const FALLBACK_STATS = {
 
 async function getLandingData() {
   try {
-    const [stats, testimonies] = await Promise.all([
+    const [stats, testimonies, upcomingEvents] = await Promise.all([
       prisma.globalStats.findFirst({ orderBy: { updatedAt: "desc" } }),
       prisma.testimony.findMany({
         where: { isApproved: true, isFeatured: true },
@@ -32,31 +32,46 @@ async function getLandingData() {
           content: true,
         },
       }),
+      prisma.event.findMany({
+        where: { status: "UPCOMING", requiresRegistration: true },
+        orderBy: { startDate: "asc" },
+        take: 10,
+        select: {
+          id: true,
+          title: true,
+          type: true,
+          location: true,
+          city: true,
+          startDate: true,
+          endDate: true,
+        },
+      }),
     ]);
 
     return {
       stats: stats
         ? {
-            totalSoulsWon: stats.totalSoulsWon,
-            schoolsVisited: stats.schoolsVisited,
-            marketOutreach: stats.marketOutreach,
-            totalCrusades: stats.totalCrusades,
-          }
+          totalSoulsWon: stats.totalSoulsWon,
+          schoolsVisited: stats.schoolsVisited,
+          marketOutreach: stats.marketOutreach,
+          totalCrusades: stats.totalCrusades,
+        }
         : FALLBACK_STATS,
       testimonies,
+      upcomingEvents,
     };
   } catch (e) {
     console.error("[HomePage] Erreur de récupération des données :", e);
-    return { stats: FALLBACK_STATS, testimonies: [] };
+    return { stats: FALLBACK_STATS, testimonies: [], upcomingEvents: [] };
   }
 }
 
 export default async function HomePage() {
-  const { stats, testimonies } = await getLandingData();
+  const { stats, testimonies, upcomingEvents } = await getLandingData();
 
   return (
     <>
-      <Hero />
+      <Hero events={upcomingEvents} />
       <StatsBar stats={stats} />
       <AboutSection />
       <ActivitiesSection />

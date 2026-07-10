@@ -226,9 +226,26 @@ async function main() {
       create: s,
     });
   }
-  console.log(`✅ ${schools.length} écoles créées`);
+  // -----------------------------------
+  // 7. Activités
+  // -----------------------------------
+  const activities = [
+    { title: "Croisade d’évangélisation", description: "Les Croisades d'Évangélisation de LiFAC sont des campagnes d'évangélisation organisées dans les villes et les communautés afin d'annoncer la Bonne Nouvelle de Jésus-Christ au plus grand nombre. Elles se déroulent généralement sur trois à quatre jours consécutifs, permettant aux populations de participer à plusieurs soirées de prédication et de prière." },
+    { title: "Youth Crusades", description: "Youth Crusades est le programme d'évangélisation de LiFAC spécialement consacré à la jeunesse. Il a pour objectif d'annoncer l'Évangile de Jésus-Christ aux élèves, étudiants et jeunes en formation, directement dans leurs milieux de vie et d'apprentissage." },
+    { title: "Évangélisation au marché", description: "Jésus au Marché est un programme d'évangélisation de proximité organisé par LiFAC dans les marchés et les espaces commerciaux. Son objectif est de porter l'Évangile de Jésus-Christ au cœur des lieux où les populations vivent, travaillent et se rencontrent quotidiennement." },
+    { title: "Pop-up crusade", description: "Pop-Up Crusade est un programme de croisades d'évangélisation de proximité organisé par LiFAC (Light For All Center). Il consiste à déployer, de manière ponctuelle et avec un minimum de matériel, une équipe d'évangélisation dans un village, un quartier, un carrefour, une place publique ou tout autre espace accessible." },
+    { title: "Évangélisation personnelle", description: "Évangélisation Personnelle est un programme de proximité de LiFAC (Light For All Center) qui consiste à aller à la rencontre des personnes, individuellement, pour leur annoncer la Bonne Nouvelle de Jésus-Christ dans le cadre d'un échange personnel." },
+    { title: "La Nuit de l’Espoir", description: "La Nuit de l'Espoir est un programme d'évangélisation organisé par LiFAC (Light For All Center). Cette rencontre, qui se tient chaque année entre les mois de mai et juillet, est entièrement consacrée à la proclamation de l'Évangile de Jésus-Christ et à la manifestation de la puissance du Saint-Esprit." },
+    { title: "Actions Humanitaires", description: "Actions Humanitaires est un programme périodique de LiFAC (Light For All Center) qui vise à manifester l’amour de Dieu de manière concrète à travers des actions sociales et médicales en faveur des personnes en situation de vulnérabilité." },
+    { title: "Formation en Évangélisation", description: "La Formation en Évangélisation est un programme de formation et d'équipement de LiFAC (Light For All Center) destiné à préparer et à envoyer des ouvriers qualifiés pour l'œuvre de l'évangélisation." },
+  ];
 
-  console.log("🎉 Seed terminé avec succès !");
+  for (const a of activities) {
+    await prisma.activity.create({
+      data: a,
+    });
+  }
+  console.log(`✅ ${activities.length} activités créées`);
 }
 
 main()

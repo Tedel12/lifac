@@ -8,7 +8,10 @@ import { z } from "zod";
 // VALIDATEURS DE BASE
 // -----------------------------------
 
-const phoneRegex = /^(\+?229)?\d{8}$/;
+// Numéros béninois : 8 chiffres (ancien format, encore très utilisé) ou 10 chiffres
+// (nouveau format depuis la réforme de numérotation 2023). L'indicatif +229 reste optionnel.
+const phoneRegex = /^(\+?229)?(\d{8}|\d{10})$/;
+const PHONE_ERROR_MESSAGE = "Numéro de téléphone béninois invalide (8 ou 10 chiffres)";
 
 // -----------------------------------
 // DONS
@@ -32,7 +35,7 @@ export const donationFormSchema = z.object({
   donorEmail: z.string().email("Email invalide"),
   donorPhone: z
     .string()
-    .regex(phoneRegex, "Numéro de téléphone béninois invalide (8 chiffres)")
+    .regex(phoneRegex, PHONE_ERROR_MESSAGE)
     .optional()
     .or(z.literal("")),
   message: z
@@ -51,9 +54,14 @@ export const eventRegistrationSchema = z.object({
   eventId: z.string().uuid("Identifiant d'événement invalide"),
   fullName: z.string().min(2).max(100),
   email: z.string().email().optional().or(z.literal("")),
-  phone: z.string().regex(phoneRegex, "Numéro invalide"),
-  city: z.string().max(80).optional(),
-  message: z.string().max(500).optional(),
+  phone: z.string().regex(phoneRegex, PHONE_ERROR_MESSAGE),
+  city: z.string().max(80).optional().or(z.literal("")),
+  message: z.string().max(500).optional().or(z.literal("")),
+
+  // Nouveaux champs
+  participationMode: z.string().optional().or(z.literal("")),
+  isFireCamp: z.boolean().default(false),
+  formData: z.record(z.any()).optional(),
 });
 
 export type EventRegistrationInput = z.infer<typeof eventRegistrationSchema>;
@@ -65,7 +73,7 @@ export type EventRegistrationInput = z.infer<typeof eventRegistrationSchema>;
 export const volunteerApplicationSchema = z.object({
   fullName: z.string().min(2).max(100),
   email: z.string().email("Email invalide"),
-  phone: z.string().regex(phoneRegex, "Numéro invalide"),
+  phone: z.string().regex(phoneRegex, PHONE_ERROR_MESSAGE),
   city: z.string().max(80).optional(),
   skills: z
     .array(z.string())
@@ -88,7 +96,7 @@ export type VolunteerApplicationInput = z.infer<
 export const contactFormSchema = z.object({
   fullName: z.string().min(2).max(100),
   email: z.string().email("Email invalide"),
-  phone: z.string().regex(phoneRegex).optional().or(z.literal("")),
+  phone: z.string().regex(phoneRegex, PHONE_ERROR_MESSAGE).optional().or(z.literal("")),
   subject: z.string().min(3).max(200),
   message: z.string().min(10).max(2000),
 });
@@ -108,7 +116,7 @@ export const registerSchema = z
   .object({
     name: z.string().min(2).max(100),
     email: z.string().email("Email invalide"),
-    phone: z.string().regex(phoneRegex).optional().or(z.literal("")),
+    phone: z.string().regex(phoneRegex, PHONE_ERROR_MESSAGE).optional().or(z.literal("")),
     password: z
       .string()
       .min(8, "Le mot de passe doit faire au moins 8 caractères")

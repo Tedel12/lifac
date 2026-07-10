@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
-import { EventRegistrationForm } from "@/components/forms/event-registration-form";
+import { RegistrationForm as EventRegistrationForm } from "@/components/forms/registration-form";
 import { formatDateTime, formatDate } from "@/lib/utils";
 import { Calendar, MapPin, Users, ArrowLeft, Clock } from "lucide-react";
 
