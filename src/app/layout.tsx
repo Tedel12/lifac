@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -107,6 +108,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <Toaster />
         </NextIntlClientProvider>
       </body>
     </html>

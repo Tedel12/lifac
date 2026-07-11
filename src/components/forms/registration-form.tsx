@@ -117,28 +117,26 @@ export function RegistrationForm({ eventId, isFireCamp = false }: RegistrationFo
     e.preventDefault();
     setError(null);
     
-    console.log("[RegistrationForm] Submitting formData:", formData);
 
     if (isFireCamp) {
       if (!formData.engagementExact || !formData.engagementReglement || !formData.engagementSessions) {
         setError("Veuillez confirmer les trois engagements avant de soumettre.");
-        console.warn("[RegistrationForm] Engagement check failed.");
         return;
       }
       if (formData.reconnuParEglise === "Non" && !formData.lettreRecommandation) {
         setError("La lettre de recommandation signée est obligatoire si vous n'êtes pas reconnu par votre Église.");
-        console.warn("[RegistrationForm] Recommandation check failed.");
+      
         return;
       }
     } else {
       if (!formData.certifieExact || !formData.accepteUtilisationDonnees) {
         setError("Veuillez cocher les cases d'engagement avant de soumettre.");
-        console.warn("[RegistrationForm] Engagement check failed.");
+        
         return;
       }
       if (!formData.evenement) {
         setError("Veuillez choisir un événement.");
-        console.warn("[RegistrationForm] Event check failed.");
+
         return;
       }
     }
@@ -152,12 +150,11 @@ export function RegistrationForm({ eventId, isFireCamp = false }: RegistrationFo
         isFireCamp: isFireCamp,
         participationMode: formData.participationMode,
         formData: formData,
-      };
-      console.log("[RegistrationForm] Payload to be sent:", JSON.stringify(payload, null, 2));
+      }
 
       const result = await registerForEvent(payload as any);
       
-      console.log("[RegistrationForm] Action result:", result);
+    
       
       if (!result.success) {
         setError(result.error);

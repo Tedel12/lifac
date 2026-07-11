@@ -96,6 +96,11 @@ enum VolunteerStatus {
   REJECTED
 }
 
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+}
+
 // =====================================================
 // MODÈLES PRINCIPAUX
 // =====================================================
@@ -131,8 +136,9 @@ model User {
   prayerRequests   PrayerRequest[]
   contactMessages  ContactMessage[]
   auditLogs        AuditLog[]
-  sessions         Session[]
+  sessions         Session[] // sessions NextAuth (connexion)
   accounts         Account[]
+  scannedAttendances Attendance[] @relation("AttendanceScanner")
 
   @@index([email])
   @@index([role])
@@ -393,6 +399,7 @@ model Event {
   volunteerAssignments VolunteerAssignment[]
   media                Media[]
   testimonies          Testimony[]
+  sessions             AttendanceSession[]
 
   @@index([slug])
   @@index([status])
@@ -425,13 +432,74 @@ model EventRegistration {
   // Données étendues
   formData Json? // Stocke tout le JSON détaillé des formulaires
 
+  // Gestion de présence (QR Code)
+  participantNumber String? @unique // ex: "FC2026-00358"
+  qrToken            String? @unique // identifiant chiffré encodé dans le QR Code
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  attendances Attendance[]
 
   @@unique([eventId, phone]) // garantit l'unicité en base, pas seulement côté code
   @@index([eventId])
   @@index([phone])
+  @@index([participantNumber])
+  @@index([qrToken])
   @@map("event_registrations")
+}
+
+// ---------- GESTION DE PRÉSENCE (QR CODE) ----------
+
+// Un créneau scannable au sein d'un événement/formation (ex: "Jour 1 - Matin")
+model AttendanceSession {
+  id      String @id @default(uuid())
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  label     String // ex: "Jour 1 - Matin"
+  dayNumber Int? // ex: 1, pour trier/grouper facilement
+  startsAt  DateTime?
+  endsAt    DateTime?
+  order     Int       @default(0) // ordre d'affichage dans le sélecteur du scanner
+
+  attendances Attendance[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId])
+  @@map("attendance_sessions")
+}
+
+// Chaque scan (ou pointage manuel) enregistré pour un participant sur une session donnée
+model Attendance {
+  id             String            @id @default(uuid())
+  registrationId String
+  registration   EventRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  sessionId      String
+  session        AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  status    AttendanceStatus @default(PRESENT)
+  scannedAt DateTime         @default(now())
+
+  scannedById String? // bénévole/agent qui a fait le scan (ou la saisie manuelle)
+  scannedBy   User?   @relation("AttendanceScanner", fields: [scannedById], references: [id], onDelete: SetNull)
+
+  method String @default("QR") // "QR" ou "MANUAL" (recherche nom/téléphone/numéro)
+  device String? // identifiant du scanner/appareil utilisé, utile en multi-site
+
+  // Optionnel : géolocalisation du scan (multi-site / contrôle d'accès)
+  latitude  Float?
+  longitude Float?
+
+  createdAt DateTime @default(now())
+
+  // Empêche un double scan pour le même participant sur la même session
+  @@unique([registrationId, sessionId])
+  @@index([sessionId])
+  @@index([registrationId])
+  @@map("attendances")
 }
 
 // ---------- BÉNÉVOLES ----------

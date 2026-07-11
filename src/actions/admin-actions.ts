@@ -37,7 +37,7 @@ export async function markAllNotificationsAsRead() {
   revalidatePath("/admin/dashboard");
 }
 
-// Pour la recherche (ex: recherche d'événements)
+// ... (existing imports and code)
 export async function searchAdmin(query: string) {
   const events = await prisma.event.findMany({
     where: {
@@ -46,4 +46,59 @@ export async function searchAdmin(query: string) {
     take: 5,
   });
   return { events };
+}
+
+// -----------------------------------
+// GESTION DES DONS ET AFFECTATIONS
+// -----------------------------------
+
+export async function getAvailableDonations() {
+  return await prisma.donation.findMany({
+    where: {
+      schoolId: null,
+      status: "APPROVED" // Seulement les dons approuvés
+    },
+    orderBy: { createdAt: "desc" },
+    select: {
+        id: true,
+        amount: true,
+        currency: true,
+        donorName: true,
+        createdAt: true
+    }
+  });
+}
+
+export async function assignDonationsToSchool(schoolId: string, donationIds: string[]) {
+  try {
+    await prisma.donation.updateMany({
+      where: {
+        id: { in: donationIds }
+      },
+      data: {
+        schoolId: schoolId
+      }
+    });
+    revalidatePath("/admin/schools");
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur lors de l'affectation des dons:", error);
+    return { success: false, error: "Erreur lors de l'affectation." };
+  }
+}
+
+export async function getSchoolDonationsHistory(schoolId: string) {
+    return await prisma.donation.findMany({
+        where: {
+            schoolId: schoolId
+        },
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            amount: true,
+            currency: true,
+            donorName: true,
+            createdAt: true
+        }
+    });
 }

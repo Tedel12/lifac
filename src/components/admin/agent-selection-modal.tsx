@@ -43,6 +43,9 @@ export function AgentSelectionModal({ isOpen, onClose, school, onAssign }: any) 
                             <img src={agent.avatarUrl || "/logo.jpg"} alt={agent.name} className="w-10 h-10 rounded-full" />
                             <div>
                                 <p className="font-medium">{agent.name}</p>
+                                <span>
+                                  <Check size={14} className={`inline-block mr-1 ${agent.volunteerProfile?.status === "Disponible" ? "text-emerald-600" : "text-gray-400"}`} />
+                                </span>
                                 <p className="text-xs text-gray-500">{agent.volunteerProfile?.status || "Disponible"}</p>
                             </div>
                         </div>
