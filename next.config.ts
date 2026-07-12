@@ -49,6 +49,14 @@ const nextConfig: NextConfig = {
         source: "/api/webhooks/:path*",
         headers: [{ key: "Cache-Control", value: "no-store, max-age=0" }],
       },
+      {
+        // Exception ciblée : le reste du site n'a jamais besoin de la caméra,
+        // seule la page de scan de présence en a besoin.
+        source: "/admin/attendance/:path*",
+        headers: [
+          { key: "Permissions-Policy", value: "camera=(self), microphone=(), geolocation=()" },
+        ],
+      },
     ];
   },
 };

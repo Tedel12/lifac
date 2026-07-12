@@ -20,6 +20,7 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
   const [selectedSchool, setSelectedSchool] = useState<any>(null);
+  const [isViewMode, setIsViewMode] = useState(false);
   const [isAssignmentsOpen, setIsAssignmentsOpen] = useState(false);
 
   const refreshSchools = async () => {
@@ -40,6 +41,13 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
 
   const handleEdit = (school: any) => {
     setSelectedSchool(school);
+    setIsViewMode(false);
+    setIsModalOpen(true);
+  };
+
+  const handleView = (school: any) => {
+    setSelectedSchool(school);
+    setIsViewMode(true);
     setIsModalOpen(true);
   };
 
@@ -114,7 +122,7 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
                     <div className="flex justify-center gap-1">
                         <Button variant="ghost" size="sm" className="text-emerald-600 text-xs gap-1" onClick={() => handleAssign(school)} title={t("actions.assign")}><UserPlus size={14} /></Button>
                         <Button variant="ghost" size="sm" className="text-blue-600 text-xs gap-1" onClick={() => handleEdit(school)}><Edit size={14} /></Button>
-                        <Button variant="ghost" size="sm" className="text-slate-600 text-xs gap-1" title={t("actions.view")}><Eye size={14} /></Button>
+                        <Button variant="ghost" size="sm" className="text-slate-600 text-xs gap-1" onClick={() => handleView(school)} title={t("actions.view")}><Eye size={14} /></Button>
                         <Button variant="ghost" size="sm" className="text-red-600 text-xs gap-1" onClick={() => handleDelete(school.id)}><Trash2 size={14} /></Button>
                     </div>
                   </td>
@@ -146,6 +154,7 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
             onClose={() => setIsModalOpen(false)} 
             school={selectedSchool}
             onUpdate={refreshSchools}
+            isReadOnly={isViewMode}
           />
       )}
       {isAgentModalOpen && (

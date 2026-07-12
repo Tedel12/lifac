@@ -7,6 +7,7 @@
  */
 
 import { revalidatePath } from "next/cache";
+import { randomBytes } from "crypto";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { uploadToCloudinary } from "@/lib/cloudinary";
@@ -21,6 +22,7 @@ import {
 } from "@/lib/validations";
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 Mo
+const MAX_PARTICIPANT_NUMBER_ATTEMPTS = 5; // tentatives en cas de collision improbable
 
 export interface ExtendedEventRegistrationInput extends EventRegistrationInput {
   additionalData?: Record<string, any>;
@@ -33,8 +35,26 @@ export type ActionResult =
   | { success: false; error: string; fieldErrors?: FieldErrors };
 
 // -----------------------------------
-// INSCRIPTION À UN ÉVÉNEMENT
+// GESTION DE PRÉSENCE (QR CODE) — HELPERS
 // -----------------------------------
+
+// Préfixe stable pour le numéro de participant : slug en majuscules (sans tirets) + année de l'événement,
+// sauf si le slug contient déjà une année à 4 chiffres (ex: "youth-crusade-2026") pour éviter "…20262026".
+function buildParticipantPrefix(slug: string, startDate: Date): string {
+  const cleanSlug = slug.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const slugAlreadyHasYear = /\d{4}/.test(slug);
+  if (slugAlreadyHasYear) {
+    return cleanSlug;
+  }
+  const year = startDate.getFullYear();
+  return `${cleanSlug}${year}`;
+}
+
+// Token QR aléatoire opaque : aucune information encodée dedans, juste une clé
+// de lookup imprévisible. 24 octets aléatoires encodés en base64url (~32 caractères).
+function generateQrToken(): string {
+  return randomBytes(24).toString("base64url");
+}
 
 // -----------------------------------
 // INSCRIPTION À UN ÉVÉNEMENT
@@ -48,7 +68,6 @@ export async function registerForEvent(
   // Assurer que les champs requis pour la validation Zod sont au premier niveau
   const validationInput = {
     ...input,
-    // On s'assure que les champs attendus par le schéma sont bien définis
     eventId: input.eventId,
     fullName: input.fullName,
     phone: input.phone,
@@ -78,6 +97,7 @@ export async function registerForEvent(
       id: true,
       slug: true,
       type: true,
+      startDate: true,
       maxAttendees: true,
       currentAttendees: true,
       status: true,
@@ -165,62 +185,98 @@ export async function registerForEvent(
     };
   }
 
-  try {
-    await prisma.$transaction(async (tx) => {
-      // Incrément conditionnel et atomique : si maxAttendees est fixé, l'update échoue
-      // (count === 0) si un autre inscrit a rempli l'événement entre-temps.
-      if (event.maxAttendees != null) {
-        const updated = await tx.event.updateMany({
-          where: { id: event.id, currentAttendees: { lt: event.maxAttendees } },
-          data: { currentAttendees: { increment: 1 } },
-        });
-        if (updated.count === 0) {
-          throw new Error("EVENT_FULL");
+  const participantPrefix = buildParticipantPrefix(event.slug, event.startDate);
+
+  // Boucle de tentatives : le numéro de participant est calculé à partir d'un COUNT
+  // au moment de la transaction. Si deux inscriptions arrivent en même temps, l'une des
+  // deux peut se voir attribuer un numéro déjà pris entre-temps (violation @@unique sur
+  // participantNumber) — dans ce cas on relance simplement une nouvelle tentative avec un
+  // numéro recalculé, jusqu'à MAX_PARTICIPANT_NUMBER_ATTEMPTS fois.
+  let attempt = 0;
+  while (true) {
+    attempt++;
+    try {
+      await prisma.$transaction(async (tx) => {
+        // Incrément conditionnel et atomique : si maxAttendees est fixé, l'update échoue
+        // (count === 0) si un autre inscrit a rempli l'événement entre-temps.
+        if (event.maxAttendees != null) {
+          const updated = await tx.event.updateMany({
+            where: { id: event.id, currentAttendees: { lt: event.maxAttendees } },
+            data: { currentAttendees: { increment: 1 } },
+          });
+          if (updated.count === 0) {
+            throw new Error("EVENT_FULL");
+          }
+        } else {
+          await tx.event.update({
+            where: { id: event.id },
+            data: { currentAttendees: { increment: 1 } },
+          });
         }
-      } else {
-        await tx.event.update({
-          where: { id: event.id },
-          data: { currentAttendees: { increment: 1 } },
+
+        // Numéro de participant séquentiel par événement (ex: FIRECAMP2026-00358)
+        const registrationCount = await tx.eventRegistration.count({
+          where: { eventId: event.id },
         });
+        const participantNumber = `${participantPrefix}-${String(registrationCount + 1).padStart(5, "0")}`;
+        const qrToken = generateQrToken();
+
+        await tx.eventRegistration.create({
+          data: {
+            eventId: data.eventId,
+            fullName: data.fullName,
+            email: data.email || null,
+            phone: data.phone,
+            city: data.city || null,
+            message: data.message || null,
+            participationMode: sanitizedFormData.participationMode ?? null,
+            photoUrl,
+            idCardUrl,
+            recommendationLetterUrl,
+            cvUrl,
+            pastorRecommended: sanitizedFormData.pasteurRecommande === "Oui",
+            status: requiresApproval ? "PENDING" : "CONFIRMED",
+            formData: sanitizedFormData,
+            participantNumber,
+            qrToken,
+          },
+        });
+      });
+
+      // Transaction réussie → on sort de la boucle de tentatives
+      break;
+    } catch (e) {
+      const isUniqueViolation = e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002";
+      const conflictTarget = isUniqueViolation ? (e.meta?.target as string[] | undefined) : undefined;
+
+      // Doublon sur (eventId, phone) : vraie erreur métier, on arrête tout de suite.
+      if (isUniqueViolation && conflictTarget?.includes("phone")) {
+        return {
+          success: false,
+          error: "Vous êtes déjà inscrit(e) avec ce numéro",
+        };
       }
 
-      await tx.eventRegistration.create({
-        data: {
-          eventId: data.eventId,
-          fullName: data.fullName,
-          email: data.email || null,
-          phone: data.phone,
-          city: data.city || null,
-          message: data.message || null,
-          participationMode: sanitizedFormData.participationMode ?? null,
-          photoUrl,
-          idCardUrl,
-          recommendationLetterUrl,
-          cvUrl,
-          pastorRecommended: sanitizedFormData.pasteurRecommande === "Oui",
-          status: requiresApproval ? "PENDING" : "CONFIRMED",
-          formData: sanitizedFormData,
-        },
-      });
-    });
-  } catch (e) {
-    // Best-effort : on pourrait ici supprimer les fichiers déjà envoyés sur Cloudinary
-    // via cloudinary.uploader.destroy(publicId) pour éviter des fichiers orphelins.
+      // Doublon sur participantNumber ou qrToken : collision statistiquement rarissime,
+      // on retente avec un nouveau calcul tant qu'on n'a pas épuisé les tentatives.
+      if (
+        isUniqueViolation &&
+        (conflictTarget?.includes("participantNumber") || conflictTarget?.includes("qrToken")) &&
+        attempt < MAX_PARTICIPANT_NUMBER_ATTEMPTS
+      ) {
+        continue;
+      }
 
-    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+      if (e instanceof Error && e.message === "EVENT_FULL") {
+        return { success: false, error: "Cet événement est complet" };
+      }
+
+      console.error("[registerForEvent] Erreur :", e);
       return {
         success: false,
-        error: "Vous êtes déjà inscrit(e) avec ce numéro",
+        error: "Erreur lors de l'inscription. Veuillez réessayer.",
       };
     }
-    if (e instanceof Error && e.message === "EVENT_FULL") {
-      return { success: false, error: "Cet événement est complet" };
-    }
-    console.error("[registerForEvent] Erreur :", e);
-    return {
-      success: false,
-      error: "Erreur lors de l'inscription. Veuillez réessayer.",
-    };
   }
 
   revalidatePath(`/events/${event.slug}`);

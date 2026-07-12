@@ -32,12 +32,42 @@
     "upcomingLabel": "Événement à venir",
     "registerNow": "S'inscrire maintenant",
     "events": [
-      { "title": "FireCamp 2026", "date": "09 Nov - 14 Nov, 2026", "location": "AD Temple Universitaire", "time": "08h00 - 19h00" },
-      { "title": "Jésus au marché", "date": "Juillet - Août 2026", "location": "Divers", "time": "À définir" },
-      { "title": "Youth Crusade", "date": "Sept - Déc 2026", "location": "Divers", "time": "À définir" },
-      { "title": "Formation Évangélisation", "date": "07 Juil - Août 2026", "location": "AD Ste Rita Cotonou", "time": "19h30" },
-      { "title": "Croisade d'Évangélisation", "date": "Août 2026", "location": "Tokpa Domè", "time": "19h00" },
-      { "title": "NUIT DU SAINT-ESPRIT", "date": "09 Mai 2027", "location": "Campus UAC", "time": "18h00" }
+      {
+        "title": "FireCamp 2026",
+        "date": "09 Nov - 14 Nov, 2026",
+        "location": "AD Temple Universitaire",
+        "time": "08h00 - 19h00"
+      },
+      {
+        "title": "Jésus au marché",
+        "date": "Juillet - Août 2026",
+        "location": "Divers",
+        "time": "À définir"
+      },
+      {
+        "title": "Youth Crusade",
+        "date": "Sept - Déc 2026",
+        "location": "Divers",
+        "time": "À définir"
+      },
+      {
+        "title": "Formation Évangélisation",
+        "date": "07 Juil - Août 2026",
+        "location": "AD Ste Rita Cotonou",
+        "time": "19h30"
+      },
+      {
+        "title": "Croisade d'Évangélisation",
+        "date": "Août 2026",
+        "location": "Tokpa Domè",
+        "time": "19h00"
+      },
+      {
+        "title": "NUIT DU SAINT-ESPRIT",
+        "date": "09 Mai 2027",
+        "location": "Campus UAC",
+        "time": "18h00"
+      }
     ]
   },
   "stats": {
@@ -109,10 +139,26 @@
       "result": "Résultat Atteint",
       "goal": "Objectif 2025",
       "rows": [
-        { "label": "Églises Implantées", "result": "45+", "goal": "60" },
-        { "label": "Leaders Formés", "result": "785", "goal": "1000" },
-        { "label": "Écoles de Vie Chrétienne", "result": "785", "goal": "1200" },
-        { "label": "Pays d'Intervention", "result": "15", "goal": "25" }
+        {
+          "label": "Églises Implantées",
+          "result": "45+",
+          "goal": "60"
+        },
+        {
+          "label": "Leaders Formés",
+          "result": "785",
+          "goal": "1000"
+        },
+        {
+          "label": "Écoles de Vie Chrétienne",
+          "result": "785",
+          "goal": "1200"
+        },
+        {
+          "label": "Pays d'Intervention",
+          "result": "15",
+          "goal": "25"
+        }
       ]
     },
     "verse": "« Allez, faites de toutes les nations des disciples, les baptisant au nom du Père, du Fils et du Saint-Esprit. »",
@@ -165,10 +211,30 @@
       }
     },
     "upcoming": [
-      { "date": "09 MARS", "title": "NUIT DU SAINT-ESPRIT", "location": "Parakou, Benin", "time": "18h00" },
-      { "date": "23 JUIN", "title": "SOIRÉE D'IMPACT", "location": "Porto-Novo, Benin", "time": "19h00" },
-      { "date": "06 OCT", "title": "CROISADE D'ÉVANGÉLISATION", "location": "Dakar, Sénégal", "time": "18h00" },
-      { "date": "15 DÉC", "title": "CONFÉRENCE LEADERSHIP", "location": "Abidjan, Côte d'Ivoire", "time": "09h00" }
+      {
+        "date": "09 MARS",
+        "title": "NUIT DU SAINT-ESPRIT",
+        "location": "Parakou, Benin",
+        "time": "18h00"
+      },
+      {
+        "date": "23 JUIN",
+        "title": "SOIRÉE D'IMPACT",
+        "location": "Porto-Novo, Benin",
+        "time": "19h00"
+      },
+      {
+        "date": "06 OCT",
+        "title": "CROISADE D'ÉVANGÉLISATION",
+        "location": "Dakar, Sénégal",
+        "time": "18h00"
+      },
+      {
+        "date": "15 DÉC",
+        "title": "CONFÉRENCE LEADERSHIP",
+        "location": "Abidjan, Côte d'Ivoire",
+        "time": "09h00"
+      }
     ],
     "table": {
       "date": "Date",
@@ -224,9 +290,18 @@
     "investDesc": "Vos dons ne sont pas de simples chiffres. Ils permettent la logistique des grandes croisades, l'impression de Bibles et le financement des écoles de leadership. En contribuant, vous devenez un partenaire direct du Saint-Esprit pour le salut des nations.",
     "modes": {
       "title": "MODES DE PAIEMENT",
-      "card": { "title": "CARTE BANCAIRE", "desc": "Don sécurisé en ligne via notre plateforme partenaire internationale." },
-      "transfer": { "title": "VIREMENT", "desc": "Pour les dons réguliers ou importants. Coordonnées bancaires disponibles." },
-      "mobile": { "title": "MOBILE MONEY", "desc": "Simple et rapide pour l'Afrique. (Orange, MTN, Moov)." }
+      "card": {
+        "title": "CARTE BANCAIRE",
+        "desc": "Don sécurisé en ligne via notre plateforme partenaire internationale."
+      },
+      "transfer": {
+        "title": "VIREMENT",
+        "desc": "Pour les dons réguliers ou importants. Coordonnées bancaires disponibles."
+      },
+      "mobile": {
+        "title": "MOBILE MONEY",
+        "desc": "Simple et rapide pour l'Afrique. (Orange, MTN, Moov)."
+      }
     },
     "partnersTitle": "NIVEAUX DE PARTENARIAT",
     "partners": {
@@ -234,19 +309,43 @@
       "frequency": "Fréquence",
       "benefits": "Avantages Membre",
       "rows": [
-        { "type": "Don Ponctuel", "freq": "Une fois", "benefit": "Rapport d'impact du projet soutenu" },
-        { "type": "Partenaire « Flamme »", "freq": "Mensuel", "benefit": "Lettre d'information exclusive & Intentions de prière" },
-        { "type": "Partenaire « Réveil »", "freq": "Annuel", "benefit": "Accès VIP aux événements & Rapport financier détaillé" }
+        {
+          "type": "Don Ponctuel",
+          "freq": "Une fois",
+          "benefit": "Rapport d'impact du projet soutenu"
+        },
+        {
+          "type": "Partenaire « Flamme »",
+          "freq": "Mensuel",
+          "benefit": "Lettre d'information exclusive & Intentions de prière"
+        },
+        {
+          "type": "Partenaire « Réveil »",
+          "freq": "Annuel",
+          "benefit": "Accès VIP aux événements & Rapport financier détaillé"
+        }
       ]
     },
     "verse": "« Que chacun donne comme il l'a résolu en son cœur, sans tristesse ni contrainte ; car Dieu aime celui qui donne avec joie. »",
     "verseRef": "— 2 Corinthiens 9:7",
     "processTitle": "PROCESSUS DE CONTRIBUTION",
     "process": [
-      { "step": "CHOIX", "desc": "Sélectionnez le projet ou le fonds général." },
-      { "step": "MONTANT", "desc": "Déterminez votre don selon votre cœur." },
-      { "step": "PAIEMENT", "desc": "Utilisez l'une de nos méthodes sécurisées." },
-      { "step": "IMPACT", "desc": "Recevez votre confirmation et l'impact généré." }
+      {
+        "step": "CHOIX",
+        "desc": "Sélectionnez le projet ou le fonds général."
+      },
+      {
+        "step": "MONTANT",
+        "desc": "Déterminez votre don selon votre cœur."
+      },
+      {
+        "step": "PAIEMENT",
+        "desc": "Utilisez l'une de nos méthodes sécurisées."
+      },
+      {
+        "step": "IMPACT",
+        "desc": "Recevez votre confirmation et l'impact généré."
+      }
     ],
     "changeLife": "CHANGEZ UNE VIE AUJOURD'HUI",
     "changeLifeDesc": "Votre don est une graine qui produira une moisson éternelle."
@@ -443,7 +542,9 @@
     "reports": "Rapports",
     "settings": "Paramètres",
     "users": "Utilisateurs",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "registrations": "Inscriptions",
+    "attendance": "Scanner présence"
   },
   "agentSidebar": {
     "home": "Accueil",
@@ -489,11 +590,34 @@
     "allStatus": "Tous les statuts",
     "filter": "Filtrer",
     "actions": {
-        "assign": "Affecter",
-        "edit": "Modifier",
-        "view": "Consulter",
-        "delete": "Supprimer"
+      "assign": "Affecter",
+      "edit": "Modifier",
+      "view": "Consulter",
+      "delete": "Supprimer"
     },
     "assignments": "Affections des écoles"
+  },
+  "adminRegistrations": {
+    "title": "Gestion des présences — Inscriptions",
+    "search": "Rechercher par nom, téléphone ou numéro...",
+    "allEvents": "Tous les événements",
+    "filter": "Filtrer",
+    "downloadCard": "Carte",
+    "noNumber": "—",
+    "noNumberTooltip": "Numéro de participant non généré",
+    "empty": "Aucune inscription trouvée",
+    "columns": {
+      "number": "N° Participant",
+      "fullName": "Nom complet",
+      "phone": "Téléphone",
+      "event": "Événement",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "status": {
+      "pending": "En attente",
+      "confirmed": "Confirmé",
+      "canceled": "Annulé"
+    }
   }
 }

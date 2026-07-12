@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, School, ShoppingCart, Target, Users, ShieldCheck, FileBarChart, Settings, UserCog, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, School, ShoppingCart, Target, Users, ShieldCheck, FileBarChart, Settings, UserCog, LogOut, Menu, X, IdCard, QrCode } from "lucide-react";
 import { logoutAdmin } from "@/actions/auth";
 import { useTranslations } from "next-intl";
 
@@ -19,6 +19,8 @@ export function AdminSidebar() {
     { name: t("popCrusade"), href: "/admin/pop-crusades", icon: Target },
     { name: t("oneToOne"), href: "/admin/one-on-one", icon: Users },
     { name: t("crusades"), href: "/admin/crusades", icon: ShieldCheck },
+    { name: t("registrations"), href: "/admin/registrations", icon: IdCard },
+    { name: t("attendance"), href: "/admin/attendance", icon: QrCode },
     { name: t("reports"), href: "/admin/reports", icon: FileBarChart },
     { name: t("settings"), href: "/admin/settings", icon: Settings },
     { name: t("users"), href: "/admin/users", icon: UserCog },
@@ -31,7 +33,7 @@ export function AdminSidebar() {
 
   return (
     <>
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-lifac-red-600 text-white rounded-md"
       >
@@ -53,7 +55,7 @@ export function AdminSidebar() {
             </Link>
           ))}
         </nav>
-        <button 
+        <button
           onClick={handleLogout}
           className="flex items-center gap-3 p-2.5 text-white/90 hover:text-white hover:bg-lifac-red-700 rounded-lg transition text-sm"
         >
@@ -61,7 +63,7 @@ export function AdminSidebar() {
           {t("logout")}
         </button>
       </aside>
-      
+
       {isOpen && (
         <div className="lg:hidden fixed inset-0 z-30 bg-black/50" onClick={() => setIsOpen(false)} />
       )}

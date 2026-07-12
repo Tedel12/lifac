@@ -70,8 +70,9 @@ export async function getAvailableDonations() {
 }
 
 export async function assignDonationsToSchool(schoolId: string, donationIds: string[]) {
+  console.log(`[assignDonationsToSchool] Assigning ${donationIds.length} donations to school ${schoolId}`);
   try {
-    await prisma.donation.updateMany({
+    const result = await prisma.donation.updateMany({
       where: {
         id: { in: donationIds }
       },
@@ -79,6 +80,7 @@ export async function assignDonationsToSchool(schoolId: string, donationIds: str
         schoolId: schoolId
       }
     });
+    console.log(`[assignDonationsToSchool] Update result:`, result);
     revalidatePath("/admin/schools");
     return { success: true };
   } catch (error) {
@@ -88,7 +90,8 @@ export async function assignDonationsToSchool(schoolId: string, donationIds: str
 }
 
 export async function getSchoolDonationsHistory(schoolId: string) {
-    return await prisma.donation.findMany({
+    console.log(`[getSchoolDonationsHistory] Fetching for schoolId: ${schoolId}`);
+    const history = await prisma.donation.findMany({
         where: {
             schoolId: schoolId
         },
@@ -101,4 +104,6 @@ export async function getSchoolDonationsHistory(schoolId: string) {
             createdAt: true
         }
     });
+    console.log(`[getSchoolDonationsHistory] Found ${history.length} donations.`);
+    return history;
 }

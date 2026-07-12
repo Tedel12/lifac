@@ -14,7 +14,7 @@ import { SchoolStatus } from "@prisma/client";
 // Note: Ensure 'sonner' is installed. If not, replace with window.alert
 import { toast } from "sonner";
 
-export function SchoolModal({ isOpen, onClose, school, onUpdate }: any) {
+export function SchoolModal({ isOpen, onClose, school, onUpdate, isReadOnly = false }: any) {
   const t = useTranslations("adminSchools");
   const [activeTab, setActiveTab] = useState<'info' | 'funds'>('info');
   const [isPending, startTransition] = useTransition();
@@ -25,12 +25,29 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate }: any) {
   const [formData, setFormData] = useState(school || {
     code: "",
     name: "",
-    address: "",
-    commune: "",
+    type: "", 
+    sector: "", 
+    country: "Bénin", 
     department: "",
-    responsibleName: "",
-    phone: "",
+    commune: "",
+    district: "", 
+    neighborhood: "", 
+    address: "",
+    latitude: 0, 
+    longitude: 0, 
     estimatedStudents: 0,
+    directorName: "", 
+    directorFunction: "", 
+    directorPhone: "", 
+    directorWhatsApp: "", 
+    directorEmail: "", 
+    contactName: "", 
+    contactFunction: "", 
+    contactPhone: "", 
+    contactWhatsApp: "", 
+    contactEmail: "", 
+    activityDate: null, 
+    activityTime: "", 
     status: SchoolStatus.NON_CONFIRMEE
   });
 
@@ -85,49 +102,54 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate }: any) {
 
         <CardContent className="p-6">
           {activeTab === 'info' ? (
-             <div className="space-y-4">
+             <fieldset disabled={isReadOnly} className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
                <h3 className="font-bold text-lg">{school ? "Modifier l'école" : "Ajouter une école"}</h3>
+               
                <div className="grid grid-cols-2 gap-4">
-                   <div className="space-y-1">
-                       <Label>Code</Label>
-                       <Input value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} />
-                   </div>
-                   <div className="space-y-1">
-                       <Label>Nom</Label>
-                       <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
-                   </div>
+                   <div className="space-y-1"><Label>Code</Label><Input value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} /></div>
+                   <div className="space-y-1"><Label>Nom</Label><Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} /></div>
                </div>
-               <div className="space-y-1">
-                   <Label>Adresse</Label>
-                   <Input value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} />
-               </div>
+               
                <div className="grid grid-cols-2 gap-4">
-                   <div className="space-y-1">
-                       <Label>Commune</Label>
-                       <Input value={formData.commune} onChange={(e) => setFormData({...formData, commune: e.target.value})} />
-                   </div>
-                   <div className="space-y-1">
-                       <Label>Département</Label>
-                       <Input value={formData.department} onChange={(e) => setFormData({...formData, department: e.target.value})} />
-                   </div>
+                 <div className="space-y-1"><Label>Type</Label><Input value={formData.type} onChange={(e) => setFormData({...formData, type: e.target.value})} /></div>
+                 <div className="space-y-1"><Label>Secteur</Label><Input value={formData.sector} onChange={(e) => setFormData({...formData, sector: e.target.value})} /></div>
                </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-1"><Label>Pays</Label><Input value={formData.country} onChange={(e) => setFormData({...formData, country: e.target.value})} /></div>
+                 <div className="space-y-1"><Label>Département</Label><Input value={formData.department} onChange={(e) => setFormData({...formData, department: e.target.value})} /></div>
+               </div>
+               
+               <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-1"><Label>Commune</Label><Input value={formData.commune} onChange={(e) => setFormData({...formData, commune: e.target.value})} /></div>
+                 <div className="space-y-1"><Label>District</Label><Input value={formData.district} onChange={(e) => setFormData({...formData, district: e.target.value})} /></div>
+               </div>
+
+               <div className="space-y-1"><Label>Adresse complète</Label><Input value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} /></div>
+               
+               <div className="space-y-1"><Label>Directeur / Responsable</Label><Input value={formData.directorName} onChange={(e) => setFormData({...formData, directorName: e.target.value})} /></div>
+               
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1"><Label>Téléphone</Label><Input value={formData.directorPhone} onChange={(e) => setFormData({...formData, directorPhone: e.target.value})} /></div>
+                  <div className="space-y-1"><Label>Email</Label><Input value={formData.directorEmail} onChange={(e) => setFormData({...formData, directorEmail: e.target.value})} /></div>
+               </div>
+
                <div className="space-y-1">
-                   <Label>Responsable</Label>
-                   <Input value={formData.responsibleName} onChange={(e) => setFormData({...formData, responsibleName: e.target.value})} />
+                 <Label>Effectif estimé</Label>
+                 <Input 
+                    type="number" 
+                    value={formData.estimatedStudents ?? ""} 
+                    onChange={(e) => setFormData({...formData, estimatedStudents: e.target.value ? parseInt(e.target.value) : 0})} 
+                 />
                </div>
-               <div className="space-y-1">
-                   <Label>Téléphone</Label>
-                   <Input value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
-               </div>
-               <div className="space-y-1">
-                   <Label>Effectif estimé</Label>
-                   <Input type="number" value={formData.estimatedStudents} onChange={(e) => setFormData({...formData, estimatedStudents: parseInt(e.target.value)})} />
-               </div>
-               <div className="flex gap-2 pt-4">
-                 <Button onClick={handleSubmit}>Sauvegarder</Button>
-                 <Button variant="outline" onClick={onClose}>Annuler</Button>
-               </div>
-             </div>
+               
+               {!isReadOnly && (
+                 <div className="flex gap-2 pt-4">
+                   <Button onClick={handleSubmit}>Sauvegarder</Button>
+                   <Button variant="outline" onClick={onClose}>Annuler</Button>
+                 </div>
+               )}
+             </fieldset>
           ) : (
             <div className="space-y-6">
               <section>
@@ -135,9 +157,9 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate }: any) {
                 <div className="max-h-48 overflow-y-auto border rounded p-3 space-y-2">
                   {donations.length === 0 && <p className="text-sm text-muted-foreground">Aucun don disponible.</p>}
                   {donations.map(d => (
-                    <div key={d.id} className="flex items-center gap-3">
+                    <div key={d.id} className="flex items-center gap-3 p-2 rounded hover:bg-gray-100 border border-transparent hover:border-gray-200">
                       <input 
-                        type="checkbox" 
+                        type="checkbox"
                         className="h-5 w-5 accent-red-600 cursor-pointer"
                         checked={selectedIds.includes(d.id)}
                         onChange={(e) => {
@@ -156,12 +178,15 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate }: any) {
 
               <section>
                 <h4 className="font-bold mb-2 flex items-center gap-2"><History size={16}/> Historique des fonds</h4>
-                <div className="max-h-48 overflow-y-auto border rounded p-3 text-sm space-y-1">
+                <div className="max-h-48 overflow-y-auto border rounded p-3 text-sm space-y-2">
                   {history.length === 0 && <p className="text-sm text-muted-foreground">Aucun historique.</p>}
                   {history.map(d => (
-                    <div key={d.id} className="py-1 border-b last:border-0 flex justify-between">
-                        <span>{d.donorName}</span>
-                        <span className="font-semibold">{Number(d.amount).toLocaleString()} {d.currency}</span>
+                    <div key={d.id} className="py-2 border-b last:border-0 flex justify-between items-center">
+                        <div className="flex flex-col">
+                            <span className="font-medium">{d.donorName}</span>
+                            <span className="text-xs text-muted-foreground">{new Date(d.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <span className="font-semibold text-red-600">{Number(d.amount).toLocaleString()} {d.currency}</span>
                     </div>
                   ))}
                 </div>
