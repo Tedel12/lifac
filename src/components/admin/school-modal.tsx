@@ -74,12 +74,15 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate, isReadOnly = fa
   };
 
   const handleAssign = async () => {
+    console.log("[SchoolModal] Assigning donation IDs:", selectedIds);
     startTransition(async () => {
       const res = await assignDonationsToSchool(school.id, selectedIds);
+      console.log("[SchoolModal] Assignment result:", res);
       if (res.success) {
         toast.success("Affectation réussie !");
         setSelectedIds([]);
         const [avail, hist] = await Promise.all([getAvailableDonations(), getSchoolDonationsHistory(school.id)]);
+        console.log("[SchoolModal] Refreshed history:", hist);
         setDonations(avail);
         setHistory(hist);
       } else {

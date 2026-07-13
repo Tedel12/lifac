@@ -544,7 +544,8 @@
     "users": "Utilisateurs",
     "logout": "Déconnexion",
     "registrations": "Inscriptions",
-    "attendance": "Scanner présence"
+    "attendance": "Scanner présence",
+    "activities": "Activités"
   },
   "agentSidebar": {
     "home": "Accueil",
@@ -619,5 +620,13 @@
       "confirmed": "Confirmé",
       "canceled": "Annulé"
     }
+  },
+  "adminActivities": {
+    "title": "Gestion des activités",
+    "add": "Ajouter une activité",
+    "search": "Rechercher par titre ou code...",
+    "allStatus": "Tous les statuts",
+    "filter": "Filtrer",
+    "empty": "Aucune activité trouvée"
   }
 }

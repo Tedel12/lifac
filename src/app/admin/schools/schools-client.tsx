@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { deleteSchool, getSchools } from "@/actions/school-actions";
-import { assignSchoolToAgent } from "@/actions/agent-actions";
+import { assignSchoolToAgent, getAssignmentHistory } from "@/actions/agent-actions";
 import { SchoolStatus } from "@prisma/client";
 import { SchoolModal } from "@/components/admin/school-modal";
 import { AgentSelectionModal } from "@/components/admin/agent-selection-modal";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 export default function SchoolsPage({ schools: initialSchools }: { schools: any[] }) {
   const t = useTranslations("adminSchools");
@@ -22,6 +23,7 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
   const [selectedSchool, setSelectedSchool] = useState<any>(null);
   const [isViewMode, setIsViewMode] = useState(false);
   const [isAssignmentsOpen, setIsAssignmentsOpen] = useState(false);
+  const [assignments, setAssignments] = useState<any[]>([]);
 
   const refreshSchools = async () => {
     const updated = await getSchools({ search, status: statusFilter !== "ALL" ? statusFilter : undefined });
@@ -57,16 +59,27 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
   };
 
   const performAssignment = async (agentId: string) => {
-      await assignSchoolToAgent(selectedSchool.id, agentId);
-      setIsAgentModalOpen(false);
-      refreshSchools();
+      const res = await assignSchoolToAgent(selectedSchool.id, agentId);
+      if(res.success) {
+          toast.success("Affectation réussie !");
+          setIsAgentModalOpen(false);
+          refreshSchools();
+          loadAssignments();
+      } else {
+          toast.error("Erreur lors de l'affectation.");
+      }
+  }
+
+  const loadAssignments = async () => {
+    const data = await getAssignmentHistory();
+    setAssignments(data);
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-lifac-navy-900">{t("title")}</h1>
-        <Button onClick={() => { setSelectedSchool(null); setIsModalOpen(true); }}>
+        <Button onClick={() => { setSelectedSchool(null); setIsViewMode(false); setIsModalOpen(true); }}>
           <Plus size={18} className="mr-2" /> {t("add")}
         </Button>
       </div>
@@ -138,12 +151,21 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
       </Card>
       
       <div className="relative">
-        <Button variant="outline" onClick={() => setIsAssignmentsOpen(!isAssignmentsOpen)} className="mr-2 text-black" >
+        <Button variant="outline" onClick={() => { setIsAssignmentsOpen(!isAssignmentsOpen); if(!isAssignmentsOpen) loadAssignments(); }} className="mr-2 text-black" >
             <List size={18} className="mr-2 text-black" /> {t("assignments")} <ChevronDown size={18} className="ml-2"/>
         </Button>
         {isAssignmentsOpen && (
-            <div className="absolute bottom-full left-0 mb-2 w-64 bg-white border rounded-md shadow-lg p-4">
-                <p className="text-sm text-gray-500">Aucune affectation pour le moment.</p>
+            <div className="absolute bottom-full left-0 mb-2 w-80 bg-white border rounded-md shadow-lg p-4 max-h-64 overflow-y-auto">
+                {assignments.length === 0 ? (
+                    <p className="text-sm text-gray-500">Aucune affectation pour le moment.</p>
+                ) : (
+                    assignments.map(a => (
+                        <div key={a.id} className="text-sm border-b py-2">
+                            <p className="font-medium">{a.school.name}</p>
+                            <p className="text-xs text-gray-500">Agent: {a.agent.name} - {new Date(a.assignedAt).toLocaleDateString()}</p>
+                        </div>
+                    ))
+                )}
             </div>
         )}
       </div>

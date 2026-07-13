@@ -219,13 +219,16 @@ async function main() {
     { code: "SCH005", name: "Lycée Mathieu Kérékou", address: "Natitingou", commune: "Natitingou", department: "Atacora", responsibleName: "Luc Bernard", phone: "+22900000005", estimatedStudents: 700 },
   ];
 
-  for (const s of schools) {
-    await prisma.school.upsert({
-      where: { code: s.code },
-      update: {},
-      create: s,
-    });
-  }
+  for (const a of activities) {
+  await prisma.activity.create({
+    data: {
+      title: "Croisade d’évangélisation",
+      description: "Les Croisades d'Évangélisation de LiFAC...",
+      code: "VALEUR_DE_VOTRE_CHOIX" // Ajoutez cette ligne avec un code unique
+    }
+  })
+}
+
   // -----------------------------------
   // 7. Activités
   // -----------------------------------

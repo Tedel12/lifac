@@ -101,6 +101,25 @@ enum AttendanceStatus {
   ABSENT
 }
 
+enum ActivityType {
+  CRUSADE // Croisade d'évangélisation
+  POP_UP_CRUSADE // Croisade de proximité
+  NIGHT_OF_HOPE // Nuit de l'Espoir
+  MARKET_OUTREACH // Jésus au marché
+  ONE_ON_ONE // Évangélisation personnelle
+  OTHER
+}
+
+enum ActivityStatus {
+  DRAFT
+  PLANNED
+  CONFIRMED
+  ONGOING
+  COMPLETED
+  POSTPONED
+  CANCELED
+}
+
 // =====================================================
 // MODÈLES PRINCIPAUX
 // =====================================================
@@ -129,16 +148,16 @@ model User {
   updatedAt   DateTime  @updatedAt
 
   // Relations
-  donations          Donation[]
-  volunteerProfile   Volunteer?
-  organizedEvents    Event[]          @relation("EventOrganizer")
-  testimonies        Testimony[]
-  prayerRequests     PrayerRequest[]
-  contactMessages    ContactMessage[]
-  auditLogs          AuditLog[]
-  sessions           Session[] // sessions NextAuth (connexion)
-  accounts           Account[]
-  scannedAttendances Attendance[]     @relation("AttendanceScanner")
+  donations        Donation[]
+  volunteerProfile Volunteer?
+  organizedEvents  Event[]          @relation("EventOrganizer")
+  testimonies      Testimony[]
+  prayerRequests   PrayerRequest[]
+  contactMessages  ContactMessage[]
+  auditLogs        AuditLog[]
+  sessions         Session[] // sessions NextAuth (connexion)
+  accounts         Account[]
+  scannedAttendances Attendance[] @relation("AttendanceScanner")
 
   @@index([email])
   @@index([role])
@@ -320,8 +339,6 @@ model Donation {
   approvedAt DateTime?
 
   transactions PaymentTransaction[]
-  school       School?              @relation(fields: [schoolId], references: [id])
-  schoolId     String?
 
   @@index([status])
   @@index([campaignId])
@@ -436,7 +453,7 @@ model EventRegistration {
 
   // Gestion de présence (QR Code)
   participantNumber String? @unique // ex: "FC2026-00358"
-  qrToken           String? @unique // identifiant chiffré encodé dans le QR Code
+  qrToken            String? @unique // identifiant chiffré encodé dans le QR Code
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -488,7 +505,7 @@ model Attendance {
   scannedById String? // bénévole/agent qui a fait le scan (ou la saisie manuelle)
   scannedBy   User?   @relation("AttendanceScanner", fields: [scannedById], references: [id], onDelete: SetNull)
 
-  method String  @default("QR") // "QR" ou "MANUAL" (recherche nom/téléphone/numéro)
+  method String @default("QR") // "QR" ou "MANUAL" (recherche nom/téléphone/numéro)
   device String? // identifiant du scanner/appareil utilisé, utile en multi-site
 
   // Optionnel : géolocalisation du scan (multi-site / contrôle d'accès)
@@ -502,6 +519,56 @@ model Attendance {
   @@index([sessionId])
   @@index([registrationId])
   @@map("attendances")
+}
+
+// ---------- ACTIVITÉS TERRAIN (croisades, Jésus au marché, etc.) ----------
+
+// Modèle unique et simple pour toutes les activités, sans champs spécifiques par type
+// (volontairement simplifié par rapport à la version "complète" avec héritage par type).
+model Activity {
+  id   String @id @default(uuid())
+  code String @unique // généré automatiquement, ex: "ACT-2026-00001"
+
+  type   ActivityType
+  title  String
+  status ActivityStatus @default(PLANNED)
+
+  // Localisation (simplifiée)
+  country String  @default("Bénin")
+  commune String?
+  address String? // lieu précis
+
+  // Planification
+  date      DateTime
+  startTime String? // ex: "09:00"
+  endTime   String?
+
+  // Responsable
+  responsibleName String?
+
+  // Église / organisation partenaire (texte libre pour l'instant)
+  partnerChurch String?
+
+  // Contact local
+  contactName  String?
+  contactPhone String?
+
+  // Objectifs / résultats
+  estimatedParticipants Int?
+  actualParticipants    Int?
+  decisionsForChrist    Int?
+  biblesDistributed     Int?
+  newContacts           Int?
+
+  notes String? // observations
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([date])
+  @@map("activities")
 }
 
 // ---------- BÉNÉVOLES ----------
@@ -707,16 +774,6 @@ model Notification {
   @@map("notifications")
 }
 
-model Activity {
-  id          String   @id @default(uuid())
-  title       String
-  description String   @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("activities")
-}
-
 enum SchoolStatus {
   NON_CONFIRMEE
   CONFIRMEE
@@ -726,49 +783,21 @@ enum SchoolStatus {
 }
 
 model School {
-  id     String @id @default(uuid())
-  code   String @unique // Code école (généré automatiquement)
-  name   String // Nom de l'école
-  type   String @default("Primaire") // Valeur temporaire pour les 5 lignes
-  sector String @default("Public")   // Valeur temporaire pour les 5 lignes
-
-
-  // Localisation
-  country      String  @default("Bénin")
-  department   String? // Département / État / Province
-  commune      String? // Commune / Ville
-  district     String? // Arrondissement / District
-  neighborhood String? // Quartier / Village
-  address      String? // Adresse complète
-  latitude     Float?
-  longitude    Float?
-
-  // Apprenants
-  estimatedStudents Int @default(0)
-
-  // Responsable établissement
-  directorName     String?
-  directorFunction String?
-  directorPhone    String?
-  directorWhatsApp String?
-  directorEmail    String?
-
-  // Contact activité
-  contactName     String?
-  contactFunction String?
-  contactPhone    String?
-  contactWhatsApp String?
-  contactEmail    String?
-
-  // Activité
-  activityDate DateTime?
-  activityTime String?
-  status       SchoolStatus @default(NON_CONFIRMEE)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  donations Donation[]
+  id                String       @id @default(uuid())
+  countryCode       String       @default("BJ") // Code Pays
+  code              String       @unique // Code école
+  name              String // Nom école
+  address           String // Adresse
+  commune           String // Commune
+  department        String // Département
+  responsibleName   String // Responsable
+  phone             String // Téléphone
+  estimatedStudents Int          @default(0) // Effectif estimé
+  latitude          Float? // Latitude
+  longitude         Float? // Longitude
+  status            SchoolStatus @default(NON_CONFIRMEE) // Statut
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 
   @@map("schools")
 }

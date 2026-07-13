@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, School, ShoppingCart, Target, Users, ShieldCheck, FileBarChart, Settings, UserCog, LogOut, Menu, X, IdCard, QrCode } from "lucide-react";
+import { LayoutDashboard, School, ShoppingCart, Target, Users, ShieldCheck, FileBarChart, Settings, UserCog, LogOut, Menu, X, IdCard, QrCode, CalendarDays } from "lucide-react";
 import { logoutAdmin } from "@/actions/auth";
 import { useTranslations } from "next-intl";
 
@@ -14,6 +14,7 @@ export function AdminSidebar() {
 
   const menuItems = [
     { name: t("dashboard"), href: "/admin/dashboard", icon: LayoutDashboard },
+    { name: t("activities"), href: "/admin/activities", icon: CalendarDays },
     { name: t("schools"), href: "/admin/schools", icon: School },
     { name: t("markets"), href: "/admin/markets", icon: ShoppingCart },
     { name: t("popCrusade"), href: "/admin/pop-crusades", icon: Target },

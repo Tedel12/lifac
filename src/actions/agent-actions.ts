@@ -26,14 +26,38 @@ export async function getAgents() {
 }
 
 export async function assignSchoolToAgent(schoolId: string, agentId: string) {
-    // This is the assignment logic to be implemented later
     console.log(`Assigning school ${schoolId} to agent ${agentId}`);
     
-    // Update school status to AFFECTEE
-    await prisma.school.update({
-        where: { id: schoolId },
-        data: { status: "AFFECTEE" }
+    try {
+        await prisma.$transaction([
+            prisma.school.update({
+                where: { id: schoolId },
+                data: { 
+                    agentId: agentId,
+                    status: "AFFECTEE"
+                }
+            }),
+            prisma.schoolAssignmentHistory.create({
+                data: {
+                    schoolId: schoolId,
+                    agentId: agentId
+                }
+            })
+        ]);
+        revalidatePath("/admin/schools");
+        return { success: true };
+    } catch (error) {
+        console.error("Erreur affectation agent:", error);
+        return { success: false, error: "Erreur lors de l'affectation." };
+    }
+}
+
+export async function getAssignmentHistory() {
+    return await prisma.schoolAssignmentHistory.findMany({
+        include: {
+            school: { select: { name: true } },
+            agent: { select: { name: true } }
+        },
+        orderBy: { assignedAt: "desc" }
     });
-    
-    return { success: true };
 }
