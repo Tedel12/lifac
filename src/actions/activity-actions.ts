@@ -54,6 +54,12 @@ export async function updateActivity(id: string, data: any) {
     revalidatePath("/admin/activities");
 }
 
+export async function getActivityById(id: string) {
+    return prisma.activity.findUnique({
+        where: { id },
+    });
+}
+
 export async function deleteActivity(id: string) {
     await prisma.activity.delete({ where: { id } });
     revalidatePath("/admin/activities");

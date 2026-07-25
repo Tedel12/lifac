@@ -21,13 +21,13 @@ export function Footer() {
               {t("tagline")}
             </p>
             <div className="flex gap-2 pt-2">
-              <SocialLink href="https://facebook.com" label="Facebook">
+              <SocialLink href="https://www.facebook.com/profile.php?id=61571025699263" label="Facebook">
                 <Facebook className="h-4 w-4" />
               </SocialLink>
-              <SocialLink href="https://instagram.com" label="Instagram">
+              <SocialLink href="https://www.instagram.com/lightforallcenter" label="Instagram">
                 <Instagram className="h-4 w-4" />
               </SocialLink>
-              <SocialLink href="https://youtube.com" label="YouTube">
+              <SocialLink href="https://www.youtube.com" label="YouTube">
                 <Youtube className="h-4 w-4" />
               </SocialLink>
             </div>
@@ -62,20 +62,21 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-3 text-sm">
                 <Phone className="h-4 w-4 shrink-0 text-white" />
-                <a href="tel:+2290162950000" className="hover:text-white transition-colors">
-                  +229 01 62 95 00 00
+                <a href="tel:+2290140131359" className="hover:text-white transition-colors">
+                  01 40 13 13 59
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm">
                 <Phone className="h-4 w-4 shrink-0 text-white" />
-                <a href="tel:+2290140121250" className="hover:text-white transition-colors">
-                  +229 01 40 12 12 50
+                <a href="tel:+2290162930001" className="hover:text-white transition-colors">
+                  01 62 93 00 01
+
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm">
                 <Mail className="h-4 w-4 shrink-0 text-white" />
-                <a href="mailto:lifacworldcenter@gmail.com" className="hover:text-white transition-colors break-all">
-                  lifacworldcenter@gmail.com
+                <a href="mailto:info@lifac.org" className="hover:text-white transition-colors break-all">
+                  info@lifac.org
                 </a>
               </li>
               <li className="flex items-start gap-3 text-sm">

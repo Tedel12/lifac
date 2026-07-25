@@ -15,6 +15,7 @@ export function AdminSidebar() {
   const menuItems = [
     { name: t("dashboard"), href: "/admin/dashboard", icon: LayoutDashboard },
     { name: t("activities"), href: "/admin/activities", icon: CalendarDays },
+    { name: "Agents", href: "/admin/agents", icon: UserCog },
     { name: t("schools"), href: "/admin/schools", icon: School },
     { name: t("markets"), href: "/admin/markets", icon: ShoppingCart },
     { name: t("popCrusade"), href: "/admin/pop-crusades", icon: Target },

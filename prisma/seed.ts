@@ -219,16 +219,6 @@ async function main() {
     { code: "SCH005", name: "Lycée Mathieu Kérékou", address: "Natitingou", commune: "Natitingou", department: "Atacora", responsibleName: "Luc Bernard", phone: "+22900000005", estimatedStudents: 700 },
   ];
 
-  for (const a of activities) {
-  await prisma.activity.create({
-    data: {
-      title: "Croisade d’évangélisation",
-      description: "Les Croisades d'Évangélisation de LiFAC...",
-      code: "VALEUR_DE_VOTRE_CHOIX" // Ajoutez cette ligne avec un code unique
-    }
-  })
-}
-
   // -----------------------------------
   // 7. Activités
   // -----------------------------------
@@ -243,11 +233,22 @@ async function main() {
     { title: "Formation en Évangélisation", description: "La Formation en Évangélisation est un programme de formation et d'équipement de LiFAC (Light For All Center) destiné à préparer et à envoyer des ouvriers qualifiés pour l'œuvre de l'évangélisation." },
   ];
 
-  for (const a of activities) {
-    await prisma.activity.create({
-      data: a,
+  for (let i = 0; i < activities.length; i++) {
+    const activity = activities[i];
+    const code = `ACT-2026-${String(i + 1).padStart(5, "0")}`;
+    await prisma.activity.upsert({
+      where: { code },
+      update: {},
+      create: {
+        title: activity.title,
+        code,
+        type: "OTHER",
+        date: new Date(),
+        status: "PLANNED",
+      },
     });
   }
+  console.log(`✅ ${activities.length} activités créées`);
   console.log(`✅ ${activities.length} activités créées`);
 }
 

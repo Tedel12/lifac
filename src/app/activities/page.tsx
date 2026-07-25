@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default async function ActivitiesPage() {
-  const activities = await getActivities();
+  const activities = await getActivities(); 
 
   return (
     <div className="bg-white min-h-screen py-12 px-4">
@@ -19,12 +19,12 @@ export default async function ActivitiesPage() {
                   alt={activity.title} 
                   className="w-full h-48 object-cover"
                 />
-                <CardContent className="p-6 space-y-4 flex-1">
-                  <h2 className="text-xl font-bold text-gray-900 group-hover:text-red-600 transition-colors">{activity.title}</h2>
+                <CardContent className="p-6 space-y-4 flex-1 flex flex-col">
+                  <h2 className="text-xl font-bold text-gray-900 transition-colors">{activity.title}</h2>
                   <p className="text-gray-600 flex-1">
-                    {activity.description.substring(0, 150)}...
+                    {(activity.description ?? "").substring(0, 150)}...
                   </p>
-                  <Button variant="outline" className="w-full">Voir les détails</Button>
+                  <Button variant="outline" className="w-full mt-auto">Voir les détails</Button>
                 </CardContent>
               </Card>
             </Link>

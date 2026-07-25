@@ -158,6 +158,8 @@ model User {
   sessions         Session[] // sessions NextAuth (connexion)
   accounts         Account[]
   scannedAttendances Attendance[] @relation("AttendanceScanner")
+  schoolAssignments  SchoolAssignmentHistory[] 
+  assignedSchools   School[]
 
   @@index([email])
   @@index([role])
@@ -531,6 +533,7 @@ model Activity {
 
   type   ActivityType
   title  String
+  description String? @db.Text
   status ActivityStatus @default(PLANNED)
 
   // Localisation (simplifiée)
@@ -798,6 +801,24 @@ model School {
   status            SchoolStatus @default(NON_CONFIRMEE) // Statut
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
+  agentId           String?
+  agent             User?    @relation(fields: [agentId], references: [id])
+  assignmentHistory SchoolAssignmentHistory[]
 
   @@map("schools")
-}
+  }
+
+
+  model SchoolAssignmentHistory {
+  id         String   @id @default(uuid())
+  schoolId   String
+  school     School   @relation(fields: [schoolId], references: [id])
+  agentId    String
+  agent      User     @relation(fields: [agentId], references: [id])
+  assignedAt DateTime @default(now())
+
+  @@index([schoolId])
+  @@index([agentId])
+  @@map("school_assignment_history")
+  }
+
