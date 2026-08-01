@@ -250,6 +250,17 @@
     "hotline": "HOTLINE",
     "hotlineNumber": "+229 61 00 00 00"
   },
+  "eventTypeLabels": {
+    "CRUSADE": "Croisades",
+    "POP_UP_CRUSADE": "Pop-Up Crusade",
+    "SCHOOL_OUTREACH": "Écoles",
+    "MARKET_OUTREACH": "Marchés",
+    "ONE_ON_ONE": "Personnelle",
+    "YOUTH_CAMP": "Camps Jeunesse",
+    "TRAINING": "Formations",
+    "HUMANITARIAN_MISSION": "Humanitaire",
+    "PRAYER_MEETING": "Prière"
+  },
   "testimonies": {
     "kicker": "Témoignages",
     "title": "Des vies transformées",
@@ -414,28 +425,52 @@
   },
   "activitiesPage": {
     "metaTitle": "Nos activités",
-    "metaDesc": "Découvrez les 5 piliers de notre ministère : évangélisation en école, marché, croisades éclair, personne-à-personne et grandes croisades.",
-    "title": "Nos activités",
-    "subtitle": "Cinq piliers complémentaires pour atteindre chaque âme, là où elle se trouve.",
-    "schoolsLabel": "Évangélisation en école",
-    "schoolsDesc": "Nous visitons les établissements scolaires pour partager l'Évangile avec les jeunes générations. À travers des sessions interactives, des témoignages et des temps de prière, nous semons des graines de foi dans les cœurs.",
-    "schoolsImpact": "+ de 785 écoles visitées",
-    "marketsLabel": "Évangélisation au marché",
-    "marketsDesc": "Les marchés sont des lieux de rencontre où nous portons la lumière de l'Évangile aux commerçants et aux passants. Distribution de tracts, prière personnelle et échanges authentiques sont au cœur de cette mission.",
-    "marketsImpact": "+ de 350 actions menées",
-    "popUpLabel": "Croisades éclair",
-    "popUpDesc": "Des rassemblements ciblés et concentrés (1 à 2 jours) dans des quartiers ou villages spécifiques. Idéales pour mobiliser une communauté locale autour d'un message d'espérance.",
-    "popUpImpact": "Mensuel dans plusieurs villes",
-    "oneOnOneLabel": "Évangélisation personne-à-personne",
-    "oneOnOneDesc": "Nous croyons à la puissance des conversations individuelles. Nos évangélistes formés rencontrent les gens là où ils sont, écoutent, prient et accompagnent chaque personne dans son cheminement.",
-    "oneOnOneImpact": "Action quotidienne",
-    "crusadesLabel": "Grandes croisades",
-    "crusadesDesc": "Nos rendez-vous d'évangélisation à grande échelle réunissent des milliers de personnes pour des soirées de louange, d'enseignement, de prière et d'appel à la repentance. Des moments de transformation collective.",
-    "crusadesImpact": "+ de 45 croisades organisées",
-    "joinTitle": "Vous souhaitez nous rejoindre ?",
-    "joinDesc": "Que vous vouliez participer à une action, soutenir financièrement ou prier pour notre œuvre, votre engagement fait toute la différence.",
-    "joinVolunteer": "Devenir bénévole",
-    "joinSupport": "Soutenir financièrement"
+    "metaDesc": "Découvrez les 8 activités de LiFAC : croisades, évangélisation jeunesse, marché, personnelle, Nuit de l'Espoir, actions humanitaires et formation.",
+    "heroKicker": "NOS ACTIVITÉS",
+    "heroTitle": "Porter la Lumière du Christ à Chaque Nation",
+    "heroSubtitle": "Huit programmes complémentaires pour annoncer l'Évangile, former des disciples et manifester l'amour de Dieu au Bénin et au-delà.",
+    "heroCtaMission": "Rejoindre une mission",
+    "heroCtaSupport": "Soutenir l'œuvre",
+    "gridTitle": "Nos Activités Principales",
+    "gridSubtitle": "Chaque activité de LiFAC répond à un besoin précis d'évangélisation, de formation ou d'action sociale.",
+    "learnMore": "En savoir plus",
+    "impactTitle": "Notre Impact",
+    "impactSouls": "Âmes gagnées à Christ",
+    "impactCrusades": "Croisades organisées",
+    "impactSchools": "Écoles visitées",
+    "impactVolunteers": "Missionnaires mobilisés",
+    "galleryKicker": "Galerie photo",
+    "galleryTitle": "Moments de la Puissance de Dieu",
+    "galleryCta": "Voir la galerie",
+    "videoKicker": "En images",
+    "videoTitle": "Découvrez Nos Actions sur le Terrain",
+    "videoDesc": "Photos et vidéos de nos croisades, formations et actions humanitaires à travers le Bénin.",
+    "videoCta": "Voir plus de photos et vidéos",
+    "testimonyKicker": "Témoignages",
+    "testimonyTitle": "Des Vies Changées pour Toujours",
+    "serveTitle": "Où Nous Servons",
+    "serveSubtitle": "LiFAC est présent dans plusieurs villes et communes du Bénin, avec une vision d'expansion continue à travers le pays.",
+    "serveCities": ["Cotonou", "Porto-Novo", "Abomey-Calavi", "Parakou", "Natitingou", "Savalou"],
+    "upcomingTitle": "Missions à Venir",
+    "upcomingSubtitle": "Rejoignez-nous lors de nos prochaines sorties sur le terrain.",
+    "upcomingEmpty": "Aucune mission à venir programmée pour le moment — revenez bientôt.",
+    "upcomingViewDetails": "Voir les détails",
+    "processTitle": "Comment Nous Atteignons, Enseignons et Faisons des Disciples",
+    "processSubtitle": "Une méthode éprouvée en 7 étapes, du premier contact jusqu'au disciple qui forme à son tour d'autres disciples.",
+    "processSteps": [
+      { "title": "Prier", "desc": "Nous intercédons avant toute action, convaincus que rien ne se fait sans la conduite du Saint-Esprit." },
+      { "title": "Former", "desc": "Nous équipons nos missionnaires par des enseignements bibliques et pratiques solides." },
+      { "title": "Aller", "desc": "Nous allons vers les populations : écoles, marchés, quartiers, villages et places publiques." },
+      { "title": "Prêcher", "desc": "Nous annonçons clairement l'Évangile de Jésus-Christ avec un appel au salut." },
+      { "title": "Prier pour les malades", "desc": "Nous intercédons avec foi pour les malades et les personnes en difficulté." },
+      { "title": "Suivre", "desc": "Nous accompagnons chaque nouveau converti pour l'établir dans la foi." },
+      { "title": "Faire des disciples", "desc": "Nous formons des disciples capables de former à leur tour d'autres disciples." }
+    ],
+    "ctaTitle": "Ensemble, Portons la Lumière à Chaque Nation",
+    "ctaDesc": "Que vous souhaitiez servir sur le terrain, soutenir financièrement ou devenir un partenaire d'œuvre, votre engagement change des vies.",
+    "ctaVolunteer": "Devenir missionnaire",
+    "ctaDonate": "Faire un don",
+    "ctaPartner": "Devenir partenaire"
   },
   "contactPage": {
     "metaTitle": "Contact",
@@ -487,6 +522,22 @@
     "kicker": "CALENDRIER DU RÉVEIL",
     "title": "NOS ÉVÉNEMENTS",
     "subtitle": "Découvrez les rendez-vous qui marquent notre génération.",
+    "registerCta": "S'inscrire maintenant",
+    "calendarCta": "Voir le calendrier",
+    "statLocations": "Villes",
+    "statEvents": "Événements cette année",
+    "statAttendance": "Participation attendue",
+    "statSpeakers": "Intervenants",
+    "statSpeakersValue": "Hommes de Dieu oints",
+    "featuredBadge": "Événement phare",
+    "upcomingTitle": "Prochains Événements",
+    "learnMore": "En savoir plus",
+    "categoriesTitle": "Catégories d'Événements",
+    "calendarTitle": "Calendrier des Événements",
+    "citiesTitle": "Nos Prochaines Localités",
+    "newsletterTitle": "Restez informé",
+    "newsletterDesc": "Ne manquez aucun événement LiFAC — contactez-nous pour rejoindre notre liste de diffusion.",
+    "newsletterCta": "Nous contacter",
     "nightTitle": "NUIT DU SAINT-ESPRIT",
     "nightDesc": "C'est l'événement phare de la LIFAC. Une nuit entière dédiée à l'adoration, à la parole prophétique et aux miracles.",
     "nightPillar1": "Baptême du Saint-Esprit",
@@ -523,6 +574,33 @@
     "verse": "« Si deux d'entre vous s'accordent sur la terre pour demander une chose quelconque, elle leur sera accordée par mon Père. »",
     "privacy": "Notre équipe et notre communauté prieront pour vous. Vos informations restent confidentielles si vous le souhaitez."
   },
+  "resourcesPage": {
+    "metaTitle": "Ressources",
+    "metaDesc": "Galerie photo, témoignages et supports pratiques pour vivre et organiser les activités de LiFAC.",
+    "heroKicker": "RESSOURCES",
+    "heroTitle": "Médiathèque et Supports LiFAC",
+    "heroSubtitle": "Photos, témoignages et outils pratiques pour découvrir, préparer et vivre nos activités sur le terrain.",
+    "galleryKicker": "Médiathèque",
+    "galleryTitle": "Nos Actions en Images",
+    "testimoniesTitle": "Témoignages",
+    "resKicker": "Supports pratiques",
+    "resTitle": "Ressources & Supports",
+    "resSubtitle": "Des repères pratiques pour approfondir chaque volet de la mission LiFAC.",
+    "resLearnMore": "Découvrir",
+    "resEvangelismTitle": "Guides d'Évangélisation",
+    "resEvangelismDesc": "Repères pratiques pour préparer et conduire une croisade d'évangélisation.",
+    "resTrainingTitle": "Supports de Formation",
+    "resTrainingDesc": "Les fondamentaux enseignés lors de nos sessions de Formation en Évangélisation.",
+    "resHumanitarianTitle": "Kit Actions Humanitaires",
+    "resHumanitarianDesc": "Comment organiser une action sociale ou une campagne de santé communautaire.",
+    "resOrganizeTitle": "Organiser une Activité",
+    "resOrganizeDesc": "Le déroulé type d'une Pop-Up Crusade, de la préparation au débriefing.",
+    "resBibleTitle": "Ressources de Prière",
+    "resBibleDesc": "Soumettez ou soutenez une demande de prière avec la communauté LiFAC.",
+    "ctaTitle": "Besoin d'un Support Spécifique ?",
+    "ctaDesc": "Contactez l'équipe LiFAC pour obtenir un accompagnement ou du matériel adapté à votre projet.",
+    "ctaButton": "Nous contacter"
+  },
   "auth": {
     "login": "Connexion",
     "loginDesc": "Accédez à votre tableau de bord donateur ou bénévole.",
@@ -539,13 +617,24 @@
     "popCrusade": "Pop-croisade",
     "oneToOne": "One-to-one",
     "crusades": "Croisades",
+    "events": "Événements",
+    "campaigns": "Campagnes",
+    "donations": "Dons",
     "reports": "Rapports",
     "settings": "Paramètres",
     "users": "Utilisateurs",
     "logout": "Déconnexion",
     "registrations": "Inscriptions",
     "attendance": "Scanner présence",
-    "activities": "Activités"
+    "activities": "Activités",
+    "missionaries": "Missionnaires",
+    "admins": "Administrateurs",
+    "connectedAs": "Connecté en tant que",
+    "sectionOverview": "Aperçu",
+    "sectionContent": "Contenu",
+    "sectionTeam": "Équipe",
+    "sectionField": "Terrain",
+    "sectionSystem": "Système"
   },
   "agentSidebar": {
     "home": "Accueil",
@@ -555,7 +644,8 @@
     "prayer": "Intercession",
     "aiAssistant": "Assistant AI LIFAC",
     "profile": "Profil",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "missionaryLabel": "Missionnaire"
   },
   "adminDashboard": {
     "title": "Tableau de bord Administrateur",
@@ -567,7 +657,7 @@
       "attendance": "Attendance total",
       "decisions": "Décisions pour Christ",
       "converts": "Nouveaux convertis",
-      "agents": "Agents actifs"
+      "agents": "Missionnaires actifs"
     },
     "distribution": "Répartition par module",
     "recentActivities": "Activités récentes",
@@ -626,7 +716,199 @@
     "add": "Ajouter une activité",
     "search": "Rechercher par titre ou code...",
     "allStatus": "Tous les statuts",
+    "allTypes": "Tous les types",
     "filter": "Filtrer",
     "empty": "Aucune activité trouvée"
+  },
+  "adminAdmins": {
+    "title": "Gestion des administrateurs",
+    "add": "Ajouter un administrateur",
+    "empty": "Aucun administrateur trouvé",
+    "columns": {
+      "name": "Nom",
+      "email": "Email",
+      "createdAt": "Créé le",
+      "actions": "Actions"
+    },
+    "delete": "Désactiver",
+    "cannotDeleteSelf": "Vous ne pouvez pas désactiver votre propre compte",
+    "requiredFields": "Nom, email et mot de passe sont obligatoires",
+    "modalTitle": "Nouvel administrateur",
+    "name": "Nom complet",
+    "email": "Email",
+    "password": "Mot de passe",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirmDelete": "Confirmer la désactivation de cet administrateur ?"
+  },
+  "activityTypes": {
+    "crusade": {
+      "label": "Croisade d'évangélisation",
+      "shortDesc": "Des campagnes de 3 à 4 jours dans les villes et communautés pour annoncer l'Évangile, prier pour les malades et voir des vies transformées.",
+      "metaDesc": "Découvrez les Croisades d'Évangélisation de LiFAC : plusieurs jours de prédication, de prière et de guérison au cœur des villes et communautés.",
+      "intro": "Les Croisades d'Évangélisation de LiFAC sont des campagnes d'évangélisation organisées dans les villes et les communautés afin d'annoncer la Bonne Nouvelle de Jésus-Christ au plus grand nombre.",
+      "paragraphs": [
+        "Elles se déroulent généralement sur trois à quatre jours consécutifs, permettant aux populations de participer à plusieurs soirées de prédication et de prière. Chaque rencontre est centrée sur la proclamation fidèle de l'Évangile, accompagnée d'un appel clair au salut afin de conduire les hommes et les femmes à une relation personnelle avec Jésus-Christ.",
+        "Les croisades sont également des temps où les malades reçoivent la prière avec foi pour leur guérison, où les captifs sont libérés et où les croyants sont conduits à recevoir le baptême du Saint-Esprit, avec les manifestations bibliques qui l'accompagnent, notamment le parler en langues.",
+        "À travers ces croisades, LiFAC poursuit sa mission de faire des disciples de Jésus-Christ, d'établir les nouveaux convertis dans la foi et de voir la puissance de Dieu transformer durablement les vies, les familles et les communautés."
+      ],
+      "bullets": [
+        "Prédication et appel au salut chaque soir",
+        "Prière pour les malades et les captifs",
+        "Baptême du Saint-Esprit et manifestations bibliques",
+        "Suivi et affermissement des nouveaux convertis"
+      ]
+    },
+    "youthCrusade": {
+      "label": "Youth Crusade",
+      "shortDesc": "Le programme d'évangélisation dédié à la jeunesse, directement dans les écoles, collèges, lycées et universités.",
+      "metaDesc": "Youth Crusade : LiFAC annonce l'Évangile aux élèves, étudiants et jeunes en formation dans leurs établissements scolaires et universitaires.",
+      "intro": "Youth Crusades est le programme d'évangélisation de LiFAC spécialement consacré à la jeunesse. Il a pour objectif d'annoncer l'Évangile de Jésus-Christ aux élèves, étudiants et jeunes en formation, directement dans leurs milieux de vie et d'apprentissage.",
+      "paragraphs": [
+        "À travers des interventions dans les écoles, collèges, lycées, universités et centres de formation, les équipes de LiFAC proclament le message du salut en Jésus-Christ de manière claire, pertinente et adaptée aux jeunes. Chaque rencontre est une occasion d'inviter les participants à recevoir Jésus-Christ comme Seigneur et Sauveur, à expérimenter la nouvelle naissance et à grandir dans une relation personnelle avec Dieu.",
+        "Les Youth Crusades sont également des moments de prière pour les malades, d'encouragement spirituel et de sensibilisation à une vie fondée sur les valeurs du Royaume de Dieu. Selon les orientations du Saint-Esprit et le contexte de chaque établissement, des temps de prière peuvent également être consacrés au baptême du Saint-Esprit.",
+        "À travers ce programme, LiFAC désire voir une génération de jeunes transformés par l'Évangile, affermis dans leur foi et équipés pour devenir des témoins de Jésus-Christ dans leurs établissements, leurs familles et la société."
+      ],
+      "bullets": [
+        "Interventions en écoles, collèges, lycées et universités",
+        "Message adapté aux réalités des jeunes",
+        "Prière pour les malades et encouragement spirituel",
+        "Formation d'une génération de témoins de Christ"
+      ]
+    },
+    "popUpCrusade": {
+      "label": "Pop-up Crusade",
+      "shortDesc": "Une équipe d'évangélisation mobile, déployée en moins de 4 heures dans un village, un quartier ou une place publique.",
+      "metaDesc": "Pop-Up Crusade : croisades d'évangélisation de proximité, simples et rapidement déployables, organisées par LiFAC partout où le besoin se fait sentir.",
+      "intro": "Pop-Up Crusade est un programme de croisades d'évangélisation de proximité organisé par LiFAC (Light For All Center). Il consiste à déployer, de manière ponctuelle et avec un minimum de matériel, une équipe d'évangélisation dans un village, un quartier, un carrefour, une place publique ou tout autre espace accessible afin d'annoncer l'Évangile de Jésus-Christ.",
+      "paragraphs": [
+        "D'une durée maximale de quatre heures, la Pop-Up Crusade est conçue pour être simple, mobile et rapidement déployable. Malgré son format court, elle conserve les éléments essentiels de la mission de LiFAC : la proclamation de l'Évangile, l'appel au salut, la prière pour les malades et la démonstration de la compassion et de la puissance de Dieu.",
+        "Ce programme permet d'atteindre des populations qui ne participeraient pas nécessairement à une grande croisade ou à une réunion dans une église. Il offre également la possibilité de répondre rapidement à un besoin missionnaire dans une localité, de préparer le terrain pour une campagne d'évangélisation plus importante ou d'apporter l'Évangile dans des zones peu ou pas encore atteintes.",
+        "À travers les Pop-Up Crusades, LiFAC manifeste sa volonté d'aller vers les populations, conformément au mandat missionnaire de Jésus-Christ, afin que le plus grand nombre entende l'Évangile, reçoive le salut et fasse l'expérience de la puissance de Dieu."
+      ],
+      "bullets": [
+        "Déploiement rapide, en moins de 4 heures",
+        "Format mobile et minimum de matériel",
+        "Idéal pour préparer une grande croisade",
+        "Atteint des zones peu ou pas encore touchées"
+      ]
+    },
+    "marketOutreach": {
+      "label": "Évangélisation au marché",
+      "shortDesc": "\"Jésus au Marché\" porte l'Évangile au cœur des marchés, là où les populations vivent, travaillent et se rencontrent chaque jour.",
+      "metaDesc": "Jésus au Marché : LiFAC annonce l'Évangile et prie pour les malades au cœur des marchés et espaces commerciaux du Bénin.",
+      "intro": "Jésus au Marché est un programme d'évangélisation de proximité organisé par LiFAC dans les marchés et les espaces commerciaux. Son objectif est de porter l'Évangile de Jésus-Christ au cœur des lieux où les populations vivent, travaillent et se rencontrent quotidiennement.",
+      "paragraphs": [
+        "À travers la prédication de l'Évangile, les équipes de LiFAC annoncent le message du salut en Jésus-Christ et invitent les hommes et les femmes à répondre à l'appel de Dieu. Des temps de prière sont également consacrés aux personnes malades, à celles qui sont liées par diverses formes de souffrance ou d'oppression, et à tous ceux qui désirent expérimenter la puissance transformatrice de Dieu.",
+        "Fidèle à la mission de Jésus-Christ, Jésus au Marché vise à voir les captifs retrouver la liberté en Christ, les personnes opprimées être relevées, les malades recevoir la prière avec foi, et les nouveaux croyants commencer une vie nouvelle avec le Seigneur.",
+        "Par cette initiative, LiFAC désire rendre l'Évangile accessible à tous, en allant à la rencontre des populations là où elles se trouvent, afin que personne ne soit privé de l'occasion d'entendre le message de l'amour et du salut en Jésus-Christ."
+      ],
+      "bullets": [
+        "Présence régulière dans les marchés et espaces commerciaux",
+        "Prédication et prière pour les malades",
+        "Libération des captifs et relèvement des opprimés",
+        "Évangile rendu accessible à tous, sans distinction"
+      ]
+    },
+    "oneOnOne": {
+      "label": "Évangélisation personnelle",
+      "shortDesc": "Aller à la rencontre de chaque personne, individuellement, pour un témoignage en tête-à-tête plein d'écoute et de compassion.",
+      "metaDesc": "Évangélisation Personnelle : LiFAC rencontre chaque personne individuellement, dans les maisons, les rues et les lieux de travail, pour annoncer l'Évangile.",
+      "intro": "Évangélisation Personnelle est un programme de proximité de LiFAC (Light For All Center) qui consiste à aller à la rencontre des personnes, individuellement, pour leur annoncer la Bonne Nouvelle de Jésus-Christ dans le cadre d'un échange personnel.",
+      "paragraphs": [
+        "Contrairement aux campagnes et aux rassemblements publics, cette approche privilégie le témoignage en tête-à-tête. Les équipes de LiFAC effectuent des sorties d'évangélisation dans les maisons, les rues, les quartiers, les plages, les lieux de travail, les espaces publics et tout autre endroit propice à une rencontre personnelle.",
+        "Chaque entretien est l'occasion d'écouter la personne, de lui présenter le message du salut en Jésus-Christ, de répondre à ses questions, de prier avec elle et de l'inviter à recevoir Jésus-Christ comme Seigneur et Sauveur. Selon les besoins, les évangélistes prient également pour les malades, les personnes en difficulté ou celles qui recherchent une intervention de Dieu dans leur vie.",
+        "À travers ce programme, LiFAC manifeste l'amour de Christ de manière personnelle, en créant un climat d'écoute, de confiance et de compassion, afin que chacun puisse entendre l'Évangile et prendre une décision libre et éclairée de suivre Jésus-Christ."
+      ],
+      "bullets": [
+        "Rencontres individuelles, en tête-à-tête",
+        "Écoute, dialogue et réponse aux questions",
+        "Prière personnalisée selon les besoins",
+        "Climat de confiance et de compassion"
+      ]
+    },
+    "nightOfHope": {
+      "label": "La Nuit de l'Espoir",
+      "shortDesc": "Un rendez-vous annuel (mai à juillet) entièrement consacré à l'Évangile et à la manifestation de la puissance du Saint-Esprit.",
+      "metaDesc": "La Nuit de l'Espoir : soirée annuelle de LiFAC consacrée à la proclamation de l'Évangile et au baptême du Saint-Esprit.",
+      "intro": "La Nuit de l'Espoir est un programme d'évangélisation organisé par LiFAC (Light For All Center). Cette rencontre, qui se tient chaque année entre les mois de mai et juillet, est entièrement consacrée à la proclamation de l'Évangile de Jésus-Christ et à la manifestation de la puissance du Saint-Esprit.",
+      "paragraphs": [
+        "Au cours de cette soirée, l'Évangile est annoncé avec un appel au salut invitant chacun à recevoir Jésus-Christ comme Seigneur et Sauveur. Des temps de prière sont ensuite consacrés aux malades, dans la foi que Dieu guérit encore aujourd'hui, ainsi qu'à ceux qui désirent recevoir le baptême du Saint-Esprit avec les manifestations bibliques qui l'accompagnent, notamment le parler en langues.",
+        "La Nuit de l'Espoir met un accent particulier sur la personne et l'œuvre du Saint-Esprit, afin d'amener les participants à vivre une rencontre personnelle avec Dieu, à grandir dans leur foi et à être équipés pour une vie chrétienne remplie de la puissance du Saint-Esprit."
+      ],
+      "bullets": [
+        "Rendez-vous annuel, entre mai et juillet",
+        "Appel au salut et prière pour les malades",
+        "Baptême du Saint-Esprit et manifestations bibliques",
+        "Accent particulier sur l'œuvre du Saint-Esprit"
+      ]
+    },
+    "humanitarian": {
+      "label": "Actions Humanitaires",
+      "shortDesc": "Manifester l'amour de Dieu de manière concrète : aide aux familles vulnérables, dons et campagnes de santé communautaire.",
+      "metaDesc": "Actions Humanitaires LiFAC : aides sociales, dons aux familles défavorisées et campagnes de santé communautaire au Bénin.",
+      "intro": "Actions Humanitaires est un programme périodique de LiFAC (Light For All Center) qui vise à manifester l'amour de Dieu de manière concrète à travers des actions sociales et médicales en faveur des personnes en situation de vulnérabilité.",
+      "paragraphs": [
+        "Dans ce cadre, LiFAC organise et soutient diverses initiatives d'assistance humanitaire, notamment des aides aux personnes en difficulté, des dons et des soutiens ponctuels aux familles défavorisées, ainsi que des actions sociales ciblées en faveur des plus démunis.",
+        "Le programme inclut également l'accompagnement de campagnes de santé communautaire, telles que les séances de dépistage de certaines maladies, les tests de groupage sanguin, les examens d'électrophorèse et d'autres activités de prévention sanitaire, en collaboration avec des professionnels de santé et des structures médicales partenaires.",
+        "À travers ces actions, LiFAC exprime concrètement la compassion de Jésus-Christ en répondant non seulement aux besoins spirituels des populations, mais aussi à leurs besoins physiques et sociaux, afin de contribuer à leur bien-être global."
+      ],
+      "bullets": [
+        "Aides et dons aux familles défavorisées",
+        "Campagnes de dépistage et de groupage sanguin",
+        "Partenariat avec des professionnels de santé",
+        "Réponse aux besoins spirituels, physiques et sociaux"
+      ]
+    },
+    "training": {
+      "label": "Formation en Évangélisation",
+      "shortDesc": "Préparer et envoyer des ouvriers qualifiés pour l'œuvre de l'évangélisation, selon Matthieu 9:37-38.",
+      "metaDesc": "Formation en Évangélisation LiFAC : équiper églises, pasteurs, évangélistes et jeunes croyants pour annoncer l'Évangile avec sagesse et puissance.",
+      "intro": "La Formation en Évangélisation est un programme de formation et d'équipement de LiFAC (Light For All Center) destiné à préparer et à envoyer des ouvriers qualifiés pour l'œuvre de l'évangélisation.",
+      "paragraphs": [
+        "Convaincu que « la moisson est grande, mais il y a peu d'ouvriers » (Matthieu 9:37-38), LiFAC investit dans la formation des croyants afin qu'ils annoncent l'Évangile avec assurance, sagesse, amour et sous la conduite du Saint-Esprit. Ces formations s'adressent notamment aux : églises locales, ministères chrétiens, évangélistes, pasteurs et responsables d'Église, jeunes passionnés par l'annonce de l'Évangile, tout croyant désireux de participer à l'expansion du Royaume de Dieu.",
+        "Les enseignements allient des fondements bibliques solides à une mise en pratique sur le terrain. Les participants sont formés à partager leur foi, conduire une personne à Jésus-Christ, exercer un ministère d'évangélisation avec sagesse et compassion, prier pour les malades, dépendre de l'action du Saint-Esprit et organiser différents types d'actions d'évangélisation.",
+        "L'objectif de LiFAC est de multiplier les ouvriers de la moisson en développant une génération de disciples capables de former à leur tour d'autres disciples, conformément au mandat missionnaire de Jésus-Christ."
+      ],
+      "bullets": [
+        "Fondements bibliques solides et pratique de terrain",
+        "Ouvert aux églises, pasteurs, évangélistes et jeunes",
+        "Formation au partage de la foi et à la prière pour les malades",
+        "Multiplication de disciples qui forment d'autres disciples"
+      ]
+    },
+    "other": {
+      "label": "Autre activité",
+      "shortDesc": "Une activité spécifique menée par nos équipes sur le terrain.",
+      "metaDesc": "Découvrez les activités de terrain de LiFAC.",
+      "intro": "LiFAC mène régulièrement des actions de terrain adaptées aux besoins spécifiques de chaque communauté.",
+      "paragraphs": [],
+      "bullets": []
+    },
+    "heroKicker": "PRÉSENTATION",
+    "keyPointsTitle": "Points clés",
+    "ctaEventsTitle": "Envie de participer ?",
+    "ctaEventsDesc": "Inscrivez-vous à notre prochain événement ou rejoignez nos équipes sur le terrain.",
+    "ctaEvents": "S'inscrire à un événement",
+    "ctaVolunteer": "Devenir missionnaire",
+    "backToActivities": "← Retour aux activités"
+  },
+  "activityDetailPage": {
+    "backToActivities": "← Retour aux activités",
+    "learnMoreAboutType": "En savoir plus sur ce type d'activité",
+    "date": "Date",
+    "location": "Lieu",
+    "responsible": "Responsable",
+    "partnerChurch": "Église partenaire",
+    "impactTitle": "Impact de l'activité",
+    "estimatedParticipants": "Participants estimés",
+    "actualParticipants": "Participants réels",
+    "decisionsForChrist": "Décisions pour Christ",
+    "biblesDistributed": "Bibles distribuées",
+    "newContacts": "Nouveaux contacts",
+    "descriptionTitle": "Description",
+    "notesTitle": "Observations",
+    "notFoundTitle": "Activité introuvable",
+    "notFoundDesc": "Cette activité n'existe pas ou a été supprimée."
   }
 }

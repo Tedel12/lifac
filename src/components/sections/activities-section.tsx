@@ -13,27 +13,27 @@ const cards: ActivityCard[] = [
   {
     key: "crusades",
     icon: <Cross className="h-5 w-5 text-white" />,
-    image: "/activites.jpg",
+    image: "/activities/crusade.jpg",
   },
   {
     key: "evangelism",
     icon: <Megaphone className="h-5 w-5 text-white" />,
-    image: "/activites.jpg",
+    image: "/activities/market-outreach.jpg",
   },
   {
     key: "humanitarian",
     icon: <HandHeart className="h-5 w-5 text-white" />,
-    image: "/activites.jpg",
+    image: "/activities/humanitarian-action.jpg",
   },
   {
     key: "prayer",
     icon: <Flame className="h-5 w-5 text-white" />,
-    image: "/activites.jpg",
+    image: "/activities/night-of-hope.jpg",
   },
   {
     key: "training",
     icon: <GraduationCap className="h-5 w-5 text-white" />,
-    image: "/activites.jpg",
+    image: "/activities/evangelism-training.jpg",
   },
 ];
 

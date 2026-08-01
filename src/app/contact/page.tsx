@@ -9,12 +9,12 @@ export default function ContactPage() {
   const t = useTranslations("contactPage");
   return (
     <div className="bg-gray-50 min-h-screen">
-      <section className="bg-gradient-to-br from-lifac-blue-900 to-lifac-blue-950 text-white py-16 lg:py-24">
+      <section className="bg-white py-16 lg:py-24 border-b border-gray-100">
         <div className="container mx-auto px-4 lg:px-8 text-center max-w-3xl">
-          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 text-lifac-navy-900">
             {t("title")}
           </h1>
-          <p className="text-lg text-blue-100">
+          <p className="text-lg text-lifac-navy-600">
             {t("subtitle")}
           </p>
         </div>

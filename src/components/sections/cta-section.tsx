@@ -9,7 +9,7 @@ export function CtaSection() {
     {
       key: "volunteer",
       href: "/volunteer",
-      icon: <Users className="h-5 w-5 text-lifac-navy-900" />,
+      icon: <Users className="h-5 w-5 text-lifac-red-600" />,
       variant: "light" as const,
     },
     {
@@ -21,32 +21,22 @@ export function CtaSection() {
     {
       key: "participate",
       href: "/events",
-      icon: <Calendar className="h-5 w-5 text-lifac-navy-900" />,
+      icon: <Calendar className="h-5 w-5 text-lifac-red-600" />,
       variant: "light" as const,
     },
     {
       key: "giveLife",
       href: "/prayer",
-      icon: <Cross className="h-5 w-5 text-lifac-navy-900" />,
+      icon: <Cross className="h-5 w-5 text-lifac-red-600" />,
       variant: "light" as const,
     },
   ];
 
   return (
-    <section className="relative bg-lifac-red-600 py-8 lg:py-10 overflow-hidden">
-      <div aria-hidden className="absolute inset-0 pointer-events-none opacity-20">
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1440 200" preserveAspectRatio="xMidYMid slice">
-          <g fill="#fff" opacity="0.1">
-            <circle cx="100" cy="50" r="40" />
-            <circle cx="1300" cy="150" r="60" />
-            <circle cx="700" cy="100" r="30" />
-          </g>
-        </svg>
-      </div>
-
-      <div className="container mx-auto px-4 lg:px-6 relative">
+    <section className="bg-white py-8 lg:py-10 border-t border-gray-100">
+      <div className="container mx-auto px-4 lg:px-6">
         <div className="grid lg:grid-cols-[1fr_auto] gap-6 lg:gap-10 items-center">
-          <h2 className="font-display text-xl md:text-2xl lg:text-3xl font-extrabold text-white leading-tight">
+          <h2 className="font-display text-xl md:text-2xl lg:text-3xl font-extrabold text-lifac-navy-900 leading-tight">
             {t("title")}
           </h2>
 
@@ -57,15 +47,15 @@ export function CtaSection() {
                 href={action.href}
                 className={
                   action.variant === "red"
-                    ? "bg-lifac-red-700 hover:bg-lifac-red-800 border-2 border-white text-white rounded-xl px-4 py-3 flex flex-col items-center justify-center gap-1.5 text-center transition-all hover:-translate-y-0.5 shadow-md"
-                    : "bg-white hover:bg-gray-50 text-lifac-navy-900 rounded-xl px-4 py-3 flex flex-col items-center justify-center gap-1.5 text-center transition-all hover:-translate-y-0.5 shadow-md"
+                    ? "bg-lifac-red-600 hover:bg-lifac-red-700 text-white rounded-xl px-4 py-3 flex flex-col items-center justify-center gap-1.5 text-center transition-all hover:-translate-y-0.5 shadow-md shadow-lifac-red-600/30"
+                    : "bg-[#F4F5F7] hover:bg-gray-100 text-lifac-navy-900 rounded-xl px-4 py-3 flex flex-col items-center justify-center gap-1.5 text-center transition-all hover:-translate-y-0.5 shadow-sm"
                 }
               >
                 <div
                   className={
                     action.variant === "red"
                       ? "h-10 w-10 rounded-full bg-white/15 flex items-center justify-center"
-                      : "h-10 w-10 rounded-full bg-lifac-red-50 flex items-center justify-center"
+                      : "h-10 w-10 rounded-full bg-white flex items-center justify-center"
                   }
                 >
                   {action.icon}

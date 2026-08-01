@@ -52,7 +52,7 @@ export function Header() {
     { label: t("activities"), href: "/activities" },
     { label: t("events"), href: "/events" },
     { label: t("testimonies"), href: "/#testimonies" },
-    { label: t("resources"), href: "/activities" },
+    { label: t("resources"), href: "/resources" },
     { label: t("contact"), href: "/contact" },
   ];
 
@@ -66,20 +66,19 @@ export function Header() {
     <header
       className={cn(
         "left-0 right-0 z-50 w-full transition-all duration-300",
-        // Sur la home : absolute transparent au top, fixed+navy quand scroll
-        // Sur les autres pages : sticky navy en permanence
+        // Sur la home : transparent sur le hero, fixed+flou quand on scroll.
+        // Sur les autres pages (thème clair partout) : barre blanche pleine en permanence.
         isHome
           ? scrolled
             ? "fixed top-0 bg-transparent backdrop-blur-md shadow-lg border-b border-white/5 animate-fade-in"
             : "absolute top-0"
-          : "sticky top-0 bg-transparent backdrop-blur-md shadow-lg border-b border-white/5"
+          : "sticky top-0 bg-white shadow-sm border-b border-gray-100"
       )}
     >
       <div className="container mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Logo — toujours blanc puisque le header est foncé dès qu'il est solide */}
           <Link href="/" className="flex-shrink-0">
-            <Logo variant="white" />
+            <Logo variant={isHome ? "white" : "default"} />
           </Link>
 
           {/* Navigation desktop */}
@@ -92,7 +91,11 @@ export function Header() {
                   href={item.href}
                   className={cn(
                     "text-[11px] font-bold tracking-[0.12em] uppercase transition-colors relative py-1",
-                    active ? "text-lifac-red-500" : "text-white/85 hover:text-white"
+                    active
+                      ? "text-lifac-red-500"
+                      : isHome
+                        ? "text-white/85 hover:text-white"
+                        : "text-lifac-navy-700 hover:text-lifac-red-600"
                   )}
                 >
                   {item.label}
@@ -128,7 +131,10 @@ export function Header() {
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
+            className={cn(
+              "lg:hidden p-2 rounded-lg transition-colors",
+              isHome ? "text-white hover:bg-white/10" : "text-lifac-navy-900 hover:bg-gray-100"
+            )}
             aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -136,7 +142,12 @@ export function Header() {
         </div>
 
         {mobileOpen && (
-          <nav className="lg:hidden pb-6 pt-2 border-t border-white/10 bg-lifac-navy-950 animate-fade-in">
+          <nav
+            className={cn(
+              "lg:hidden pb-6 pt-2 animate-fade-in",
+              isHome ? "border-t border-white/10 bg-lifac-navy-950" : "border-t border-gray-100 bg-white"
+            )}
+          >
             <ul className="flex flex-col gap-1 pt-3">
               {navItems.map((item) => {
                 const active = isActive(item.href);
@@ -147,7 +158,11 @@ export function Header() {
                       onClick={() => setMobileOpen(false)}
                       className={cn(
                         "block px-4 py-3 rounded-lg font-semibold text-sm transition-colors uppercase tracking-wider",
-                        active ? "text-lifac-red-500 bg-white/5" : "text-white/85 hover:bg-white/5"
+                        active
+                          ? "text-lifac-red-500 bg-lifac-red-600/5"
+                          : isHome
+                            ? "text-white/85 hover:bg-white/5"
+                            : "text-lifac-navy-700 hover:bg-gray-50"
                       )}
                     >
                       {item.label}
@@ -155,7 +170,12 @@ export function Header() {
                   </li>
                 );
               })}
-              <li className="pt-3 mt-3 border-t border-white/10 flex flex-col gap-2 px-4">
+              <li
+                className={cn(
+                  "pt-3 mt-3 flex flex-col gap-2 px-4",
+                  isHome ? "border-t border-white/10" : "border-t border-gray-100"
+                )}
+              >
                 <LanguageSwitcher className="self-start mb-2" />
                 {auth.isAuthenticated ? (
                   <Link href={dashboardUrl} onClick={() => setMobileOpen(false)}>

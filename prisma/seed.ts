@@ -2,7 +2,7 @@
  * Seed Prisma - Données de démonstration pour LiFAC
  * Lancer avec : npm run db:seed
  */
-import { PrismaClient, CampaignType, CampaignStatus, EventType, EventStatus, Role } from "@prisma/client";
+import { PrismaClient, CampaignType, CampaignStatus, EventType, EventStatus, Role, ActivityType, ActivityStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -222,15 +222,15 @@ async function main() {
   // -----------------------------------
   // 7. Activités
   // -----------------------------------
-  const activities = [
-    { title: "Croisade d’évangélisation", description: "Les Croisades d'Évangélisation de LiFAC sont des campagnes d'évangélisation organisées dans les villes et les communautés afin d'annoncer la Bonne Nouvelle de Jésus-Christ au plus grand nombre. Elles se déroulent généralement sur trois à quatre jours consécutifs, permettant aux populations de participer à plusieurs soirées de prédication et de prière." },
-    { title: "Youth Crusades", description: "Youth Crusades est le programme d'évangélisation de LiFAC spécialement consacré à la jeunesse. Il a pour objectif d'annoncer l'Évangile de Jésus-Christ aux élèves, étudiants et jeunes en formation, directement dans leurs milieux de vie et d'apprentissage." },
-    { title: "Évangélisation au marché", description: "Jésus au Marché est un programme d'évangélisation de proximité organisé par LiFAC dans les marchés et les espaces commerciaux. Son objectif est de porter l'Évangile de Jésus-Christ au cœur des lieux où les populations vivent, travaillent et se rencontrent quotidiennement." },
-    { title: "Pop-up crusade", description: "Pop-Up Crusade est un programme de croisades d'évangélisation de proximité organisé par LiFAC (Light For All Center). Il consiste à déployer, de manière ponctuelle et avec un minimum de matériel, une équipe d'évangélisation dans un village, un quartier, un carrefour, une place publique ou tout autre espace accessible." },
-    { title: "Évangélisation personnelle", description: "Évangélisation Personnelle est un programme de proximité de LiFAC (Light For All Center) qui consiste à aller à la rencontre des personnes, individuellement, pour leur annoncer la Bonne Nouvelle de Jésus-Christ dans le cadre d'un échange personnel." },
-    { title: "La Nuit de l’Espoir", description: "La Nuit de l'Espoir est un programme d'évangélisation organisé par LiFAC (Light For All Center). Cette rencontre, qui se tient chaque année entre les mois de mai et juillet, est entièrement consacrée à la proclamation de l'Évangile de Jésus-Christ et à la manifestation de la puissance du Saint-Esprit." },
-    { title: "Actions Humanitaires", description: "Actions Humanitaires est un programme périodique de LiFAC (Light For All Center) qui vise à manifester l’amour de Dieu de manière concrète à travers des actions sociales et médicales en faveur des personnes en situation de vulnérabilité." },
-    { title: "Formation en Évangélisation", description: "La Formation en Évangélisation est un programme de formation et d'équipement de LiFAC (Light For All Center) destiné à préparer et à envoyer des ouvriers qualifiés pour l'œuvre de l'évangélisation." },
+  const activities: { title: string; description: string; type: ActivityType; commune: string; date: Date; status: ActivityStatus }[] = [
+    { title: "Croisade d’évangélisation — Tokpa Domè", description: "Les Croisades d'Évangélisation de LiFAC sont des campagnes d'évangélisation organisées dans les villes et les communautés afin d'annoncer la Bonne Nouvelle de Jésus-Christ au plus grand nombre. Elles se déroulent généralement sur trois à quatre jours consécutifs, permettant aux populations de participer à plusieurs soirées de prédication et de prière.", type: ActivityType.CRUSADE, commune: "Cotonou", date: new Date("2026-08-15T19:00:00"), status: ActivityStatus.PLANNED },
+    { title: "Youth Crusade — Campagne Sept-Déc", description: "Youth Crusades est le programme d'évangélisation de LiFAC spécialement consacré à la jeunesse. Il a pour objectif d'annoncer l'Évangile de Jésus-Christ aux élèves, étudiants et jeunes en formation, directement dans leurs milieux de vie et d'apprentissage.", type: ActivityType.YOUTH_CRUSADE, commune: "Cotonou", date: new Date("2026-09-15T09:00:00"), status: ActivityStatus.PLANNED },
+    { title: "Pop-Up Crusade — Quartier Fidjrossè", description: "Pop-Up Crusade est un programme de croisades d'évangélisation de proximité organisé par LiFAC (Light For All Center). Il consiste à déployer, de manière ponctuelle et avec un minimum de matériel, une équipe d'évangélisation dans un village, un quartier, un carrefour, une place publique ou tout autre espace accessible.", type: ActivityType.POP_UP_CRUSADE, commune: "Cotonou", date: new Date("2026-07-05T16:00:00"), status: ActivityStatus.COMPLETED },
+    { title: "Jésus au Marché — Marché Dantokpa", description: "Jésus au Marché est un programme d'évangélisation de proximité organisé par LiFAC dans les marchés et les espaces commerciaux. Son objectif est de porter l'Évangile de Jésus-Christ au cœur des lieux où les populations vivent, travaillent et se rencontrent quotidiennement.", type: ActivityType.MARKET_OUTREACH, commune: "Cotonou", date: new Date("2026-07-15T08:00:00"), status: ActivityStatus.PLANNED },
+    { title: "Évangélisation personnelle — Porto-Novo", description: "Évangélisation Personnelle est un programme de proximité de LiFAC (Light For All Center) qui consiste à aller à la rencontre des personnes, individuellement, pour leur annoncer la Bonne Nouvelle de Jésus-Christ dans le cadre d'un échange personnel.", type: ActivityType.ONE_ON_ONE, commune: "Porto-Novo", date: new Date("2026-06-20T10:00:00"), status: ActivityStatus.COMPLETED },
+    { title: "La Nuit de l’Espoir — Campus UAC", description: "La Nuit de l'Espoir est un programme d'évangélisation organisé par LiFAC (Light For All Center). Cette rencontre, qui se tient chaque année entre les mois de mai et juillet, est entièrement consacrée à la proclamation de l'Évangile de Jésus-Christ et à la manifestation de la puissance du Saint-Esprit.", type: ActivityType.NIGHT_OF_HOPE, commune: "Abomey-Calavi", date: new Date("2026-05-09T18:00:00"), status: ActivityStatus.PLANNED },
+    { title: "Actions Humanitaires — Distribution Cotonou", description: "Actions Humanitaires est un programme périodique de LiFAC (Light For All Center) qui vise à manifester l’amour de Dieu de manière concrète à travers des actions sociales et médicales en faveur des personnes en situation de vulnérabilité.", type: ActivityType.HUMANITARIAN, commune: "Cotonou", date: new Date("2026-04-12T09:00:00"), status: ActivityStatus.COMPLETED },
+    { title: "Formation en Évangélisation — AD Ste Rita", description: "La Formation en Évangélisation est un programme de formation et d'équipement de LiFAC (Light For All Center) destiné à préparer et à envoyer des ouvriers qualifiés pour l'œuvre de l'évangélisation.", type: ActivityType.TRAINING, commune: "Cotonou", date: new Date("2026-07-07T19:30:00"), status: ActivityStatus.PLANNED },
   ];
 
   for (let i = 0; i < activities.length; i++) {
@@ -241,14 +241,15 @@ async function main() {
       update: {},
       create: {
         title: activity.title,
+        description: activity.description,
         code,
-        type: "OTHER",
-        date: new Date(),
-        status: "PLANNED",
+        type: activity.type,
+        commune: activity.commune,
+        date: activity.date,
+        status: activity.status,
       },
     });
   }
-  console.log(`✅ ${activities.length} activités créées`);
   console.log(`✅ ${activities.length} activités créées`);
 }
 

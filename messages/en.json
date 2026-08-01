@@ -184,6 +184,17 @@
     "hotline": "HOTLINE",
     "hotlineNumber": "+229 61 00 00 00"
   },
+  "eventTypeLabels": {
+    "CRUSADE": "Crusades",
+    "POP_UP_CRUSADE": "Pop-Up Crusade",
+    "SCHOOL_OUTREACH": "Schools",
+    "MARKET_OUTREACH": "Markets",
+    "ONE_ON_ONE": "Personal",
+    "YOUTH_CAMP": "Youth Camps",
+    "TRAINING": "Trainings",
+    "HUMANITARIAN_MISSION": "Humanitarian",
+    "PRAYER_MEETING": "Prayer"
+  },
   "testimonies": {
     "kicker": "Testimonies",
     "title": "Transformed lives",
@@ -315,28 +326,52 @@
   },
   "activitiesPage": {
     "metaTitle": "Our activities",
-    "metaDesc": "Discover the 5 pillars of our ministry: school evangelism, market outreach, pop-up crusades, one-on-one evangelism, and large-scale crusades.",
-    "title": "Our activities",
-    "subtitle": "Five complementary pillars to reach every soul, wherever they may be.",
-    "schoolsLabel": "School Evangelism",
-    "schoolsDesc": "We visit schools to share the Gospel with the younger generation. Through interactive sessions, testimonies, and prayer times, we sow seeds of faith in hearts.",
-    "schoolsImpact": "785+ schools visited",
-    "marketsLabel": "Market Evangelism",
-    "marketsDesc": "Markets are meeting places where we bring the light of the Gospel to traders and passersby. Tract distribution, personal prayer, and authentic exchanges are at the heart of this mission.",
-    "marketsImpact": "350+ actions conducted",
-    "popUpLabel": "Pop-up Crusades",
-    "popUpDesc": "Targeted and concentrated gatherings (1-2 days) in specific neighborhoods or villages. Ideal for mobilizing a local community around a message of hope.",
-    "popUpImpact": "Monthly in several cities",
-    "oneOnOneLabel": "One-on-one Evangelism",
-    "oneOnOneDesc": "We believe in the power of individual conversations. Our trained evangelists meet people where they are, listen, pray, and accompany each person on their journey.",
-    "oneOnOneImpact": "Daily action",
-    "crusadesLabel": "Large-scale Crusades",
-    "crusadesDesc": "Our large-scale evangelism events bring together thousands of people for evenings of worship, teaching, prayer, and repentance calls. Moments of collective transformation.",
-    "crusadesImpact": "45+ crusades organized",
-    "joinTitle": "Do you want to join us?",
-    "joinDesc": "Whether you want to participate in an action, support financially, or pray for our work, your commitment makes all the difference.",
-    "joinVolunteer": "Become a volunteer",
-    "joinSupport": "Support financially"
+    "metaDesc": "Discover LiFAC's 8 activities: crusades, youth evangelism, market outreach, personal evangelism, Night of Hope, humanitarian action and training.",
+    "heroKicker": "OUR ACTIVITIES",
+    "heroTitle": "Bringing the Light of Christ to Every Nation",
+    "heroSubtitle": "Eight complementary programs to proclaim the Gospel, make disciples and manifest God's love in Benin and beyond.",
+    "heroCtaMission": "Join a mission",
+    "heroCtaSupport": "Support the work",
+    "gridTitle": "Our Main Activities",
+    "gridSubtitle": "Each LiFAC activity answers a specific need for evangelism, training or social action.",
+    "learnMore": "Learn more",
+    "impactTitle": "Our Impact",
+    "impactSouls": "Souls won for Christ",
+    "impactCrusades": "Crusades organized",
+    "impactSchools": "Schools visited",
+    "impactVolunteers": "Missionaries mobilized",
+    "galleryKicker": "Photo gallery",
+    "galleryTitle": "Moments of God's Power",
+    "galleryCta": "View gallery",
+    "videoKicker": "In pictures",
+    "videoTitle": "See What God Is Doing in the Field",
+    "videoDesc": "Photos and videos from our crusades, trainings and humanitarian actions across Benin.",
+    "videoCta": "See more photos and videos",
+    "testimonyKicker": "Testimonies",
+    "testimonyTitle": "Lives Changed Forever",
+    "serveTitle": "Where We Serve",
+    "serveSubtitle": "LiFAC is present in several cities and communes across Benin, with a vision for continued expansion nationwide.",
+    "serveCities": ["Cotonou", "Porto-Novo", "Abomey-Calavi", "Parakou", "Natitingou", "Savalou"],
+    "upcomingTitle": "Upcoming Missions",
+    "upcomingSubtitle": "Join us for our next outreach on the field.",
+    "upcomingEmpty": "No upcoming mission scheduled at the moment — check back soon.",
+    "upcomingViewDetails": "View details",
+    "processTitle": "How We Reach, Teach and Disciple",
+    "processSubtitle": "A proven 7-step method, from first contact to disciples who train other disciples in turn.",
+    "processSteps": [
+      { "title": "Pray", "desc": "We intercede before any action, convinced that nothing happens without the Holy Spirit's leading." },
+      { "title": "Train", "desc": "We equip our missionaries with solid biblical and practical teaching." },
+      { "title": "Go", "desc": "We go to the people: schools, markets, neighborhoods, villages and public squares." },
+      { "title": "Preach", "desc": "We clearly proclaim the Gospel of Jesus Christ with a call to salvation." },
+      { "title": "Pray for the sick", "desc": "We intercede in faith for the sick and those in difficulty." },
+      { "title": "Follow up", "desc": "We accompany every new convert to establish them in the faith." },
+      { "title": "Make disciples", "desc": "We train disciples able to train other disciples in turn." }
+    ],
+    "ctaTitle": "Together, Let's Bring Light to Every Nation",
+    "ctaDesc": "Whether you want to serve in the field, support financially or become a partner, your commitment changes lives.",
+    "ctaVolunteer": "Become a missionary",
+    "ctaDonate": "Make a donation",
+    "ctaPartner": "Become a partner"
   },
   "contactPage": {
     "metaTitle": "Contact",
@@ -388,6 +423,22 @@
     "kicker": "AWAKENING CALENDAR",
     "title": "OUR EVENTS",
     "subtitle": "Discover the events marking our generation.",
+    "registerCta": "Register now",
+    "calendarCta": "View calendar",
+    "statLocations": "Cities",
+    "statEvents": "Events this year",
+    "statAttendance": "Expected attendance",
+    "statSpeakers": "Speakers",
+    "statSpeakersValue": "Anointed men of God",
+    "featuredBadge": "Featured event",
+    "upcomingTitle": "Upcoming Events",
+    "learnMore": "Learn more",
+    "categoriesTitle": "Event Categories",
+    "calendarTitle": "Event Calendar",
+    "citiesTitle": "Our Upcoming Locations",
+    "newsletterTitle": "Stay updated",
+    "newsletterDesc": "Never miss a LiFAC event — contact us to join our mailing list.",
+    "newsletterCta": "Contact us",
     "nightTitle": "NIGHT OF THE HOLY SPIRIT",
     "nightDesc": "It is LiFAC's flagship event. A whole night dedicated to worship, prophetic word, and miracles.",
     "nightPillar1": "Holy Spirit Baptism",
@@ -424,6 +475,33 @@
     "verse": "\"If two of you on earth agree about anything they ask for, it will be done for them by my Father.\"",
     "privacy": "Our team and community will pray for you. Your information remains confidential if you wish."
   },
+  "resourcesPage": {
+    "metaTitle": "Resources",
+    "metaDesc": "Photo gallery, testimonies and practical materials to experience and organize LiFAC's activities.",
+    "heroKicker": "RESOURCES",
+    "heroTitle": "LiFAC Media Library & Resources",
+    "heroSubtitle": "Photos, testimonies and practical tools to discover, prepare and take part in our field activities.",
+    "galleryKicker": "Media library",
+    "galleryTitle": "Our Actions in Pictures",
+    "testimoniesTitle": "Testimonies",
+    "resKicker": "Practical resources",
+    "resTitle": "Resources & Materials",
+    "resSubtitle": "Practical guidance to go deeper into every part of LiFAC's mission.",
+    "resLearnMore": "Discover",
+    "resEvangelismTitle": "Evangelism Guides",
+    "resEvangelismDesc": "Practical guidance to prepare and lead an evangelism crusade.",
+    "resTrainingTitle": "Training Materials",
+    "resTrainingDesc": "The fundamentals taught in our Evangelism Training sessions.",
+    "resHumanitarianTitle": "Humanitarian Action Kit",
+    "resHumanitarianDesc": "How to organize a social action or a community health campaign.",
+    "resOrganizeTitle": "Organizing an Activity",
+    "resOrganizeDesc": "The typical run of a Pop-Up Crusade, from preparation to debrief.",
+    "resBibleTitle": "Prayer Resources",
+    "resBibleDesc": "Submit or support a prayer request with the LiFAC community.",
+    "ctaTitle": "Need a Specific Resource?",
+    "ctaDesc": "Contact the LiFAC team to get support or materials tailored to your project.",
+    "ctaButton": "Contact us"
+  },
   "auth": {
     "login": "Login",
     "loginDesc": "Access your donor or volunteer dashboard.",
@@ -435,6 +513,8 @@
   },
   "adminDashboard": {
     "title": "Admin Dashboard",
+    "welcome": "Welcome!",
+    "dashboardOverview": "Here's an overview of LiFAC's activities and impact. Use the menu to navigate and manage the different sections.",
     "kpi": {
       "activities": "Activities Executed",
       "schools": "Schools Visited",
@@ -443,7 +523,7 @@
       "attendance": "Total Attendance",
       "decisions": "Decisions for Christ",
       "converts": "New Converts",
-      "agents": "Active Agents"
+      "agents": "Active Missionaries"
     },
     "distribution": "Distribution by Module",
     "recentActivities": "Recent Activities",
@@ -465,12 +545,24 @@
     "popCrusade": "Pop-crusade",
     "oneToOne": "One-to-one",
     "crusades": "Crusades",
+    "events": "Events",
+    "campaigns": "Campaigns",
+    "donations": "Donations",
     "registrations": "Registrations",
     "attendance": "Attendance Scanner",
+    "activities": "Activities",
     "reports": "Reports",
     "settings": "Settings",
     "users": "Users",
-    "logout": "Logout"
+    "logout": "Logout",
+    "missionaries": "Missionaries",
+    "admins": "Administrators",
+    "connectedAs": "Logged in as",
+    "sectionOverview": "Overview",
+    "sectionContent": "Content",
+    "sectionTeam": "Team",
+    "sectionField": "Field",
+    "sectionSystem": "System"
   },
   "agentSidebar": {
     "home": "Home",
@@ -480,7 +572,8 @@
     "prayer": "Intercession",
     "aiAssistant": "LIFAC AI Assistant",
     "profile": "Profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "missionaryLabel": "Missionary"
   },
   "adminSchools": {
     "title": "Schools Management",
@@ -495,5 +588,228 @@
         "delete": "Delete"
     },
     "assignments": "School assignments"
+  },
+  "adminRegistrations": {
+    "title": "Attendance Management — Registrations",
+    "search": "Search by name, phone or number...",
+    "allEvents": "All events",
+    "filter": "Filter",
+    "downloadCard": "Card",
+    "noNumber": "—",
+    "noNumberTooltip": "Participant number not generated",
+    "empty": "No registration found",
+    "columns": {
+      "number": "Participant No.",
+      "fullName": "Full name",
+      "phone": "Phone",
+      "event": "Event",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "canceled": "Canceled"
+    }
+  },
+  "adminActivities": {
+    "title": "Activities Management",
+    "add": "Add an activity",
+    "search": "Search by title or code...",
+    "allStatus": "All statuses",
+    "allTypes": "All types",
+    "filter": "Filter",
+    "empty": "No activity found"
+  },
+  "adminAdmins": {
+    "title": "Administrators Management",
+    "add": "Add an administrator",
+    "empty": "No administrator found",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "createdAt": "Created on",
+      "actions": "Actions"
+    },
+    "delete": "Deactivate",
+    "cannotDeleteSelf": "You cannot deactivate your own account",
+    "requiredFields": "Name, email and password are required",
+    "modalTitle": "New administrator",
+    "name": "Full name",
+    "email": "Email",
+    "password": "Password",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirmDelete": "Confirm deactivation of this administrator?"
+  },
+  "activityTypes": {
+    "crusade": {
+      "label": "Evangelism Crusade",
+      "shortDesc": "3 to 4-day campaigns in cities and communities to proclaim the Gospel, pray for the sick and see lives transformed.",
+      "metaDesc": "Discover LiFAC's Evangelism Crusades: several days of preaching, prayer and healing at the heart of cities and communities.",
+      "intro": "LiFAC's Evangelism Crusades are evangelistic campaigns organized in cities and communities to proclaim the Good News of Jesus Christ to as many people as possible.",
+      "paragraphs": [
+        "They usually take place over three to four consecutive days, allowing populations to attend several evenings of preaching and prayer. Each gathering is centered on the faithful proclamation of the Gospel, accompanied by a clear call to salvation to lead men and women into a personal relationship with Jesus Christ.",
+        "Crusades are also times when the sick receive prayer in faith for their healing, the captives are set free, and believers are led to receive the baptism of the Holy Spirit, with the biblical manifestations that accompany it, including speaking in tongues.",
+        "Through these crusades, LiFAC pursues its mission to make disciples of Jesus Christ, establish new converts in the faith, and see God's power lastingly transform lives, families and communities."
+      ],
+      "bullets": [
+        "Preaching and altar call every evening",
+        "Prayer for the sick and the captives",
+        "Baptism of the Holy Spirit and biblical manifestations",
+        "Follow-up and grounding of new converts"
+      ]
+    },
+    "youthCrusade": {
+      "label": "Youth Crusade",
+      "shortDesc": "The evangelism program dedicated to young people, directly in schools, colleges, high schools and universities.",
+      "metaDesc": "Youth Crusade: LiFAC proclaims the Gospel to pupils, students and young trainees in their schools and universities.",
+      "intro": "Youth Crusades is LiFAC's evangelism program specially dedicated to young people. Its goal is to proclaim the Gospel of Jesus Christ to pupils, students and young trainees, directly in their living and learning environments.",
+      "paragraphs": [
+        "Through interventions in schools, colleges, high schools, universities and training centers, LiFAC teams proclaim the message of salvation in Jesus Christ in a clear, relevant way suited to young people. Each gathering is an opportunity to invite participants to receive Jesus Christ as Lord and Savior, to experience the new birth, and to grow in a personal relationship with God.",
+        "Youth Crusades are also times of prayer for the sick, spiritual encouragement, and awareness of a life founded on Kingdom values. Depending on the Holy Spirit's leading and the context of each institution, prayer times may also be dedicated to the baptism of the Holy Spirit.",
+        "Through this program, LiFAC desires to see a generation of young people transformed by the Gospel, strengthened in their faith and equipped to become witnesses of Jesus Christ in their schools, families and society."
+      ],
+      "bullets": [
+        "Interventions in schools, colleges, high schools and universities",
+        "Message tailored to young people's realities",
+        "Prayer for the sick and spiritual encouragement",
+        "Raising a generation of witnesses for Christ"
+      ]
+    },
+    "popUpCrusade": {
+      "label": "Pop-Up Crusade",
+      "shortDesc": "A mobile evangelism team, deployed in under 4 hours in a village, neighborhood or public square.",
+      "metaDesc": "Pop-Up Crusade: simple, quickly deployable local evangelism crusades organized by LiFAC wherever the need arises.",
+      "intro": "Pop-Up Crusade is a local evangelism crusade program organized by LiFAC (Light For All Center). It consists of deploying, on a one-off basis and with minimal equipment, an evangelism team in a village, neighborhood, crossroads, public square or any other accessible space to proclaim the Gospel of Jesus Christ.",
+      "paragraphs": [
+        "Lasting a maximum of four hours, the Pop-Up Crusade is designed to be simple, mobile and quickly deployable. Despite its short format, it retains the essential elements of LiFAC's mission: proclamation of the Gospel, the call to salvation, prayer for the sick, and the demonstration of God's compassion and power.",
+        "This program makes it possible to reach populations who would not necessarily attend a large crusade or a church meeting. It also offers the ability to quickly respond to a missionary need in a locality, prepare the ground for a larger evangelism campaign, or bring the Gospel into areas that are little or not yet reached.",
+        "Through Pop-Up Crusades, LiFAC demonstrates its determination to go to the people, in line with the missionary mandate of Jesus Christ, so that as many as possible hear the Gospel, receive salvation and experience the power of God."
+      ],
+      "bullets": [
+        "Rapid deployment, in under 4 hours",
+        "Mobile format with minimal equipment",
+        "Ideal for preparing a larger crusade",
+        "Reaches little or not yet reached areas"
+      ]
+    },
+    "marketOutreach": {
+      "label": "Market Outreach",
+      "shortDesc": "\"Jesus at the Market\" brings the Gospel to the heart of markets, where people live, work and meet every day.",
+      "metaDesc": "Jesus at the Market: LiFAC proclaims the Gospel and prays for the sick at the heart of Benin's markets and commercial spaces.",
+      "intro": "Jesus at the Market is a local evangelism program organized by LiFAC in markets and commercial spaces. Its goal is to bring the Gospel of Jesus Christ to the heart of places where people live, work and meet daily.",
+      "paragraphs": [
+        "Through the preaching of the Gospel, LiFAC teams proclaim the message of salvation in Jesus Christ and invite men and women to respond to God's call. Prayer times are also dedicated to the sick, those bound by various forms of suffering or oppression, and all who wish to experience the transforming power of God.",
+        "Faithful to the mission of Jesus Christ, Jesus at the Market aims to see captives regain freedom in Christ, the oppressed lifted up, the sick receive prayer in faith, and new believers begin a new life with the Lord.",
+        "Through this initiative, LiFAC wants to make the Gospel accessible to all, going to meet people where they are, so that no one is denied the chance to hear the message of God's love and salvation in Jesus Christ."
+      ],
+      "bullets": [
+        "Regular presence in markets and commercial spaces",
+        "Preaching and prayer for the sick",
+        "Freeing captives and lifting up the oppressed",
+        "Gospel made accessible to all, without distinction"
+      ]
+    },
+    "oneOnOne": {
+      "label": "Personal Evangelism",
+      "shortDesc": "Meeting each person individually for a face-to-face testimony full of listening and compassion.",
+      "metaDesc": "Personal Evangelism: LiFAC meets each person individually, in homes, streets and workplaces, to proclaim the Gospel.",
+      "intro": "Personal Evangelism is a local LiFAC (Light For All Center) program that consists of going to meet people, individually, to proclaim the Good News of Jesus Christ to them through a personal exchange.",
+      "paragraphs": [
+        "Unlike campaigns and public gatherings, this approach favors face-to-face testimony. LiFAC teams carry out evangelism outreaches in homes, streets, neighborhoods, beaches, workplaces, public spaces and any other place suited to a personal encounter.",
+        "Every conversation is an opportunity to listen to the person, present the message of salvation in Jesus Christ, answer their questions, pray with them, and invite them to receive Jesus Christ as Lord and Savior. Depending on the need, evangelists also pray for the sick, people in difficulty, or those seeking God's intervention in their lives.",
+        "Through this program, LiFAC demonstrates the love of Christ in a personal way, creating an atmosphere of listening, trust and compassion, so that everyone can hear the Gospel and make a free, informed decision to follow Jesus Christ."
+      ],
+      "bullets": [
+        "One-on-one, face-to-face encounters",
+        "Listening, dialogue and answering questions",
+        "Personalized prayer according to needs",
+        "An atmosphere of trust and compassion"
+      ]
+    },
+    "nightOfHope": {
+      "label": "Night of Hope",
+      "shortDesc": "An annual gathering (May to July) entirely devoted to the Gospel and the manifestation of the Holy Spirit's power.",
+      "metaDesc": "Night of Hope: LiFAC's annual evening devoted to the proclamation of the Gospel and the baptism of the Holy Spirit.",
+      "intro": "Night of Hope is an evangelism program organized by LiFAC (Light For All Center). This gathering, held every year between May and July, is entirely devoted to the proclamation of the Gospel of Jesus Christ and the manifestation of the Holy Spirit's power.",
+      "paragraphs": [
+        "During this evening, the Gospel is proclaimed with a call to salvation inviting everyone to receive Jesus Christ as Lord and Savior. Prayer times are then dedicated to the sick, in faith that God still heals today, as well as to those who wish to receive the baptism of the Holy Spirit with the biblical manifestations that accompany it, including speaking in tongues.",
+        "Night of Hope places particular emphasis on the person and work of the Holy Spirit, to bring participants to experience a personal encounter with God, grow in their faith, and be equipped for a Christian life filled with the Holy Spirit's power."
+      ],
+      "bullets": [
+        "Annual gathering, between May and July",
+        "Altar call and prayer for the sick",
+        "Baptism of the Holy Spirit and biblical manifestations",
+        "Special focus on the work of the Holy Spirit"
+      ]
+    },
+    "humanitarian": {
+      "label": "Humanitarian Action",
+      "shortDesc": "Demonstrating God's love in concrete ways: aid to vulnerable families, donations and community health campaigns.",
+      "metaDesc": "LiFAC Humanitarian Action: social aid, donations to disadvantaged families and community health campaigns in Benin.",
+      "intro": "Humanitarian Action is a periodic LiFAC (Light For All Center) program that aims to demonstrate God's love in concrete ways through social and medical actions for vulnerable people.",
+      "paragraphs": [
+        "In this context, LiFAC organizes and supports various humanitarian assistance initiatives, including aid to people in difficulty, donations and one-off support to disadvantaged families, as well as targeted social actions for the neediest.",
+        "The program also includes supporting community health campaigns, such as screening sessions for certain diseases, blood typing tests, electrophoresis exams and other health prevention activities, in collaboration with health professionals and partner medical facilities.",
+        "Through these actions, LiFAC concretely expresses the compassion of Jesus Christ by responding not only to people's spiritual needs, but also to their physical and social needs, contributing to their overall well-being."
+      ],
+      "bullets": [
+        "Aid and donations to disadvantaged families",
+        "Screening and blood typing campaigns",
+        "Partnership with health professionals",
+        "Responding to spiritual, physical and social needs"
+      ]
+    },
+    "training": {
+      "label": "Evangelism Training",
+      "shortDesc": "Preparing and sending qualified workers for the work of evangelism, according to Matthew 9:37-38.",
+      "metaDesc": "LiFAC Evangelism Training: equipping churches, pastors, evangelists and young believers to proclaim the Gospel with wisdom and power.",
+      "intro": "Evangelism Training is a LiFAC (Light For All Center) training and equipping program designed to prepare and send qualified workers for the work of evangelism.",
+      "paragraphs": [
+        "Convinced that \"the harvest is plentiful, but the workers are few\" (Matthew 9:37-38), LiFAC invests in training believers so they can proclaim the Gospel with confidence, wisdom, love and under the leading of the Holy Spirit. These trainings are aimed in particular at: local churches, Christian ministries, evangelists, pastors and church leaders, young people passionate about proclaiming the Gospel, and any believer wishing to take part in expanding the Kingdom of God.",
+        "The teaching combines solid biblical foundations with hands-on field practice. Participants are trained to share their faith, lead a person to Jesus Christ, exercise an evangelism ministry with wisdom and compassion, pray for the sick, depend on the Holy Spirit's work, and organize various types of evangelism actions.",
+        "LiFAC's goal is to multiply harvest workers by developing a generation of disciples able to train other disciples in turn, in line with the missionary mandate of Jesus Christ."
+      ],
+      "bullets": [
+        "Solid biblical foundations and field practice",
+        "Open to churches, pastors, evangelists and young people",
+        "Training in sharing faith and praying for the sick",
+        "Multiplying disciples who train other disciples"
+      ]
+    },
+    "other": {
+      "label": "Other activity",
+      "shortDesc": "A specific activity carried out by our field teams.",
+      "metaDesc": "Discover LiFAC's field activities.",
+      "intro": "LiFAC regularly carries out field actions tailored to the specific needs of each community.",
+      "paragraphs": [],
+      "bullets": []
+    },
+    "heroKicker": "OVERVIEW",
+    "keyPointsTitle": "Key points",
+    "ctaEventsTitle": "Want to take part?",
+    "ctaEventsDesc": "Register for our next event or join our teams in the field.",
+    "ctaEvents": "Register for an event",
+    "ctaVolunteer": "Become a missionary",
+    "backToActivities": "← Back to activities"
+  },
+  "activityDetailPage": {
+    "backToActivities": "← Back to activities",
+    "learnMoreAboutType": "Learn more about this type of activity",
+    "date": "Date",
+    "location": "Location",
+    "responsible": "In charge",
+    "partnerChurch": "Partner church",
+    "impactTitle": "Activity impact",
+    "estimatedParticipants": "Estimated participants",
+    "actualParticipants": "Actual participants",
+    "decisionsForChrist": "Decisions for Christ",
+    "biblesDistributed": "Bibles distributed",
+    "newContacts": "New contacts",
+    "descriptionTitle": "Description",
+    "notesTitle": "Notes",
+    "notFoundTitle": "Activity not found",
+    "notFoundDesc": "This activity does not exist or has been removed."
   }
 }

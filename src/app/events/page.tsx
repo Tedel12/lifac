@@ -1,192 +1,366 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { useTranslations } from "next-intl";
+import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
-import { Flame, Globe, GraduationCap, Quote, MapPin, Phone, Calendar } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  Users,
+  Mic,
+  ArrowRight,
+  Flame,
+  GraduationCap,
+  HandHeart,
+  Cross,
+  Sparkles,
+  Store,
+  MessageCircle,
+  Tent,
+  Quote,
+} from "lucide-react";
+
+export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("events");
-  return {
-    title: t("title"),
-    description: t("subtitle"),
-  };
+  return { title: t("title"), description: t("subtitle") };
 }
 
-export default function EventsPage() {
+const EVENT_TYPE_ICONS: Record<string, typeof Flame> = {
+  CRUSADE: Flame,
+  POP_UP_CRUSADE: Sparkles,
+  SCHOOL_OUTREACH: GraduationCap,
+  MARKET_OUTREACH: Store,
+  ONE_ON_ONE: MessageCircle,
+  YOUTH_CAMP: Tent,
+  TRAINING: GraduationCap,
+  HUMANITARIAN_MISSION: HandHeart,
+  PRAYER_MEETING: Cross,
+};
+
+const EVENT_TYPES_ORDER = [
+  "CRUSADE",
+  "POP_UP_CRUSADE",
+  "SCHOOL_OUTREACH",
+  "MARKET_OUTREACH",
+  "YOUTH_CAMP",
+  "TRAINING",
+  "HUMANITARIAN_MISSION",
+  "PRAYER_MEETING",
+] as const;
+
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>;
+}) {
+  const { type } = await searchParams;
+  const now = new Date();
+  const yearStart = new Date(now.getFullYear(), 0, 1);
+  const yearEnd = new Date(now.getFullYear() + 1, 0, 1);
+
+  const [allUpcoming, yearCount, testimony] = await Promise.all([
+    prisma.event.findMany({
+      where: {
+        status: "UPCOMING",
+        startDate: { gte: now },
+        ...(type ? { type: type as any } : {}),
+      },
+      orderBy: { startDate: "asc" },
+      take: 30,
+    }),
+    prisma.event.count({ where: { startDate: { gte: yearStart, lt: yearEnd } } }),
+    prisma.testimony.findFirst({
+      where: { isApproved: true, isFeatured: true },
+      orderBy: { createdAt: "desc" },
+      select: { authorName: true, authorRole: true, content: true },
+    }),
+  ]);
+
+  const featured = allUpcoming.find((e) => e.isFeatured) ?? allUpcoming[0] ?? null;
+  const upcoming = allUpcoming.filter((e) => e.id !== featured?.id).slice(0, 6);
+  const cities = Array.from(new Set(allUpcoming.map((e) => e.city).filter(Boolean))) as string[];
+  const expectedAttendance = allUpcoming.reduce((sum, e) => sum + (e.maxAttendees ?? 0), 0);
+
   return (
-    <div className="bg-lifac-navy-950">
-      <EventsHero />
-      <FireInAction />
-      <NightOfHolySpirit />
-      <EventTypes />
-      <UpcomingTable />
-      <Atmosphere />
-      <BigCrusades />
-      <ImpactNumbers />
-      <FormationsSeminars />
-      <TestimonyQuote />
-      <ReadyCta />
-      <PracticalInfo />
+    <div>
+      <Hero />
+      <StatsBar
+        citiesCount={cities.length}
+        eventsCount={yearCount}
+        attendance={expectedAttendance}
+      />
+      {featured && <FeaturedEvent event={featured} />}
+      {upcoming.length > 0 && <UpcomingEvents events={upcoming} />}
+      <EventCategories activeType={type} />
+      {allUpcoming.length > 0 && <CalendarList events={allUpcoming.slice(0, 6)} />}
+      {cities.length > 0 && <CitiesList cities={cities} />}
+      <TestimonyBanner testimony={testimony} />
+      <NewsletterCta />
     </div>
   );
 }
 
-function EventsHero() {
-  const t = useTranslations("events");
-  const tp = useTranslations("eventsPage");
+async function Hero() {
+  const t = await getTranslations("eventsPage");
+  const te = await getTranslations("events");
   return (
-    <section className="relative bg-lifac-fire pt-32 pb-20 lg:pt-40 lg:pb-28 text-center text-white overflow-hidden">
+    <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-24 text-center text-white overflow-hidden">
+      <div className="absolute inset-0">
+        <Image src="/activities/night-of-hope.jpg" alt="" fill priority className="object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/70 to-black" />
+      </div>
       <div className="container mx-auto px-4 lg:px-6 relative">
-        <p className="text-xs tracking-[0.3em] text-white/60 uppercase mb-4">
-          {tp("kicker")}
-        </p>
-        <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold text-lifac-red-500 mb-5 tracking-tight">
-          {tp("title")}
+        <p className="text-xs tracking-[0.3em] text-white/60 uppercase mb-4">{t("kicker")}</p>
+        <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-5 tracking-tight max-w-3xl mx-auto">
+          {t("title")}
         </h1>
-        <p className="text-white/80 max-w-2xl mx-auto">{t("subtitle")}</p>
+        <p className="text-white/80 max-w-2xl mx-auto">{te("subtitle")}</p>
         <div className="mt-8 w-24 h-1 bg-lifac-red-600 mx-auto rounded-full" />
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <Link href="/register">
+            <Button variant="default" size="xl" className="uppercase tracking-wider">
+              {t("registerCta")}
+            </Button>
+          </Link>
+          <Link href="#calendar">
+            <Button
+              variant="outline"
+              size="xl"
+              className="uppercase tracking-wider border-white/40 bg-transparent text-white hover:bg-white hover:text-lifac-navy-950"
+            >
+              {t("calendarCta")}
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );
 }
 
-function FireInAction() {
-  const t = useTranslations("events");
+async function StatsBar({
+  citiesCount,
+  eventsCount,
+  attendance,
+}: {
+  citiesCount: number;
+  eventsCount: number;
+  attendance: number;
+}) {
+  const t = await getTranslations("eventsPage");
+  const items = [
+    { icon: MapPin, value: citiesCount > 0 ? `${citiesCount}+` : "5+", label: t("statLocations") },
+    { icon: Calendar, value: `${eventsCount || 20}+`, label: t("statEvents") },
+    { icon: Users, value: attendance > 0 ? `${attendance.toLocaleString("fr-FR")}+` : "50K+", label: t("statAttendance") },
+    { icon: Mic, value: t("statSpeakersValue"), label: t("statSpeakers") },
+  ];
   return (
-    <section className="bg-lifac-navy-950 py-20 text-white text-center">
+    <section className="bg-[#F4F5F7] py-8 lg:py-10">
       <div className="container mx-auto px-4 lg:px-6">
-        <div className="w-16 h-1 bg-lifac-red-600 mx-auto mb-6 rounded-full" />
-        <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
-          {t("title")}<br />{t("subtitle") === "..." ? "" : ""} {/* Adjust if needed */}
-        </h2>
-        <p className="text-white/70">{t("subtitle")}</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4">
+          {items.map((item) => (
+            <div key={item.label} className="flex items-center gap-3 lg:justify-center">
+              <div className="h-12 w-12 rounded-full bg-lifac-red-600 flex items-center justify-center shrink-0 shadow-md shadow-lifac-red-600/30">
+                <item.icon className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <div className="font-display text-xl lg:text-2xl font-extrabold text-lifac-navy-900 leading-none">
+                  {item.value}
+                </div>
+                <div className="text-[10px] lg:text-[11px] tracking-[0.1em] text-lifac-navy-500 mt-1.5 font-bold uppercase">
+                  {item.label}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-function NightOfHolySpirit() {
-  const t = useTranslations("eventsPage");
+async function FeaturedEvent({ event }: { event: Awaited<ReturnType<typeof prisma.event.findFirst>> }) {
+  if (!event) return null;
+  const t = await getTranslations("eventsPage");
   return (
-    <section className="bg-lifac-navy-900 py-16 lg:py-20 text-white">
+    <section className="bg-white py-16 lg:py-20">
       <div className="container mx-auto px-4 lg:px-6">
-        <div className="flex items-center gap-3 mb-10">
+        <div className="grid lg:grid-cols-2 gap-8 items-center bg-[#F4F5F7] rounded-2xl overflow-hidden">
+          <div className="relative aspect-[4/3] lg:aspect-auto lg:h-full min-h-[280px]">
+            {event.coverImageUrl ? (
+              <Image src={event.coverImageUrl} alt={event.title} fill className="object-cover" />
+            ) : (
+              <Image src="/activities/crusade.jpg" alt={event.title} fill className="object-cover" />
+            )}
+            <span className="absolute top-4 left-4 bg-lifac-red-600 text-white text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full">
+              {t("featuredBadge")}
+            </span>
+          </div>
+          <div className="p-6 lg:p-10">
+            <h2 className="font-display text-2xl lg:text-3xl font-extrabold text-lifac-navy-900 mb-3">
+              {event.title}
+            </h2>
+            <div className="flex flex-wrap gap-4 text-sm text-lifac-navy-600 mb-4">
+              <span className="flex items-center gap-1.5">
+                <Calendar className="h-4 w-4 text-lifac-red-600" />
+                {formatRange(event.startDate, event.endDate)}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4 text-lifac-red-600" />
+                {event.location}
+                {event.city ? `, ${event.city}` : ""}
+              </span>
+            </div>
+            <p className="text-lifac-navy-700 leading-relaxed mb-6">{event.shortDescription}</p>
+            <Link href={`/events/${event.slug}`}>
+              <Button variant="default" size="lg" className="uppercase tracking-wider">
+                {t("registerCta")}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+async function UpcomingEvents({ events }: { events: Awaited<ReturnType<typeof prisma.event.findMany>> }) {
+  const t = await getTranslations("eventsPage");
+  return (
+    <section className="bg-[#F4F5F7] py-16 lg:py-20">
+      <div className="container mx-auto px-4 lg:px-6">
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <div className="h-8 w-1 bg-lifac-red-600 rounded-full mb-3" />
+            <h2 className="font-display text-2xl lg:text-3xl font-extrabold text-lifac-navy-900">
+              {t("upcomingTitle")}
+            </h2>
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map((event) => (
+            <Link
+              key={event.id}
+              href={`/events/${event.slug}`}
+              className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="relative aspect-[4/3] overflow-hidden">
+                {event.coverImageUrl ? (
+                  <Image src={event.coverImageUrl} alt={event.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                ) : (
+                  <Image src="/activities/pop-up-crusade.jpg" alt={event.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                )}
+                <div className="absolute top-3 left-3 bg-white rounded-lg px-2.5 py-1.5 text-center shadow-md">
+                  <div className="text-base font-extrabold text-lifac-navy-900 leading-none">
+                    {event.startDate.toLocaleDateString("fr-FR", { day: "2-digit" })}
+                  </div>
+                  <div className="text-[9px] tracking-widest text-lifac-red-600 font-bold mt-0.5 uppercase">
+                    {event.startDate.toLocaleDateString("fr-FR", { month: "short" })}
+                  </div>
+                </div>
+              </div>
+              <div className="p-5 flex flex-col flex-1">
+                <h3 className="font-display font-bold text-lifac-navy-900 mb-2 leading-tight line-clamp-2">
+                  {event.title}
+                </h3>
+                <p className="text-lifac-navy-500 text-xs mb-4 flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-lifac-red-600 shrink-0" />
+                  {event.location}
+                  {event.city ? `, ${event.city}` : ""}
+                </p>
+                <span className="mt-auto inline-flex items-center gap-1.5 text-lifac-red-600 text-sm font-bold uppercase tracking-wide">
+                  {t("learnMore")}
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+async function EventCategories({ activeType }: { activeType?: string }) {
+  const t = await getTranslations("eventsPage");
+  const tt = await getTranslations("eventTypeLabels");
+  return (
+    <section className="bg-white py-16 lg:py-20">
+      <div className="container mx-auto px-4 lg:px-6">
+        <div className="flex items-center gap-3 mb-8">
           <div className="h-8 w-1 bg-lifac-red-600 rounded-full" />
-          <h2 className="font-display text-2xl lg:text-3xl font-extrabold">
-            {t("nightTitle")}
+          <h2 className="font-display text-2xl lg:text-3xl font-extrabold text-lifac-navy-900">
+            {t("categoriesTitle")}
           </h2>
         </div>
-
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-5xl mx-auto">
-          <div>
-            <h4 className="font-bold text-sm tracking-wider mb-3">UNE RENCONTRE DIVINE</h4>
-            <p className="text-white/75 leading-relaxed mb-5">
-              {t("nightDesc")}
-            </p>
-            <ul className="space-y-3 text-white/85">
-              <li className="flex items-center gap-3">
-                <Flame className="h-5 w-5 text-lifac-red-500" />
-                {t("nightPillar1")}
-              </li>
-              <li className="flex items-center gap-3">
-                <Flame className="h-5 w-5 text-lifac-red-500" />
-                {t("nightPillar2")}
-              </li>
-              <li className="flex items-center gap-3">
-                <Flame className="h-5 w-5 text-lifac-red-500" />
-                {t("nightPillar3")}
-              </li>
-            </ul>
-          </div>
-
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border-2 border-lifac-red-600/60">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-400 via-lifac-red-600 to-lifac-navy-950" />
-            <svg className="absolute inset-0 w-full h-full opacity-50" viewBox="0 0 400 300">
-              <g stroke="#000" strokeWidth="4" strokeLinecap="round">
-                <line x1="120" y1="250" x2="120" y2="150" />
-                <line x1="180" y1="250" x2="180" y2="120" />
-                <line x1="240" y1="250" x2="240" y2="120" />
-                <line x1="300" y1="250" x2="300" y2="150" />
-              </g>
-              <g fill="#000" opacity="0.6">
-                <circle cx="120" cy="265" r="20" />
-                <circle cx="180" cy="265" r="22" />
-                <circle cx="240" cy="265" r="22" />
-                <circle cx="300" cy="265" r="20" />
-              </g>
-            </svg>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {EVENT_TYPES_ORDER.map((et) => {
+            const Icon = EVENT_TYPE_ICONS[et];
+            const active = activeType === et;
+            return (
+              <Link
+                key={et}
+                href={active ? "/events" : `/events?type=${et}`}
+                className={`rounded-2xl p-5 text-center border transition-all hover:-translate-y-1 hover:shadow-md ${
+                  active ? "bg-lifac-red-600 border-lifac-red-600" : "bg-[#F4F5F7] border-transparent hover:border-lifac-red-600/30"
+                }`}
+              >
+                <div className={`h-12 w-12 rounded-full flex items-center justify-center mx-auto mb-3 ${active ? "bg-white/20" : "bg-white"}`}>
+                  <Icon className={`h-5 w-5 ${active ? "text-white" : "text-lifac-red-600"}`} />
+                </div>
+                <span className={`text-xs font-bold uppercase tracking-wide ${active ? "text-white" : "text-lifac-navy-800"}`}>
+                  {tt(et)}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 
-function EventTypes() {
-  const t = useTranslations("events.types");
-  const tp = useTranslations("eventsPage");
-  const types = [
-    { key: "crusades", icon: <Globe className="h-7 w-7 text-lifac-red-500" /> },
-    { key: "seminars", icon: <GraduationCap className="h-7 w-7 text-lifac-red-500" /> },
-    { key: "vigils", icon: <Flame className="h-7 w-7 text-lifac-red-500" /> },
-  ] as const;
-
+async function CalendarList({ events }: { events: Awaited<ReturnType<typeof prisma.event.findMany>> }) {
+  const t = await getTranslations("eventsPage");
   return (
-    <section className="bg-lifac-navy-950 py-16 lg:py-20 text-white">
+    <section id="calendar" className="bg-[#F4F5F7] py-16 lg:py-20 scroll-mt-24">
       <div className="container mx-auto px-4 lg:px-6">
-        <div className="flex items-center gap-3 mb-12">
+        <div className="flex items-center gap-3 mb-8">
           <div className="h-8 w-1 bg-lifac-red-600 rounded-full" />
-          <h2 className="font-display text-2xl lg:text-3xl font-extrabold">{tp("typesTitle")}</h2>
+          <h2 className="font-display text-2xl lg:text-3xl font-extrabold text-lifac-navy-900">
+            {t("calendarTitle")}
+          </h2>
         </div>
-
-        <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
-          {types.map((type) => (
-            <div key={type.key} className="bg-lifac-navy-900 rounded-2xl p-6 text-center border-b-2 border-lifac-red-600">
-              <div className="h-14 w-14 rounded-full bg-lifac-red-600/10 flex items-center justify-center mx-auto mb-4">
-                {type.icon}
-              </div>
-              <h3 className="font-bold text-white tracking-wider mb-3">
-                {t(`${type.key}.title`)}
-              </h3>
-              <p className="text-white/70 text-sm leading-relaxed">{t(`${type.key}.desc`)}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function UpcomingTable() {
-  const t = useTranslations("events");
-  const rows = t.raw("upcoming") as { date: string; title: string; location: string; time: string }[];
-
-  return (
-    <section className="bg-lifac-navy-900 py-16 lg:py-20 text-white">
-      <div className="container mx-auto px-4 lg:px-6">
-        <div className="flex items-center gap-3 mb-10">
-          <div className="h-8 w-1 bg-lifac-red-600 rounded-full" />
-          <h2 className="font-display text-2xl lg:text-3xl font-extrabold uppercase">{t("kicker")}</h2>
-        </div>
-
-        <div className="max-w-5xl mx-auto rounded-xl overflow-hidden border border-white/10">
-          <div className="grid grid-cols-3 bg-lifac-red-600 text-white font-bold text-sm">
-            <div className="px-5 py-3.5">{t("table.date")}</div>
-            <div className="px-5 py-3.5">{t("table.event")}</div>
-            <div className="px-5 py-3.5">{t("table.place")}</div>
-          </div>
-          {rows.map((row, i) => (
-            <div
-              key={row.title}
-              className={`grid grid-cols-3 text-sm border-t border-white/5 ${
-                i % 2 === 0 ? "bg-lifac-navy-950/40" : ""
+        <div className="max-w-3xl bg-white rounded-2xl overflow-hidden shadow-sm">
+          {events.map((event, i) => (
+            <Link
+              key={event.id}
+              href={`/events/${event.slug}`}
+              className={`flex items-center gap-4 px-5 py-4 hover:bg-[#F4F5F7] transition-colors ${
+                i > 0 ? "border-t border-gray-100" : ""
               }`}
             >
-              <div className="px-5 py-4 text-white font-bold">{row.date}</div>
-              <div className="px-5 py-4 text-white/85">{row.title}</div>
-              <div className="px-5 py-4 text-white/75">{row.location}</div>
-            </div>
+              <div className="text-center w-14 shrink-0">
+                <div className="text-xl font-extrabold text-lifac-red-600 leading-none">
+                  {event.startDate.toLocaleDateString("fr-FR", { day: "2-digit" })}
+                </div>
+                <div className="text-[10px] font-bold text-lifac-navy-500 uppercase tracking-wide">
+                  {event.startDate.toLocaleDateString("fr-FR", { month: "short" })}
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-lifac-navy-900 truncate">{event.title}</p>
+                <p className="text-xs text-lifac-navy-500">
+                  {event.location}
+                  {event.city ? `, ${event.city}` : ""}
+                </p>
+              </div>
+              <ArrowRight className="h-4 w-4 text-lifac-red-600 shrink-0" />
+            </Link>
           ))}
         </div>
       </div>
@@ -194,35 +368,26 @@ function UpcomingTable() {
   );
 }
 
-function Atmosphere() {
-  const t = useTranslations("eventsPage");
+async function CitiesList({ cities }: { cities: string[] }) {
+  const t = await getTranslations("eventsPage");
   return (
-    <section className="bg-lifac-navy-950 py-16 lg:py-20 text-white">
+    <section className="bg-white py-16 lg:py-20">
       <div className="container mx-auto px-4 lg:px-6">
-        <div className="flex items-center gap-3 mb-10">
+        <div className="flex items-center gap-3 mb-8">
           <div className="h-8 w-1 bg-lifac-red-600 rounded-full" />
-          <h2 className="font-display text-2xl lg:text-3xl font-extrabold">{t("atmosphereTitle")}</h2>
+          <h2 className="font-display text-2xl lg:text-3xl font-extrabold text-lifac-navy-900">
+            {t("citiesTitle")}
+          </h2>
         </div>
-
-        <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
-          {[0, 1].map((i) => (
-            <div
-              key={i}
-              className="aspect-[16/10] rounded-2xl bg-lifac-navy-900 border border-lifac-red-600/40 overflow-hidden relative"
+        <div className="flex flex-wrap gap-3">
+          {cities.map((city) => (
+            <span
+              key={city}
+              className="inline-flex items-center gap-2 bg-[#F4F5F7] text-lifac-navy-800 text-sm font-medium px-4 py-2 rounded-full"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-lifac-navy-800 to-lifac-navy-950" />
-              <svg className="absolute inset-0 w-full h-full opacity-50" viewBox="0 0 200 130">
-                <g fill="#020617">
-                  <path d="M0 110 Q 50 90 100 100 T 200 105 L 200 130 L 0 130 Z" />
-                </g>
-                <g fill="#0B1428">
-                  {[10, 30, 60, 90, 120, 150, 180].map((x) => (
-                    <circle key={x} cx={x} cy={108} r={8} />
-                  ))}
-                </g>
-                <ellipse cx="100" cy="40" rx="80" ry="35" fill={i === 0 ? "#DC2626" : "#F59E0B"} opacity="0.35" />
-              </svg>
-            </div>
+              <MapPin className="h-4 w-4 text-lifac-red-600" />
+              {city}
+            </span>
           ))}
         </div>
       </div>
@@ -230,199 +395,53 @@ function Atmosphere() {
   );
 }
 
-function BigCrusades() {
-  const t = useTranslations("eventsPage");
+async function TestimonyBanner({
+  testimony,
+}: {
+  testimony: { authorName: string; authorRole: string | null; content: string } | null;
+}) {
+  const tt = await getTranslations("testimonies");
+  const current = testimony ?? { authorName: "Marie C.", authorRole: null, content: tt("quote") };
   return (
-    <section className="bg-lifac-navy-900 py-16 lg:py-20 text-white">
-      <div className="container mx-auto px-4 lg:px-6">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
-          <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-8 w-1 bg-lifac-red-600 rounded-full" />
-              <h2 className="font-display text-2xl lg:text-3xl font-extrabold leading-tight">
-                {t("conquerTitle")}
-              </h2>
-            </div>
-
-            <h4 className="font-bold text-sm tracking-wider mb-3">{t("conquerTitle")}</h4>
-            <p className="text-white/75 leading-relaxed mb-4">
-              {t("conquerDesc")}
-            </p>
-          </div>
-
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-lifac-navy-700 to-lifac-navy-950" />
-            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
-              <g fill="#1F2A4D">
-                <rect x="0" y="180" width="400" height="120" />
-              </g>
-              <g fill="#070E1F">
-                {Array.from({ length: 40 }, (_, i) => (
-                  <circle key={i} cx={(i * 11) % 400} cy={200 + (i % 4) * 20} r="3" />
-                ))}
-              </g>
-              <g fill="#DC2626" opacity="0.6">
-                <ellipse cx="200" cy="80" rx="180" ry="60" />
-              </g>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ImpactNumbers() {
-  const t = useTranslations("eventsPage");
-  return (
-    <section className="bg-lifac-navy-950 py-16 lg:py-20 text-white">
-      <div className="container mx-auto px-4 lg:px-6">
-        <div className="flex items-center gap-3 mb-12">
-          <div className="h-8 w-1 bg-lifac-red-600 rounded-full" />
-          <h2 className="font-display text-2xl lg:text-3xl font-extrabold">IMPACT</h2>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 max-w-5xl mx-auto items-center">
-          <div className="text-center lg:text-left">
-            <div className="font-display text-7xl md:text-8xl lg:text-9xl font-extrabold text-lifac-red-500 leading-none mb-3">
-              50K+
-            </div>
-            <div className="text-white font-bold text-lg">{t("impactParticipants")}</div>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-sm tracking-wider mb-4 uppercase">{t("mobilizationTitle")}</h4>
-            <p className="text-white/75 leading-relaxed mb-3">
-              {t("mobilizationDesc")}
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FormationsSeminars() {
-  const t = useTranslations("eventsPage");
-  return (
-    <section className="bg-lifac-navy-900 py-16 lg:py-20 text-white">
-      <div className="container mx-auto px-4 lg:px-6">
-        <div className="flex items-center gap-3 mb-12">
-          <div className="h-8 w-1 bg-lifac-red-600 rounded-full" />
-          <h2 className="font-display text-2xl lg:text-3xl font-extrabold">{t("trainingTitle")}</h2>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
-          <div className="aspect-[4/3] rounded-2xl bg-lifac-navy-800 border border-lifac-red-600/40 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-lifac-navy-700 to-lifac-navy-900" />
-            <svg className="absolute inset-0 w-full h-full opacity-60" viewBox="0 0 400 300">
-              <ellipse cx="200" cy="100" rx="80" ry="40" fill="#DC2626" opacity="0.4" />
-              <rect x="180" y="140" width="40" height="100" fill="#0B1428" />
-              <circle cx="200" cy="120" r="22" fill="#0B1428" />
-            </svg>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-sm tracking-wider mb-3 uppercase">{t("equipTitle")}</h4>
-            <p className="text-white/75 leading-relaxed mb-5">
-              {t("equipDesc")}
-            </p>
-            <ul className="space-y-2.5 text-white/85">
-              <li className="flex items-center gap-3">
-                <span className="text-lifac-red-500 font-bold">✓</span>
-                {t("course1")}
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="text-lifac-red-500 font-bold">✓</span>
-                {t("course2")}
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="text-lifac-red-500 font-bold">✓</span>
-                {t("course3")}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TestimonyQuote() {
-  const t = useTranslations("eventsPage");
-  return (
-    <section className="bg-lifac-navy-950 py-20 lg:py-24 text-white text-center">
-      <div className="container mx-auto px-4 lg:px-6 max-w-4xl">
-        <Quote className="h-12 w-12 text-lifac-red-600 mx-auto mb-6 opacity-60" />
-        <blockquote className="font-display text-xl md:text-2xl lg:text-3xl italic font-bold text-white leading-relaxed mb-4">
-          {t("testimony")}
-        </blockquote>
-        <p className="text-lifac-red-500 font-bold">— Marie C., Participante</p>
-      </div>
-    </section>
-  );
-}
-
-function ReadyCta() {
-  const t = useTranslations("events");
-  const tc = useTranslations("common");
-  return (
-    <section className="bg-lifac-navy-900 py-20 text-white text-center">
+    <section className="bg-white py-20 lg:py-24 text-center border-t border-gray-100">
       <div className="container mx-auto px-4 lg:px-6 max-w-3xl">
-        <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mb-5">
-          {t("readyTitle")}
-        </h2>
-        <p className="text-white/75 mb-8">{t("readyDesc")}</p>
-        <Link href="/register">
-          <Button variant="default" size="xl" className="uppercase tracking-wider">
-            {tc("registerNow")}
-          </Button>
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-function PracticalInfo() {
-  const t = useTranslations("events");
-  const tp = useTranslations("eventsPage");
-  return (
-    <section className="bg-lifac-navy-950 py-16 lg:py-20 text-white text-center">
-      <div className="container mx-auto px-4 lg:px-6">
-        <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
-          {t("infos")}
-        </h2>
-        <p className="text-white/75 max-w-2xl mx-auto mb-10">{t("infosDesc")}</p>
-
-        <div className="grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
-          <InfoCard
-            icon={<MapPin className="h-5 w-5 text-lifac-red-500" />}
-            title={t("offices")}
-            content={t("officesAddress")}
-          />
-          <InfoCard
-            icon={<Phone className="h-5 w-5 text-lifac-red-500" />}
-            title={t("hotline")}
-            content={t("hotlineNumber")}
-          />
-        </div>
-
-        <p className="mt-10 text-white/50 text-sm">
-          {tp("joinTagline")}
+        <Quote className="h-10 w-10 text-lifac-red-600 mx-auto mb-6 opacity-70" />
+        <blockquote className="font-display text-xl md:text-2xl lg:text-3xl italic font-bold text-lifac-navy-900 leading-relaxed mb-4">
+          « {current.content} »
+        </blockquote>
+        <p className="text-lifac-red-600 font-bold">
+          — {current.authorName}
+          {current.authorRole ? `, ${current.authorRole}` : ""}
         </p>
       </div>
     </section>
   );
 }
 
-function InfoCard({ icon, title, content }: { icon: React.ReactNode; title: string; content: string }) {
+async function NewsletterCta() {
+  const t = await getTranslations("eventsPage");
   return (
-    <div className="bg-lifac-navy-800 rounded-2xl p-6 border-l-4 border-lifac-red-600 text-left">
-      <div className="flex items-center gap-2 mb-2">
-        {icon}
-        <h3 className="font-bold text-white tracking-wider uppercase text-xs">{title}</h3>
+    <section className="bg-[#F4F5F7] py-10">
+      <div className="container mx-auto px-4 lg:px-6">
+        <div className="grid lg:grid-cols-[1fr_auto] gap-6 items-center">
+          <div>
+            <h2 className="font-display text-xl lg:text-2xl font-extrabold text-lifac-navy-900">{t("newsletterTitle")}</h2>
+            <p className="text-lifac-navy-600 text-sm mt-1">{t("newsletterDesc")}</p>
+          </div>
+          <Link href="/contact">
+            <Button variant="default" size="lg" className="uppercase tracking-wider">
+              {t("newsletterCta")}
+            </Button>
+          </Link>
+        </div>
       </div>
-      <p className="text-white/75 text-sm">{content}</p>
-    </div>
+    </section>
   );
+}
+
+function formatRange(start: Date, end: Date | null) {
+  const opts: Intl.DateTimeFormatOptions = { day: "2-digit", month: "long", year: "numeric" };
+  const startStr = start.toLocaleDateString("fr-FR", opts);
+  if (!end) return startStr;
+  return `${start.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" })} — ${end.toLocaleDateString("fr-FR", opts)}`;
 }

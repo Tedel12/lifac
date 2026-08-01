@@ -11,13 +11,13 @@ export function Footer() {
   const tc = useTranslations("common");
 
   return (
-    <footer className="bg-gradient-to-b from-lifac-red-700 via-lifac-red-800 to-lifac-red-900 text-white/85">
+    <footer className="bg-white border-t border-gray-100">
       <div className="container mx-auto px-4 lg:px-6 pt-14 pb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="space-y-4">
-            <Logo variant="white" />
-            <p className="text-sm text-white/75 leading-relaxed pt-1">
+            <Logo variant="default" />
+            <p className="text-sm text-lifac-navy-600 leading-relaxed pt-1">
               {t("tagline")}
             </p>
             <div className="flex gap-2 pt-2">
@@ -35,7 +35,7 @@ export function Footer() {
 
           {/* Liens rapides */}
           <div>
-            <h3 className="text-white font-bold text-xs uppercase tracking-[0.18em] mb-5">
+            <h3 className="text-lifac-navy-900 font-bold text-xs uppercase tracking-[0.18em] mb-5">
               {t("quickLinks")}
             </h3>
             <div className="grid grid-cols-2 gap-x-2">
@@ -47,51 +47,50 @@ export function Footer() {
               </ul>
               <ul className="space-y-2.5">
                 <FooterLink href="/#testimonies">{tn("testimonies")}</FooterLink>
+                <FooterLink href="/resources">{tn("resources")}</FooterLink>
                 <FooterLink href="/donate">{tc("donate")}</FooterLink>
                 <FooterLink href="/contact">{tn("contact")}</FooterLink>
-                <li><a href="/#newsletter" className="hover:text-white transition-colors">{tc("subscribe")}</a></li>
               </ul>
             </div>
           </div>
 
           {/* Contact */}
           <div>
-            <h3 className="text-white font-bold text-xs uppercase tracking-[0.18em] mb-5">
+            <h3 className="text-lifac-navy-900 font-bold text-xs uppercase tracking-[0.18em] mb-5">
               {t("contact")}
             </h3>
             <ul className="space-y-3">
               <li className="flex items-center gap-3 text-sm">
-                <Phone className="h-4 w-4 shrink-0 text-white" />
-                <a href="tel:+2290140131359" className="hover:text-white transition-colors">
+                <Phone className="h-4 w-4 shrink-0 text-lifac-red-600" />
+                <a href="tel:+2290140131359" className="text-lifac-navy-600 hover:text-lifac-red-600 transition-colors">
                   01 40 13 13 59
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm">
-                <Phone className="h-4 w-4 shrink-0 text-white" />
-                <a href="tel:+2290162930001" className="hover:text-white transition-colors">
+                <Phone className="h-4 w-4 shrink-0 text-lifac-red-600" />
+                <a href="tel:+2290162930001" className="text-lifac-navy-600 hover:text-lifac-red-600 transition-colors">
                   01 62 93 00 01
-
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm">
-                <Mail className="h-4 w-4 shrink-0 text-white" />
-                <a href="mailto:info@lifac.org" className="hover:text-white transition-colors break-all">
+                <Mail className="h-4 w-4 shrink-0 text-lifac-red-600" />
+                <a href="mailto:info@lifac.org" className="text-lifac-navy-600 hover:text-lifac-red-600 transition-colors break-all">
                   info@lifac.org
                 </a>
               </li>
               <li className="flex items-start gap-3 text-sm">
-                <MapPin className="h-4 w-4 shrink-0 text-white mt-0.5" />
-                <span className="text-white/80">{t("address")}</span>
+                <MapPin className="h-4 w-4 shrink-0 text-lifac-red-600 mt-0.5" />
+                <span className="text-lifac-navy-600">{t("address")}</span>
               </li>
             </ul>
           </div>
 
           {/* Stay connected */}
           <div>
-            <h3 className="text-white font-bold text-xs uppercase tracking-[0.18em] mb-5">
+            <h3 className="text-lifac-navy-900 font-bold text-xs uppercase tracking-[0.18em] mb-5">
               {t("stayConnected")}
             </h3>
-            <p className="text-sm text-white/75 mb-4">
+            <p className="text-sm text-lifac-navy-600 mb-4">
               {t("joinGroupHelp")}
             </p>
             <a
@@ -100,11 +99,7 @@ export function Footer() {
               rel="noopener noreferrer"
               className="inline-block w-full"
             >
-              <Button
-                variant="secondary"
-                size="default"
-                className="w-full uppercase tracking-wider bg-white text-lifac-red-700 hover:bg-white/90"
-              >
+              <Button variant="default" size="default" className="w-full uppercase tracking-wider">
                 <MessageCircle className="h-4 w-4" />
                 {t("joinGroup")}
               </Button>
@@ -113,13 +108,13 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-white/15 flex flex-col md:flex-row items-center justify-between gap-3 text-xs bg-lifac-red-900 -mx-4 lg:-mx-6 px-4 lg:px-6 pb-2 pt-4 rounded-b-sm">
-          <p className="text-white/60">{t("rights")}</p>
+        <div className="mt-12 pt-4 pb-2 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+          <p className="text-lifac-navy-400">{t("rights")}</p>
           <div className="flex items-center gap-5">
-            <Link href="/legal/privacy" className="text-white/60 hover:text-white transition-colors">
+            <Link href="/legal/privacy" className="text-lifac-navy-400 hover:text-lifac-red-600 transition-colors">
               {t("privacy")}
             </Link>
-            <Link href="/legal/terms" className="text-white/60 hover:text-white transition-colors">
+            <Link href="/legal/terms" className="text-lifac-navy-400 hover:text-lifac-red-600 transition-colors">
               {t("terms")}
             </Link>
           </div>
@@ -134,7 +129,7 @@ function FooterLink({ href, children }: { href: string; children: ReactNode }) {
     <li>
       <Link
         href={href}
-        className="text-sm text-white/75 hover:text-white transition-colors"
+        className="text-sm text-lifac-navy-600 hover:text-lifac-red-600 transition-colors"
       >
         {children}
       </Link>
@@ -157,7 +152,7 @@ function SocialLink({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+      className="h-8 w-8 rounded-full bg-lifac-red-600/10 hover:bg-lifac-red-600 flex items-center justify-center text-lifac-red-600 hover:text-white transition-colors"
     >
       {children}
     </a>
