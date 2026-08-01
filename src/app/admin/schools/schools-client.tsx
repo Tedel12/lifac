@@ -162,7 +162,7 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
                     assignments.map(a => (
                         <div key={a.id} className="text-sm border-b py-2">
                             <p className="font-medium">{a.school.name}</p>
-                            <p className="text-xs text-gray-500">Agent: {a.agent.name} - {new Date(a.assignedAt).toLocaleDateString()}</p>
+                            <p className="text-xs text-gray-500">Missionnaire : {a.agent.name} - {new Date(a.assignedAt).toLocaleDateString()}</p>
                         </div>
                     ))
                 )}

@@ -1,18 +1,41 @@
 "use client";
 
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, HeartHandshake, Target, PartyPopper } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { KPIUpdateModal } from "./kpi-update-modal";
 import { DistributionUpdateModal } from "./distribution-update-modal";
+import { formatAmountXof } from "@/lib/fedapay";
 
 interface DashboardContentProps {
   initialGlobalStats: any;
   initialModuleDistributions: any[];
+  recentActivities: any[];
+  operationalStats: {
+    donationsApproved: number;
+    activeCampaigns: number;
+    upcomingEvents: number;
+  };
 }
 
-export default function DashboardContent({ initialGlobalStats, initialModuleDistributions }: DashboardContentProps) {
+const ACTIVITY_STATUS_LABELS: Record<string, string> = {
+  DRAFT: "Brouillon",
+  PLANNED: "Planifiée",
+  CONFIRMED: "Confirmée",
+  ONGOING: "En cours",
+  COMPLETED: "Terminée",
+  POSTPONED: "Reportée",
+  CANCELED: "Annulée",
+};
+
+export default function DashboardContent({
+  initialGlobalStats,
+  initialModuleDistributions,
+  recentActivities,
+  operationalStats,
+}: DashboardContentProps) {
   const t = useTranslations("adminDashboard");
   const [stats, setStats] = useState(initialGlobalStats);
   const [distributions, setDistributions] = useState(initialModuleDistributions);
@@ -26,10 +49,28 @@ export default function DashboardContent({ initialGlobalStats, initialModuleDist
     { title: t("kpi.crusades"), key: "totalCrusades", value: stats?.totalCrusades || 0, change: "+2%" },
   ];
 
-  const recentActivities = [
-    { id: 1, title: "Croisade Tokpa Domè", date: "01/07/2026", status: "Terminé" },
-    { id: 2, title: "Formation Ste Rita", date: "30/06/2026", status: "Terminé" },
-    { id: 3, title: "Visite Lycée Moderne", date: "29/06/2026", status: "En cours" },
+  const opStats = [
+    {
+      icon: <HeartHandshake className="h-5 w-5 text-emerald-600" />,
+      label: "Dons confirmés",
+      value: formatAmountXof(operationalStats.donationsApproved),
+      href: "/admin/donations",
+      bg: "bg-emerald-50",
+    },
+    {
+      icon: <Target className="h-5 w-5 text-lifac-red-600" />,
+      label: "Campagnes actives",
+      value: String(operationalStats.activeCampaigns),
+      href: "/admin/campaigns",
+      bg: "bg-lifac-red-50",
+    },
+    {
+      icon: <PartyPopper className="h-5 w-5 text-blue-600" />,
+      label: "Événements à venir",
+      value: String(operationalStats.upcomingEvents),
+      href: "/admin/events",
+      bg: "bg-blue-50",
+    },
   ];
 
   return (
@@ -38,6 +79,21 @@ export default function DashboardContent({ initialGlobalStats, initialModuleDist
         <span className="text-2xl font-bold text-lifac-navy-900">{t("welcome")}</span>
         <p className="text-sm text-gray-500">{t("dashboardOverview")}</p>
       </div>
+      {/* Stats opérationnelles réelles */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        {opStats.map((s) => (
+          <Link key={s.label} href={s.href}>
+            <Card className="hover:shadow-md transition-shadow">
+              <CardContent className="p-5">
+                <div className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${s.bg} mb-3`}>{s.icon}</div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider">{s.label}</p>
+                <p className="font-display text-xl font-bold text-lifac-navy-900 mt-1">{s.value}</p>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
+
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpis.map((kpi) => (
@@ -91,22 +147,38 @@ export default function DashboardContent({ initialGlobalStats, initialModuleDist
         <Card className="xl:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>{t("recentActivities")}</CardTitle>
-            <button className="text-sm text-lifac-red-600 font-semibold">{t("seeAll")}</button>
+            <Link href="/admin/activities" className="text-sm text-lifac-red-600 font-semibold hover:underline">
+              {t("seeAll")}
+            </Link>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {recentActivities.map((act) => (
-                <div key={act.id} className="flex items-center justify-between p-3 border-b border-gray-100 last:border-0">
-                  <div>
-                    <p className="font-medium text-lifac-navy-900">{act.title}</p>
-                    <p className="text-xs text-gray-500">{act.date}</p>
-                  </div>
-                  <span className={`px-2 py-1 rounded-full text-xs ${act.status === 'Terminé' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
-                    {act.status}
-                  </span>
-                </div>
-              ))}
-            </div>
+            {recentActivities.length === 0 ? (
+              <p className="text-sm text-gray-500 py-4">Aucune activité enregistrée pour le moment.</p>
+            ) : (
+              <div className="space-y-4">
+                {recentActivities.map((act) => (
+                  <Link
+                    key={act.id}
+                    href={`/admin/activities`}
+                    className="flex items-center justify-between p-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <div>
+                      <p className="font-medium text-lifac-navy-900">{act.title}</p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(act.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}
+                      </p>
+                    </div>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        act.status === "COMPLETED" ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"
+                      }`}
+                    >
+                      {ACTIVITY_STATUS_LABELS[act.status] ?? act.status}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

@@ -1,12 +1,23 @@
 import { getDashboardStats } from "@/actions/dashboard";
 import { getNotifications } from "@/actions/admin-actions";
+import { getActivities } from "@/actions/activity-actions";
+import { prisma } from "@/lib/prisma";
 import DashboardContent from "@/components/admin/dashboard-content";
 import { AdminHeaderBar } from "@/components/admin/admin-header-bar";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
-  const { globalStats, moduleDistributions } = await getDashboardStats();
-  const notifications = await getNotifications();
-  
+  const [{ globalStats, moduleDistributions }, notifications, recentActivities, approvedAgg, activeCampaigns, upcomingEvents] =
+    await Promise.all([
+      getDashboardStats(),
+      getNotifications(),
+      getActivities().then((a) => a.slice(0, 5)),
+      prisma.donation.aggregate({ _sum: { amount: true }, where: { status: "APPROVED" } }),
+      prisma.campaign.count({ where: { status: "ACTIVE" } }),
+      prisma.event.count({ where: { status: "UPCOMING" } }),
+    ]);
+
   // Default values if database is empty
   const defaultDistributions = [
       { category: "School", value: 30, color: "#EF4444" },
@@ -21,9 +32,15 @@ export default async function AdminDashboardPage() {
         <div className="flex justify-end">
             <AdminHeaderBar notifications={notifications} />
         </div>
-        <DashboardContent 
-            initialGlobalStats={globalStats} 
-            initialModuleDistributions={moduleDistributions.length > 0 ? moduleDistributions : defaultDistributions} 
+        <DashboardContent
+            initialGlobalStats={globalStats}
+            initialModuleDistributions={moduleDistributions.length > 0 ? moduleDistributions : defaultDistributions}
+            recentActivities={recentActivities}
+            operationalStats={{
+                donationsApproved: Number(approvedAgg._sum.amount ?? 0),
+                activeCampaigns,
+                upcomingEvents,
+            }}
         />
     </div>
   );

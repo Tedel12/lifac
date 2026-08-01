@@ -11,10 +11,13 @@ import { ActivityStatus, ActivityType } from "@prisma/client";
 
 const ACTIVITY_TYPE_LABELS: Record<string, string> = {
     CRUSADE: "Croisade d'évangélisation",
-    POP_UP_CRUSADE: "Croisade de proximité",
-    NIGHT_OF_HOPE: "Nuit de l'Espoir",
-    MARKET_OUTREACH: "Jésus au marché",
+    YOUTH_CRUSADE: "Youth Crusade",
+    POP_UP_CRUSADE: "Pop-up Crusade",
+    MARKET_OUTREACH: "Évangélisation au marché",
     ONE_ON_ONE: "Évangélisation personnelle",
+    NIGHT_OF_HOPE: "La Nuit de l'Espoir",
+    HUMANITARIAN: "Actions Humanitaires",
+    TRAINING: "Formation en Évangélisation",
     OTHER: "Autre",
 };
 

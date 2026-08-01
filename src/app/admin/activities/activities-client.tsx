@@ -8,14 +8,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { deleteActivity, getActivities } from "@/actions/activity-actions";
 import { ActivityStatus } from "@prisma/client";
 import { ActivityModal } from "@/components/admin/activity-modal";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { useTranslations } from "next-intl";
 
 const ACTIVITY_TYPE_LABELS: Record<string, string> = {
     CRUSADE: "Croisade d'évangélisation",
-    POP_UP_CRUSADE: "Croisade de proximité",
-    NIGHT_OF_HOPE: "Nuit de l'Espoir",
-    MARKET_OUTREACH: "Jésus au marché",
+    YOUTH_CRUSADE: "Youth Crusade",
+    POP_UP_CRUSADE: "Pop-up Crusade",
+    MARKET_OUTREACH: "Évangélisation au marché",
     ONE_ON_ONE: "Évangélisation personnelle",
+    NIGHT_OF_HOPE: "La Nuit de l'Espoir",
+    HUMANITARIAN: "Actions Humanitaires",
+    TRAINING: "Formation en Évangélisation",
     OTHER: "Autre",
 };
 
@@ -39,16 +43,27 @@ const STATUS_COLORS: Record<string, string> = {
     CANCELED: "bg-red-100 text-red-700",
 };
 
-export default function ActivitiesPage({ activities: initialActivities }: { activities: any[] }) {
+export default function ActivitiesPage({
+    activities: initialActivities,
+    initialType,
+}: {
+    activities: any[];
+    initialType?: string;
+}) {
     const t = useTranslations("adminActivities");
     const [activities, setActivities] = useState(initialActivities);
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState<ActivityStatus | "ALL">("ALL");
+    const [typeFilter, setTypeFilter] = useState<string | "ALL">(initialType ?? "ALL");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedActivity, setSelectedActivity] = useState<any>(null);
 
     const refresh = async () => {
-        const updated = await getActivities({ search, status: statusFilter !== "ALL" ? statusFilter : undefined });
+        const updated = await getActivities({
+            search,
+            status: statusFilter !== "ALL" ? statusFilter : undefined,
+            type: typeFilter !== "ALL" ? (typeFilter as any) : undefined,
+        });
         setActivities(updated);
     };
 
@@ -66,17 +81,19 @@ export default function ActivitiesPage({ activities: initialActivities }: { acti
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold text-lifac-navy-900">{t("title")}</h1>
-                <Button
-                    onClick={() => {
-                        setSelectedActivity(null);
-                        setIsModalOpen(true);
-                    }}
-                >
-                    <Plus size={18} className="mr-2" /> {t("add")}
-                </Button>
-            </div>
+            <AdminPageHeader
+                title={t("title")}
+                action={
+                    <Button
+                        onClick={() => {
+                            setSelectedActivity(null);
+                            setIsModalOpen(true);
+                        }}
+                    >
+                        <Plus size={18} className="mr-2" /> {t("add")}
+                    </Button>
+                }
+            />
 
             <div className="flex gap-4">
                 <div className="relative flex-1">
@@ -89,6 +106,18 @@ export default function ActivitiesPage({ activities: initialActivities }: { acti
                         onKeyDown={(e) => e.key === "Enter" && refresh()}
                     />
                 </div>
+                <select
+                    className="border rounded-md px-3 text-sm"
+                    value={typeFilter}
+                    onChange={(e) => setTypeFilter(e.target.value)}
+                >
+                    <option value="ALL">{t("allTypes")}</option>
+                    {Object.entries(ACTIVITY_TYPE_LABELS).map(([value, label]) => (
+                        <option key={value} value={value}>
+                            {label}
+                        </option>
+                    ))}
+                </select>
                 <select
                     className="border rounded-md px-3 text-sm"
                     value={statusFilter}

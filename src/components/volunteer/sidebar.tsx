@@ -37,7 +37,7 @@ export function AgentSidebar() {
       </button>
 
       <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-lifac-blue-900 text-white p-6 flex flex-col transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-        <div className="text-2xl font-bold mb-10 text-white">Agent</div>
+        <div className="text-2xl font-bold mb-10 text-white">{t("missionaryLabel")}</div>
         <nav className="flex-1 space-y-1">
           {menuItems.map((item) => (
             <Link

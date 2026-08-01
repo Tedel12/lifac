@@ -23,19 +23,19 @@ export default function AgentsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer cet agent ?")) {
+    if (confirm("Êtes-vous sûr de vouloir supprimer ce missionnaire ?")) {
       await deleteAgent(id);
       loadAgents();
-      toast.success("Agent supprimé");
+      toast.success("Missionnaire supprimé");
     }
   };
 
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Gestion des Agents</h1>
+        <h1 className="text-2xl font-bold">Gestion des Missionnaires</h1>
         <Button onClick={() => { setSelectedAgent(null); setModalOpen(true); }}>
-          <Plus className="mr-2 h-4 w-4" /> Ajouter un agent
+          <Plus className="mr-2 h-4 w-4" /> Ajouter un missionnaire
         </Button>
       </div>
 
@@ -70,11 +70,13 @@ export default function AgentsPage() {
         </TableBody>
       </Table>
 
-      <AgentModal 
-        isOpen={modalOpen} 
-        onClose={() => { setModalOpen(false); loadAgents(); }} 
-        agent={selectedAgent} 
-      />
+      {modalOpen && (
+        <AgentModal
+          isOpen={modalOpen}
+          onClose={() => { setModalOpen(false); loadAgents(); }}
+          agent={selectedAgent}
+        />
+      )}
     </div>
   );
 }

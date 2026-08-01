@@ -22,16 +22,16 @@ export function AgentModal({ isOpen, onClose, agent, onUpdate }: any) {
       return;
     }
     if (!agent && !formData.password?.trim()) {
-      toast.error("Le mot de passe est obligatoire pour un nouvel agent");
+      toast.error("Le mot de passe est obligatoire pour un nouveau missionnaire");
       return;
     }
 
     if (agent) {
       await updateAgent(agent.id, formData);
-      toast.success("Agent mis à jour");
+      toast.success("Missionnaire mis à jour");
     } else {
       await createAgent(formData);
-      toast.success("Agent ajouté");
+      toast.success("Missionnaire ajouté");
     }
     onUpdate && onUpdate();
     onClose();
@@ -46,7 +46,7 @@ export function AgentModal({ isOpen, onClose, agent, onUpdate }: any) {
 
         <CardContent className="p-6">
           <div className="space-y-4">
-            <h3 className="font-bold text-lg">{agent ? "Modifier l'agent" : "Ajouter un agent"}</h3>
+            <h3 className="font-bold text-lg">{agent ? "Modifier le missionnaire" : "Ajouter un missionnaire"}</h3>
 
             <div className="space-y-1">
               <Label>Nom complet</Label>

@@ -34,7 +34,7 @@ export function AgentSelectionModal({ isOpen, onClose, school, onAssign }: any) 
           <h3 className="font-bold text-lg">Affecter {school.name}</h3>
           
           {loading ? (
-              <p>Chargement des agents...</p>
+              <p>Chargement des missionnaires...</p>
           ) : (
             <div className="space-y-2">
                 {agents.map(agent => (
@@ -56,7 +56,7 @@ export function AgentSelectionModal({ isOpen, onClose, school, onAssign }: any) 
                 ))}
             </div>
           )}
-          <Button className="w-full" disabled={!selectedAgentId} onClick={() => onAssign(selectedAgentId)}>Affecter à l'agent</Button>
+          <Button className="w-full" disabled={!selectedAgentId} onClick={() => onAssign(selectedAgentId)}>Affecter au missionnaire</Button>
         </CardContent>
       </Card>
     </div>
