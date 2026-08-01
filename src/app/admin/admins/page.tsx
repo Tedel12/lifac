@@ -111,9 +111,13 @@ function NewAdminModal({ onClose, onCreated }: { onClose: () => void; onCreated:
       toast.error(t("requiredFields"));
       return;
     }
-    await createAdmin(form);
-    toast.success(t("save"));
-    onCreated();
+    try {
+      await createAdmin(form);
+      toast.success(t("save"));
+      onCreated();
+    } catch (e: any) {
+      toast.error(e?.message ?? t("createError"));
+    }
   };
 
   return (

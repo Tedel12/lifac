@@ -26,15 +26,19 @@ export function AgentModal({ isOpen, onClose, agent, onUpdate }: any) {
       return;
     }
 
-    if (agent) {
-      await updateAgent(agent.id, formData);
-      toast.success("Missionnaire mis à jour");
-    } else {
-      await createAgent(formData);
-      toast.success("Missionnaire ajouté");
+    try {
+      if (agent) {
+        await updateAgent(agent.id, formData);
+        toast.success("Missionnaire mis à jour");
+      } else {
+        await createAgent(formData);
+        toast.success("Missionnaire ajouté");
+      }
+      onUpdate && onUpdate();
+      onClose();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Une erreur est survenue");
     }
-    onUpdate && onUpdate();
-    onClose();
   };
 
   return (

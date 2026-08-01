@@ -733,6 +733,7 @@
     "delete": "Désactiver",
     "cannotDeleteSelf": "Vous ne pouvez pas désactiver votre propre compte",
     "requiredFields": "Nom, email et mot de passe sont obligatoires",
+    "createError": "Impossible de créer cet administrateur. Vérifiez que l'email n'est pas déjà utilisé.",
     "modalTitle": "Nouvel administrateur",
     "name": "Nom complet",
     "email": "Email",

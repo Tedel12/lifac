@@ -634,6 +634,7 @@
     "delete": "Deactivate",
     "cannotDeleteSelf": "You cannot deactivate your own account",
     "requiredFields": "Name, email and password are required",
+    "createError": "Unable to create this administrator. Check that the email isn't already in use.",
     "modalTitle": "New administrator",
     "name": "Full name",
     "email": "Email",

@@ -68,15 +68,19 @@ export function EventModal({ isOpen, onClose, event, onUpdate }: any) {
       toast.error("Titre, date de début et lieu sont obligatoires");
       return;
     }
-    if (event) {
-      await updateEvent(event.id, formData);
-      toast.success("Événement mis à jour");
-    } else {
-      await createEvent(formData);
-      toast.success("Événement créé");
+    try {
+      if (event) {
+        await updateEvent(event.id, formData);
+        toast.success("Événement mis à jour");
+      } else {
+        await createEvent(formData);
+        toast.success("Événement créé");
+      }
+      onUpdate && onUpdate();
+      onClose();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Une erreur est survenue");
     }
-    onUpdate && onUpdate();
-    onClose();
   };
 
   return (

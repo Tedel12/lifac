@@ -58,15 +58,19 @@ export function CampaignModal({ isOpen, onClose, campaign, onUpdate }: any) {
       toast.error("Titre et objectif de collecte sont obligatoires");
       return;
     }
-    if (campaign) {
-      await updateCampaign(campaign.id, formData);
-      toast.success("Campagne mise à jour");
-    } else {
-      await createCampaign(formData);
-      toast.success("Campagne créée");
+    try {
+      if (campaign) {
+        await updateCampaign(campaign.id, formData);
+        toast.success("Campagne mise à jour");
+      } else {
+        await createCampaign(formData);
+        toast.success("Campagne créée");
+      }
+      onUpdate && onUpdate();
+      onClose();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Une erreur est survenue");
     }
-    onUpdate && onUpdate();
-    onClose();
   };
 
   return (

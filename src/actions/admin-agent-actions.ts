@@ -22,6 +22,11 @@ export async function getAgents() {
 }
 
 export async function createAgent(data: any) {
+  const existing = await prisma.user.findUnique({ where: { email: data.email } });
+  if (existing) {
+    throw new Error("Un compte existe déjà avec cet email.");
+  }
+
   const hashedPassword = await bcrypt.hash(data.password, 10);
   await prisma.user.create({
     data: {

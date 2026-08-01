@@ -16,6 +16,22 @@ export async function getAdmins() {
 
 export async function createAdmin(data: { name: string; email: string; password: string }) {
   const hashedPassword = await bcrypt.hash(data.password, 10);
+  const existing = await prisma.user.findUnique({ where: { email: data.email } });
+
+  if (existing) {
+    // Compte admin précédemment désactivé (soft-delete) avec le même email : on le réactive
+    // plutôt que d'échouer sur la contrainte unique — évite un email "coincé" pour toujours.
+    if (existing.role === Role.ADMIN && !existing.isActive) {
+      await prisma.user.update({
+        where: { id: existing.id },
+        data: { name: data.name, password: hashedPassword, isActive: true },
+      });
+      revalidatePath("/admin/admins");
+      return;
+    }
+    throw new Error("Un compte existe déjà avec cet email.");
+  }
+
   await prisma.user.create({
     data: {
       name: data.name,
