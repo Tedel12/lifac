@@ -71,6 +71,14 @@ export async function approveVolunteerApplication(volunteerId: string, password:
   await prisma.$transaction([
     prisma.user.update({ where: { id: volunteer.userId }, data: { password: hashedPassword, isActive: true } }),
     prisma.volunteer.update({ where: { id: volunteerId }, data: { status: "APPROVED", approvedAt: new Date() } }),
+    prisma.notification.create({
+      data: {
+        title: "Bienvenue chez LiFAC !",
+        message: "Votre candidature a été approuvée. Vous pouvez maintenant vous connecter à votre espace missionnaire.",
+        type: "success",
+        targetUserId: volunteer.userId,
+      },
+    }),
   ]);
   await logAudit("VOLUNTEER_APPLICATION_APPROVE", "Volunteer", volunteerId);
   revalidatePath("/admin/agents");

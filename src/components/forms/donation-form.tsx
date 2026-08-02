@@ -73,12 +73,12 @@ export function DonationForm({ campaignId, campaignTitle }: DonationFormProps) {
   }
 
   return (
-    <Card className="max-w-2xl mx-auto">
+    <Card className="max-w-2xl mx-auto animate-fade-in shadow-lg">
       <CardContent className="p-6 lg:p-10">
         {campaignTitle && (
-          <div className="mb-6 p-4 bg-lifac-gold-50 border border-lifac-gold-200 rounded-xl">
+          <div className="mb-6 p-4 bg-lifac-red-50 border border-lifac-red-200 rounded-xl">
             <p className="text-sm text-gray-600">Vous soutenez :</p>
-            <p className="font-bold text-lifac-blue-900">{campaignTitle}</p>
+            <p className="font-bold text-lifac-navy-900">{campaignTitle}</p>
           </div>
         )}
 
@@ -95,9 +95,9 @@ export function DonationForm({ campaignId, campaignTitle }: DonationFormProps) {
                   type="button"
                   onClick={() => selectPreset(preset)}
                   className={cn(
-                    "py-3 px-4 rounded-lg border-2 font-semibold text-sm transition-all",
+                    "py-3 px-4 rounded-lg border-2 font-semibold text-sm transition-all hover:-translate-y-0.5",
                     amount === preset && !customAmount
-                      ? "border-lifac-gold-500 bg-lifac-gold-50 text-lifac-gold-700"
+                      ? "border-lifac-red-600 bg-lifac-red-50 text-lifac-red-700 shadow-sm"
                       : "border-gray-200 hover:border-gray-300 text-gray-700"
                   )}
                 >
@@ -136,9 +136,9 @@ export function DonationForm({ campaignId, campaignTitle }: DonationFormProps) {
                   type="button"
                   onClick={() => setFrequency(f)}
                   className={cn(
-                    "py-3 px-4 rounded-lg border-2 font-medium text-sm transition-all",
+                    "py-3 px-4 rounded-lg border-2 font-medium text-sm transition-all hover:-translate-y-0.5",
                     frequency === f
-                      ? "border-lifac-blue-900 bg-lifac-blue-50 text-lifac-blue-900"
+                      ? "border-lifac-navy-900 bg-gray-50 text-lifac-navy-900 shadow-sm"
                       : "border-gray-200 hover:border-gray-300 text-gray-700"
                   )}
                 >
@@ -150,7 +150,7 @@ export function DonationForm({ campaignId, campaignTitle }: DonationFormProps) {
 
           {/* Étape 2 : Identité donateur */}
           <div className="space-y-4 pt-4 border-t border-gray-100">
-            <h3 className="font-semibold text-lifac-blue-900">Vos coordonnées</h3>
+            <h3 className="font-semibold text-lifac-navy-900">Vos coordonnées</h3>
 
             <div>
               <Label htmlFor="donorName">
@@ -220,7 +220,7 @@ export function DonationForm({ campaignId, campaignTitle }: DonationFormProps) {
                 type="checkbox"
                 checked={isAnonymous}
                 onChange={(e) => setIsAnonymous(e.target.checked)}
-                className="h-5 w-5 rounded border-gray-300 text-lifac-blue-900 focus:ring-lifac-blue-900"
+                className="h-5 w-5 rounded border-gray-300 text-lifac-navy-900 focus:ring-lifac-navy-900"
               />
               <span className="text-sm text-gray-700">
                 Je souhaite que mon don soit anonyme publiquement
@@ -240,7 +240,7 @@ export function DonationForm({ campaignId, campaignTitle }: DonationFormProps) {
           <div className="pt-4 border-t border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-700">Total à payer</span>
-              <span className="font-display text-3xl font-bold text-lifac-blue-900">
+              <span className="font-display text-3xl font-bold text-lifac-navy-900">
                 {new Intl.NumberFormat("fr-FR").format(amount)}{" "}
                 <span className="text-lg">FCFA</span>
               </span>

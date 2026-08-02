@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Bell, Check, CheckCheck, Trash2, Inbox } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { searchAdmin, markNotificationAsRead, deleteNotification, markAllNotificationsAsRead, deleteAllNotifications } from "@/actions/admin-actions";
+import { Bell, Check, CheckCheck, Trash2, Inbox } from "lucide-react";
+import { markMyNotificationAsRead, deleteMyNotification, markAllMyNotificationsAsRead } from "@/actions/volunteer-actions";
 
 const TYPE_DOT: Record<string, string> = {
   info: "bg-blue-500",
@@ -23,67 +22,31 @@ function timeAgo(date: string | Date) {
   return `il y a ${days} j`;
 }
 
-export function AdminHeaderBar({ notifications: initialNotifications }: { notifications: any[] }) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+export function AgentHeaderBar({ notifications: initialNotifications }: { notifications: any[] }) {
   const [notifications, setNotifications] = useState(initialNotifications);
-  const [isNotifOpen, setIsNotifOpen] = useState(false);
-
-  const handleSearch = async (query: string) => {
-    setSearchQuery(query);
-    if (query.length > 2) {
-      const { events } = await searchAdmin(query);
-      setSearchResults(events);
-    } else {
-      setSearchResults([]);
-    }
-  };
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleMarkAsRead = async (id: string) => {
-    await markNotificationAsRead(id);
+    await markMyNotificationAsRead(id);
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
   };
 
   const handleDelete = async (id: string) => {
-    await deleteNotification(id);
+    await deleteMyNotification(id);
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
   const handleMarkAllRead = async () => {
-    await markAllNotificationsAsRead();
+    await markAllMyNotificationsAsRead();
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-  };
-
-  const handleDeleteAll = async () => {
-    await deleteAllNotifications();
-    setNotifications([]);
   };
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <div className="flex items-center gap-4 relative">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-        <Input
-          placeholder="Rechercher..."
-          className="pl-10 w-64"
-          value={searchQuery}
-          onChange={(e) => handleSearch(e.target.value)}
-        />
-        {searchResults.length > 0 && (
-          <div className="absolute top-full mt-2 w-full bg-white border border-gray-100 shadow-lg rounded-xl z-50 p-2">
-            {searchResults.map((result) => (
-              <div key={result.id} className="p-2 rounded-lg hover:bg-gray-50 cursor-pointer text-sm text-lifac-navy-900">
-                {result.title}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
+    <div className="relative flex justify-end">
       <button
-        onClick={() => setIsNotifOpen(!isNotifOpen)}
+        onClick={() => setIsOpen(!isOpen)}
         className="p-2.5 bg-white rounded-full shadow-sm border border-gray-100 hover:bg-gray-50 relative transition-colors"
       >
         <Bell size={20} className="text-lifac-navy-900" />
@@ -94,7 +57,7 @@ export function AdminHeaderBar({ notifications: initialNotifications }: { notifi
         )}
       </button>
 
-      {isNotifOpen && (
+      {isOpen && (
         <div className="absolute top-full right-0 mt-2 w-96 bg-white border border-gray-100 shadow-xl rounded-2xl z-50 overflow-hidden animate-fade-in">
           <div className="flex justify-between items-center px-4 py-3.5 border-b border-gray-100 bg-gray-50/60">
             <div className="flex items-center gap-2">
@@ -107,22 +70,13 @@ export function AdminHeaderBar({ notifications: initialNotifications }: { notifi
               )}
             </div>
             {notifications.length > 0 && (
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={handleMarkAllRead}
-                  title="Tout marquer comme lu"
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-lifac-navy-900 hover:bg-gray-100 transition-colors"
-                >
-                  <CheckCheck size={15} />
-                </button>
-                <button
-                  onClick={handleDeleteAll}
-                  title="Tout supprimer"
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                >
-                  <Trash2 size={15} />
-                </button>
-              </div>
+              <button
+                onClick={handleMarkAllRead}
+                title="Tout marquer comme lu"
+                className="p-1.5 rounded-lg text-gray-400 hover:text-lifac-navy-900 hover:bg-gray-100 transition-colors"
+              >
+                <CheckCheck size={15} />
+              </button>
             )}
           </div>
 

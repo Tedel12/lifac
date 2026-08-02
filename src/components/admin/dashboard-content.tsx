@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RefreshCw, HeartHandshake, Target, PartyPopper, Sparkles, UserPlus, Church, Users, TrendingUp, MapPin, Gauge } from "lucide-react";
+import { RefreshCw, HeartHandshake, Target, PartyPopper, Sparkles, UserPlus, Church, Users, TrendingUp, MapPin, Gauge, CalendarClock, Wallet } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { KPIUpdateModal } from "./kpi-update-modal";
-import { DistributionUpdateModal } from "./distribution-update-modal";
+import { useState, useTransition } from "react";
 import { formatAmountXof } from "@/lib/fedapay";
+import { recomputeGlobalStats } from "@/actions/dashboard";
+import { toast } from "sonner";
 
 interface DashboardContentProps {
   initialGlobalStats: any;
@@ -23,9 +23,16 @@ interface DashboardContentProps {
     newContacts: number;
     partnerChurchesCount: number;
     activeAgentsCount: number;
+    attendanceTotal: number;
     monthlyEvolution: { key: string; label: string; activities: number; decisions: number }[];
     geoDistribution: { commune: string; count: number }[];
     efficiencyRate: number;
+  };
+  secondaryCharts: {
+    donationsEvolution: { key: string; label: string; value: number }[];
+    registrationsEvolution: { key: string; label: string; value: number }[];
+    activitiesByStatus: { label: string; count: number }[];
+    donationsByMethod: { label: string; count: number }[];
   };
 }
 
@@ -45,18 +52,26 @@ export default function DashboardContent({
   recentActivities,
   operationalStats,
   extendedMetrics,
+  secondaryCharts,
 }: DashboardContentProps) {
   const t = useTranslations("adminDashboard");
   const [stats, setStats] = useState(initialGlobalStats);
-  const [distributions, setDistributions] = useState(initialModuleDistributions);
-  const [activeKpi, setActiveKpi] = useState<any>(null);
-  const [isDistModalOpen, setIsDistModalOpen] = useState(false);
+  const distributions = initialModuleDistributions;
+  const [isRefreshing, startRefresh] = useTransition();
+
+  const handleRefreshStats = () => {
+    startRefresh(async () => {
+      const updated = await recomputeGlobalStats();
+      setStats(updated);
+      toast.success("Statistiques recalculées depuis les données réelles");
+    });
+  };
 
   const kpis = [
-    { title: t("kpi.activities"), key: "totalSoulsWon", value: stats?.totalSoulsWon || 0, change: "+18%" },
-    { title: t("kpi.schools"), key: "schoolsVisited", value: stats?.schoolsVisited || 0, change: "+5%" },
-    { title: t("kpi.markets"), key: "marketOutreach", value: stats?.marketOutreach || 0, change: "+10%" },
-    { title: t("kpi.crusades"), key: "totalCrusades", value: stats?.totalCrusades || 0, change: "+2%" },
+    { title: t("kpi.activities"), key: "totalSoulsWon", value: stats?.totalSoulsWon || 0 },
+    { title: t("kpi.schools"), key: "schoolsVisited", value: stats?.schoolsVisited || 0 },
+    { title: t("kpi.markets"), key: "marketOutreach", value: stats?.marketOutreach || 0 },
+    { title: t("kpi.crusades"), key: "totalCrusades", value: stats?.totalCrusades || 0 },
   ];
 
   const opStats = [
@@ -105,25 +120,48 @@ export default function DashboardContent({
       </div>
 
       {/* KPIs */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display font-bold text-lifac-navy-900">Statistiques clés</h2>
+          {stats?.updatedAt && (
+            <p className="text-xs text-gray-400">
+              Dernière mise à jour : {new Date(stats.updatedAt).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}
+            </p>
+          )}
+        </div>
+        <button
+          onClick={handleRefreshStats}
+          disabled={isRefreshing}
+          className="flex items-center gap-1.5 text-xs font-medium text-lifac-red-600 hover:text-lifac-red-700 px-3 py-1.5 rounded-full border border-lifac-red-600/20 hover:bg-lifac-red-50 transition-colors disabled:opacity-50"
+        >
+          <RefreshCw size={13} className={isRefreshing ? "animate-spin" : ""} />
+          {isRefreshing ? "Calcul..." : "Rafraîchir depuis les données réelles"}
+        </button>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpis.map((kpi) => (
           <Card key={kpi.title}>
-            <CardHeader className="pb-2 flex flex-row items-center justify-between">
+            <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-500">{kpi.title}</CardTitle>
-              <button onClick={() => setActiveKpi(kpi)} className="p-1 hover:bg-gray-100 rounded">
-                <RefreshCw size={14} className="text-gray-400" />
-              </button>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-lifac-navy-900">{kpi.value}</div>
-              <p className="text-sm text-green-600 font-semibold">{kpi.change}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* KPIs ministère (décisions pour Christ, convertis, églises partenaires, agents actifs) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* KPIs ministère (attendance, décisions pour Christ, convertis, églises partenaires, agents actifs) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+        <Card>
+          <CardContent className="p-5">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 mb-3">
+              <Users className="h-5 w-5 text-indigo-600" />
+            </div>
+            <p className="text-xs text-gray-500 uppercase tracking-wider">Attendance total</p>
+            <p className="font-display text-2xl font-bold text-lifac-navy-900 mt-1">{extendedMetrics.attendanceTotal}</p>
+          </CardContent>
+        </Card>
         <Card>
           <CardContent className="p-5">
             <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-lifac-red-50 mb-3">
@@ -241,19 +279,69 @@ export default function DashboardContent({
         </CardContent>
       </Card>
 
+      {/* 4 graphiques complémentaires (dons, inscriptions, activités par statut, méthodes de paiement) */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center gap-2">
+            <HeartHandshake className="h-4 w-4 text-lifac-red-600" />
+            <CardTitle>Évolution des dons (6 derniers mois)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <MiniLineChart points={secondaryCharts.donationsEvolution} formatValue={(v) => `${Math.round(v / 1000)}k`} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center gap-2">
+            <PartyPopper className="h-4 w-4 text-lifac-red-600" />
+            <CardTitle>Inscriptions aux événements (6 derniers mois)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <MiniLineChart points={secondaryCharts.registrationsEvolution} formatValue={(v) => String(Math.round(v))} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center gap-2">
+            <CalendarClock className="h-4 w-4 text-lifac-red-600" />
+            <CardTitle>Activités par statut</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {secondaryCharts.activitiesByStatus.length === 0 ? (
+              <p className="text-sm text-gray-500 py-2">Aucune activité enregistrée.</p>
+            ) : (
+              <HorizontalBarList items={secondaryCharts.activitiesByStatus.map((a) => ({ label: a.label, count: a.count }))} />
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center gap-2">
+            <Wallet className="h-4 w-4 text-lifac-red-600" />
+            <CardTitle>Dons par méthode de paiement</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {secondaryCharts.donationsByMethod.length === 0 ? (
+              <p className="text-sm text-gray-500 py-2">Aucun don confirmé pour le moment.</p>
+            ) : (
+              <HorizontalBarList items={secondaryCharts.donationsByMethod.map((d) => ({ label: d.label, count: d.count }))} />
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Distribution & Recent Activities */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <Card className="xl:col-span-1">
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader>
             <CardTitle>{t("distribution")}</CardTitle>
-            <button onClick={() => setIsDistModalOpen(true)} className="p-1 hover:bg-gray-100 rounded">
-                <RefreshCw size={14} className="text-gray-400" />
-            </button>
+            <p className="text-xs text-gray-400">Calculée à partir de toutes les activités enregistrées, par type.</p>
           </CardHeader>
           <CardContent>
+            {distributions.length === 0 ? (
+              <p className="text-sm text-gray-500 py-4">Aucune activité enregistrée pour le moment.</p>
+            ) : (
+            <>
             {/* Graphique en secteurs réel avec conic-gradient */}
             <div className="h-48 flex items-center justify-center gap-4">
-              <div 
+              <div
                 className="w-32 h-32 rounded-full"
                 style={{
                   background: `conic-gradient(${distributions.map((d, i) => `${d.color} ${i === 0 ? '0%' : ''} ${d.value}%`).join(', ')})`
@@ -271,6 +359,8 @@ export default function DashboardContent({
                   </div>
               ))}
             </div>
+            </>
+            )}
           </CardContent>
         </Card>
         <Card className="xl:col-span-2">
@@ -312,23 +402,61 @@ export default function DashboardContent({
         </Card>
       </div>
 
-      {activeKpi && (
-        <KPIUpdateModal 
-          isOpen={true} 
-          onClose={() => setActiveKpi(null)} 
-          kpi={activeKpi} 
-          stats={stats} 
-          onUpdate={setStats} 
-        />
-      )}
-      {isDistModalOpen && (
-        <DistributionUpdateModal 
-          isOpen={true} 
-          onClose={() => setIsDistModalOpen(false)} 
-          distributions={distributions} 
-          onUpdate={setDistributions} 
-        />
-      )}
+    </div>
+  );
+}
+
+function MiniLineChart({
+  points,
+  formatValue,
+}: {
+  points: { key: string; label: string; value: number }[];
+  formatValue: (v: number) => string;
+}) {
+  const width = 100;
+  const height = 40;
+  const max = Math.max(1, ...points.map((p) => p.value));
+  const stepX = points.length > 1 ? width / (points.length - 1) : 0;
+  const coords = points.map((p, i) => ({
+    x: i * stepX,
+    y: height - (p.value / max) * (height - 4) - 2,
+  }));
+  const linePath = coords.map((c, i) => `${i === 0 ? "M" : "L"} ${c.x} ${c.y}`).join(" ");
+  const areaPath = `${linePath} L ${width} ${height} L 0 ${height} Z`;
+  const total = points.reduce((sum, p) => sum + p.value, 0);
+
+  return (
+    <div>
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-32" preserveAspectRatio="none">
+        <path d={areaPath} fill="rgba(220,38,38,0.08)" />
+        <path d={linePath} fill="none" stroke="#DC2626" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+        {coords.map((c, i) => (
+          <circle key={i} cx={c.x} cy={c.y} r={1.4} fill="#DC2626" vectorEffect="non-scaling-stroke" />
+        ))}
+      </svg>
+      <div className="flex justify-between text-[11px] text-gray-400 mt-1">
+        {points.map((p) => (
+          <span key={p.key} className="capitalize">{p.label}</span>
+        ))}
+      </div>
+      <p className="text-xs text-gray-400 mt-2">Total sur la période : {formatValue(total)}</p>
+    </div>
+  );
+}
+
+function HorizontalBarList({ items }: { items: { label: string; count: number }[] }) {
+  const max = Math.max(1, ...items.map((i) => i.count));
+  return (
+    <div className="space-y-3">
+      {items.map((item) => (
+        <div key={item.label} className="flex items-center gap-3">
+          <span className="w-32 shrink-0 text-sm text-lifac-navy-900 truncate">{item.label}</span>
+          <div className="flex-1 h-2.5 rounded-full bg-gray-100 overflow-hidden">
+            <div className="h-full rounded-full bg-lifac-red-600" style={{ width: `${(item.count / max) * 100}%` }} />
+          </div>
+          <span className="w-6 text-right text-sm font-semibold text-lifac-navy-900">{item.count}</span>
+        </div>
+      ))}
     </div>
   );
 }

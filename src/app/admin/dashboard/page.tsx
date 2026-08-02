@@ -1,4 +1,4 @@
-import { getDashboardStats, getExtendedDashboardMetrics } from "@/actions/dashboard";
+import { getDashboardStats, getExtendedDashboardMetrics, computeModuleDistribution, getSecondaryDashboardCharts } from "@/actions/dashboard";
 import { getNotifications } from "@/actions/admin-actions";
 import { getActivities } from "@/actions/activity-actions";
 import { prisma } from "@/lib/prisma";
@@ -8,7 +8,7 @@ import { AdminHeaderBar } from "@/components/admin/admin-header-bar";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  const [{ globalStats, moduleDistributions }, notifications, recentActivities, approvedAgg, activeCampaigns, upcomingEvents, extendedMetrics] =
+  const [{ globalStats }, notifications, recentActivities, approvedAgg, activeCampaigns, upcomingEvents, extendedMetrics, moduleDistributions, secondaryCharts] =
     await Promise.all([
       getDashboardStats(),
       getNotifications(),
@@ -17,16 +17,9 @@ export default async function AdminDashboardPage() {
       prisma.campaign.count({ where: { status: "ACTIVE" } }),
       prisma.event.count({ where: { status: "UPCOMING" } }),
       getExtendedDashboardMetrics(),
+      computeModuleDistribution(),
+      getSecondaryDashboardCharts(),
     ]);
-
-  // Default values if database is empty
-  const defaultDistributions = [
-      { category: "School", value: 30, color: "#EF4444" },
-      { category: "Markets", value: 20, color: "#1E293B" },
-      { category: "Pop-up Crusade", value: 20, color: "#22C55E" },
-      { category: "One-to-one", value: 15, color: "#EAB308" },
-      { category: "Crusade", value: 15, color: "#A855F7" },
-  ];
 
   return (
     <div className="space-y-6">
@@ -35,7 +28,7 @@ export default async function AdminDashboardPage() {
         </div>
         <DashboardContent
             initialGlobalStats={globalStats}
-            initialModuleDistributions={moduleDistributions.length > 0 ? moduleDistributions : defaultDistributions}
+            initialModuleDistributions={moduleDistributions}
             recentActivities={recentActivities}
             operationalStats={{
                 donationsApproved: Number(approvedAgg._sum.amount ?? 0),
@@ -43,6 +36,7 @@ export default async function AdminDashboardPage() {
                 upcomingEvents,
             }}
             extendedMetrics={extendedMetrics}
+            secondaryCharts={secondaryCharts}
         />
     </div>
   );

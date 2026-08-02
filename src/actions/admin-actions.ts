@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 export async function getNotifications() {
   return await prisma.notification.findMany({
+    where: { targetUserId: null },
     orderBy: { createdAt: "desc" },
   });
 }
@@ -25,13 +26,13 @@ export async function deleteNotification(id: string) {
 }
 
 export async function deleteAllNotifications() {
-  await prisma.notification.deleteMany();
+  await prisma.notification.deleteMany({ where: { targetUserId: null } });
   revalidatePath("/admin/dashboard");
 }
 
 export async function markAllNotificationsAsRead() {
   await prisma.notification.updateMany({
-    where: { isRead: false },
+    where: { isRead: false, targetUserId: null },
     data: { isRead: true },
   });
   revalidatePath("/admin/dashboard");

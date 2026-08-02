@@ -176,7 +176,7 @@ export function RegistrationForm({ eventId, isFireCamp = false }: RegistrationFo
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {isFireCamp ? <FireCampForm formData={formData} updateFormData={updateFormData} toggleArrayValue={toggleArrayValue} updateFile={updateFile} /> : (
-        <LiFACGeneralForm formData={formData} updateFormData={updateFormData} toggleArrayValue={toggleArrayValue} />
+        <LiFACGeneralForm formData={formData} updateFormData={updateFormData} toggleArrayValue={toggleArrayValue} updateFile={updateFile} />
       )}
 
       {error && <p className="text-sm text-red-500">{error}</p>}
@@ -303,10 +303,12 @@ function LiFACGeneralForm({
   formData,
   updateFormData,
   toggleArrayValue,
+  updateFile,
 }: {
   formData: Record<string, any>;
   updateFormData: (key: string, value: any) => void;
   toggleArrayValue: (key: string, value: string) => void;
+  updateFile: (key: string, file: File | null) => void;
 }) {
   const evenement = formData.evenement;
   const participationMode = formData.participationMode;
@@ -365,6 +367,13 @@ function LiFACGeneralForm({
         <Input placeholder="Ville" onChange={(e) => updateFormData("ville", e.target.value)} />
         <Input placeholder="Église ou ministère" onChange={(e) => updateFormData("eglise", e.target.value)} />
         <Input placeholder="Profession" onChange={(e) => updateFormData("profession", e.target.value)} />
+
+        <div className="space-y-1">
+          <FileField label="Votre photo (optionnelle)" accept="image/*" onChange={(f) => updateFile("photoParticipant", f)} />
+          <p className="text-xs text-muted-foreground">
+            Facultatif — cette photo sera utilisée sur votre carte de participant. Vous pouvez vous inscrire sans donner de photo.
+          </p>
+        </div>
       </Section>
 
       {/* 2. Événement */}

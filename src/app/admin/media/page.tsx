@@ -8,13 +8,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, Trash2, X, FileText, Video, ImageIcon } from "lucide-react";
+import { Upload, Trash2, X, FileText, Video, ImageIcon, Download } from "lucide-react";
 import { toast } from "sonner";
 
 export default function MediaLibraryPage() {
   const [media, setMedia] = useState<any[]>([]);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [previewItem, setPreviewItem] = useState<any>(null);
 
   useEffect(() => {
     load();
@@ -58,7 +59,11 @@ export default function MediaLibraryPage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {media.map((m) => (
             <Card key={m.id} className="overflow-hidden group hover:shadow-lg transition-shadow duration-300">
-              <div className="relative h-36 bg-gray-100 flex items-center justify-center">
+              <button
+                type="button"
+                onClick={() => setPreviewItem(m)}
+                className="relative h-36 w-full bg-gray-100 flex items-center justify-center cursor-zoom-in"
+              >
                 {m.type === "image" ? (
                   <Image src={m.url} alt={m.altText ?? m.filename ?? "media"} fill className="object-cover" unoptimized />
                 ) : m.type === "video" ? (
@@ -66,13 +71,17 @@ export default function MediaLibraryPage() {
                 ) : (
                   <FileText className="h-10 w-10 text-gray-400" />
                 )}
-                <button
-                  onClick={() => handleDelete(m.id)}
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(m.id);
+                  }}
+                  role="button"
                   className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
                 >
                   <Trash2 className="h-3.5 w-3.5 text-lifac-red-600" />
-                </button>
-              </div>
+                </span>
+              </button>
               <CardContent className="p-3 space-y-0.5">
                 <p className="text-xs font-medium text-lifac-navy-900 truncate">{m.filename ?? "Sans nom"}</p>
                 <p className="text-[11px] text-gray-400">
@@ -93,6 +102,42 @@ export default function MediaLibraryPage() {
           }}
         />
       )}
+
+      {previewItem && <MediaLightbox item={previewItem} onClose={() => setPreviewItem(null)} />}
+    </div>
+  );
+}
+
+function MediaLightbox({ item, onClose }: { item: any; onClose: () => void }) {
+  return (
+    <div
+      className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in"
+      onClick={onClose}
+    >
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+      >
+        <X size={22} />
+      </button>
+      <div className="max-w-4xl max-h-[85vh] w-full flex flex-col items-center gap-3" onClick={(e) => e.stopPropagation()}>
+        {item.type === "image" ? (
+          <img src={item.url} alt={item.altText ?? item.filename ?? "media"} className="max-h-[75vh] w-auto rounded-lg object-contain shadow-2xl" />
+        ) : item.type === "video" ? (
+          <video src={item.url} controls autoPlay className="max-h-[75vh] w-auto rounded-lg shadow-2xl" />
+        ) : (
+          <div className="bg-white rounded-lg p-10 text-center">
+            <FileText className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+            <p className="text-sm text-gray-600">{item.filename ?? "Document"}</p>
+          </div>
+        )}
+        <div className="flex items-center justify-between w-full text-white/90 text-sm px-1">
+          <span>{item.caption || item.filename || "Sans légende"}</span>
+          <a href={item.url} download target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-white">
+            <Download size={14} /> Télécharger
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

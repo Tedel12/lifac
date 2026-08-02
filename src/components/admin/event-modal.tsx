@@ -5,8 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X } from "lucide-react";
+import { X, Upload, Loader2 } from "lucide-react";
 import { createEvent, updateEvent } from "@/actions/admin-events-actions";
+import { uploadAdminImage } from "@/actions/upload-actions";
 import { EventStatus, EventType } from "@prisma/client";
 import { toast } from "sonner";
 
@@ -35,6 +36,8 @@ function toDateTimeLocal(date: any) {
 }
 
 export function EventModal({ isOpen, onClose, event, onUpdate }: any) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [formData, setFormData] = useState(
     event
       ? {
@@ -62,6 +65,24 @@ export function EventModal({ isOpen, onClose, event, onUpdate }: any) {
   );
 
   if (!isOpen) return null;
+
+  const handleCoverChange = async (file: File | null) => {
+    if (!file) return;
+    setUploading(true);
+    setUploadError(null);
+    try {
+      const fd = new FormData();
+      fd.set("file", file);
+      const result = await uploadAdminImage(fd);
+      if (!result.success || !result.url) {
+        setUploadError(result.error ?? "Erreur lors de l'envoi de l'image.");
+        return;
+      }
+      setFormData((prev: any) => ({ ...prev, coverImageUrl: result.url }));
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!formData.title.trim() || !formData.startDate || !formData.location.trim()) {
@@ -189,12 +210,24 @@ export function EventModal({ isOpen, onClose, event, onUpdate }: any) {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <Label>Image de couverture (URL)</Label>
-                <Input
-                  value={formData.coverImageUrl ?? ""}
-                  onChange={(e) => setFormData({ ...formData, coverImageUrl: e.target.value })}
-                  placeholder="https://..."
-                />
+                <Label>Image de couverture</Label>
+                <div className="flex items-center gap-3">
+                  {formData.coverImageUrl && (
+                    <img src={formData.coverImageUrl} alt="" className="h-12 w-12 rounded-lg object-cover border" />
+                  )}
+                  <label className="flex items-center gap-2 border rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 cursor-pointer">
+                    {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                    {uploading ? "Envoi..." : formData.coverImageUrl ? "Changer" : "Choisir un fichier"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={uploading}
+                      onChange={(e) => handleCoverChange(e.target.files?.[0] ?? null)}
+                    />
+                  </label>
+                </div>
+                {uploadError && <p className="text-xs text-red-600">{uploadError}</p>}
               </div>
               <div className="space-y-1">
                 <Label>Capacité max.</Label>

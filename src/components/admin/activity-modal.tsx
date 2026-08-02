@@ -5,9 +5,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X } from "lucide-react";
+import { X, Upload, Loader2 } from "lucide-react";
 import { createActivity, updateActivity } from "@/actions/activity-actions";
 import { getAgents } from "@/actions/admin-agent-actions";
+import { uploadAdminImage } from "@/actions/upload-actions";
 import { ActivityStatus, ActivityType } from "@prisma/client";
 
 const ACTIVITY_TYPE_LABELS: Record<string, string> = {
@@ -34,6 +35,8 @@ const ACTIVITY_STATUS_LABELS: Record<string, string> = {
 
 export function ActivityModal({ isOpen, onClose, activity, onUpdate }: any) {
     const [agents, setAgents] = useState<{ id: string; name: string | null; email: string }[]>([]);
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
 
     useEffect(() => {
         getAgents().then((data: any) => setAgents(data));
@@ -56,6 +59,7 @@ export function ActivityModal({ isOpen, onClose, activity, onUpdate }: any) {
             startTime: "",
             endTime: "",
             responsibleName: "",
+            imageUrl: "",
             assignedToId: "",
             partnerChurch: "",
             contactName: "",
@@ -84,6 +88,24 @@ export function ActivityModal({ isOpen, onClose, activity, onUpdate }: any) {
         }
         onUpdate && onUpdate();
         onClose();
+    };
+
+    const handlePhotoChange = async (file: File | null) => {
+        if (!file) return;
+        setUploading(true);
+        setUploadError(null);
+        try {
+            const fd = new FormData();
+            fd.set("file", file);
+            const result = await uploadAdminImage(fd);
+            if (!result.success || !result.url) {
+                setUploadError(result.error ?? "Erreur lors de l'envoi de l'image.");
+                return;
+            }
+            setFormData((prev: any) => ({ ...prev, imageUrl: result.url }));
+        } finally {
+            setUploading(false);
+        }
     };
 
     const numberField = (key: string, label: string) => (
@@ -142,6 +164,27 @@ export function ActivityModal({ isOpen, onClose, activity, onUpdate }: any) {
                         <div className="space-y-1">
                             <Label>Intitulé de l&apos;activité</Label>
                             <Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
+                        </div>
+
+                        <div className="space-y-1">
+                            <Label>Photo de l&apos;activité</Label>
+                            <div className="flex items-center gap-3">
+                                {formData.imageUrl && (
+                                    <img src={formData.imageUrl} alt="" className="h-14 w-14 rounded-lg object-cover border" />
+                                )}
+                                <label className="flex items-center gap-2 border rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 cursor-pointer">
+                                    {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                                    {uploading ? "Envoi..." : formData.imageUrl ? "Changer la photo" : "Choisir une photo"}
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        disabled={uploading}
+                                        onChange={(e) => handlePhotoChange(e.target.files?.[0] ?? null)}
+                                    />
+                                </label>
+                            </div>
+                            {uploadError && <p className="text-xs text-red-600">{uploadError}</p>}
                         </div>
 
                         <div className="grid grid-cols-3 gap-4">

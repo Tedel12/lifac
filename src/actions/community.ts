@@ -166,7 +166,7 @@ export async function registerForEvent(
         const url = await uploadToCloudinary(value, "registrations");
         uploadedUrls.push(url);
 
-        if (key === "photoIdentite" || key === "photoIdentiteDoc") photoUrl = url;
+        if (key === "photoIdentite" || key === "photoIdentiteDoc" || key === "photoParticipant") photoUrl = url;
         if (key === "pieceIdentite") idCardUrl = url;
         if (key === "lettreRecommandation" || key === "lettreRecommandationDoc")
           recommendationLetterUrl = url;

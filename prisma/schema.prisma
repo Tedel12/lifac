@@ -165,6 +165,7 @@ model User {
   assignedSchools   School[]
   assignedActivities Activity[] @relation("ActivityAssignee")
   prayerIntercessions PrayerIntercession[]
+  personalNotifications Notification[]
 
   @@index([email])
   @@index([role])
@@ -551,6 +552,9 @@ model Activity {
   startTime String? // ex: "09:00"
   endTime   String?
 
+  // Photo de l'activité (upload libre, distincte de l'image générique du type)
+  imageUrl String?
+
   // Responsable
   responsibleName String? // affichage libre / legacy
   assignedToId     String? // missionnaire (User role VOLUNTEER) responsable, source de vérité
@@ -808,8 +812,13 @@ model Notification {
   message   String
   isRead    Boolean  @default(false)
   type      String // 'info', 'warning', 'success', 'error'
+  // null = notification "diffusion" visible dans la cloche admin (comportement historique).
+  // renseigné = notification personnelle visible uniquement dans la cloche du missionnaire ciblé.
+  targetUserId String?
+  targetUser   User?   @relation(fields: [targetUserId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
+  @@index([targetUserId])
   @@map("notifications")
 }
 

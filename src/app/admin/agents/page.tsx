@@ -9,7 +9,6 @@ import {
   rejectVolunteerApplication,
 } from "@/actions/admin-agent-actions";
 import { AgentModal } from "@/components/admin/agent-modal";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -101,37 +100,78 @@ export default function AgentsPage() {
       )}
 
       <div className="space-y-3">
-        <h2 className="font-display font-bold text-lifac-navy-900">Missionnaires actifs</h2>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nom</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Téléphone</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {agents.map((agent) => (
-              <TableRow key={agent.id}>
-                <TableCell>{agent.name}</TableCell>
-                <TableCell>{agent.email}</TableCell>
-                <TableCell>{agent.phone}</TableCell>
-                <TableCell className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => { setSelectedAgent(agent); setModalOpen(true); }}>
-                    <Eye className="h-4 w-4 mr-1" /> Voir
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => { setSelectedAgent(agent); setModalOpen(true); }}>
-                    <Pencil className="h-4 w-4 mr-1" /> Modifier
-                  </Button>
-                  <Button variant="destructive" size="sm" onClick={() => handleDelete(agent.id)}>
-                    <Trash2 className="h-4 w-4 mr-1" /> Supprimer
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="flex items-center justify-between">
+          <h2 className="font-display font-bold text-lifac-navy-900">Missionnaires actifs</h2>
+          <span className="text-xs text-gray-400">{agents.length} missionnaire{agents.length !== 1 ? "s" : ""}</span>
+        </div>
+        {agents.length === 0 ? (
+          <Card>
+            <CardContent className="p-8 text-center text-sm text-gray-500">Aucun missionnaire pour le moment.</CardContent>
+          </Card>
+        ) : (
+        <Card className="overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50/80 border-b border-gray-100">
+                  <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-gray-400">Missionnaire</th>
+                  <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-gray-400">Contact</th>
+                  <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-gray-400">Statut</th>
+                  <th className="px-5 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {agents.map((agent) => (
+                  <tr key={agent.id} className="hover:bg-gray-50/60 transition-colors">
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 shrink-0 rounded-full bg-lifac-red-50 text-lifac-red-600 flex items-center justify-center font-bold text-xs">
+                          {(agent.name || agent.email || "?").slice(0, 1).toUpperCase()}
+                        </div>
+                        <span className="font-medium text-lifac-navy-900">{agent.name || "—"}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <p className="text-lifac-navy-700">{agent.email}</p>
+                      <p className="text-xs text-gray-400">{agent.phone || "—"}</p>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Actif
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <div className="flex justify-end gap-1.5">
+                        <button
+                          title="Voir"
+                          onClick={() => { setSelectedAgent(agent); setModalOpen(true); }}
+                          className="p-2 rounded-lg text-gray-400 hover:text-lifac-navy-900 hover:bg-gray-100 transition-colors"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button
+                          title="Modifier"
+                          onClick={() => { setSelectedAgent(agent); setModalOpen(true); }}
+                          className="p-2 rounded-lg text-gray-400 hover:text-lifac-red-600 hover:bg-lifac-red-50 transition-colors"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          title="Supprimer"
+                          onClick={() => handleDelete(agent.id)}
+                          className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+        )}
       </div>
 
       {modalOpen && (

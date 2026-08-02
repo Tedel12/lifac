@@ -155,7 +155,16 @@ export default function ActivitiesPage({
                                 activities.map((activity) => (
                                     <tr key={activity.id} className="hover:bg-gray-50">
                                         <td className="px-6 py-4 font-medium">{activity.code}</td>
-                                        <td className="px-6 py-4">{activity.title}</td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2.5">
+                                                {activity.imageUrl ? (
+                                                    <img src={activity.imageUrl} alt="" className="h-8 w-8 rounded-md object-cover shrink-0" />
+                                                ) : (
+                                                    <div className="h-8 w-8 rounded-md bg-gray-100 shrink-0" />
+                                                )}
+                                                {activity.title}
+                                            </div>
+                                        </td>
                                         <td className="px-6 py-4">{ACTIVITY_TYPE_LABELS[activity.type] ?? activity.type}</td>
                                         <td className="px-6 py-4">{new Date(activity.date).toLocaleDateString("fr-FR")}</td>
                                         <td className="px-6 py-4">{activity.commune || "—"}</td>

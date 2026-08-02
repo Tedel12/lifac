@@ -42,9 +42,21 @@ export async function createActivity(data: any) {
     const date = data.date ? new Date(data.date) : new Date();
     const code = await generateActivityCode(date);
 
-    await prisma.activity.create({
+    const created = await prisma.activity.create({
         data: { ...data, date, code },
     });
+
+    if (created.assignedToId) {
+        await prisma.notification.create({
+            data: {
+                title: "Nouvelle affectation",
+                message: `Vous avez été affecté(e) à l'activité "${created.title}" le ${date.toLocaleDateString("fr-FR")}.`,
+                type: "info",
+                targetUserId: created.assignedToId,
+            },
+        });
+    }
+
     revalidatePath("/admin/activities");
 }
 
@@ -54,7 +66,21 @@ export async function updateActivity(id: string, data: any) {
     // Le code est généré une seule fois à la création, jamais modifiable ensuite
     delete updateData.code;
 
-    await prisma.activity.update({ where: { id }, data: updateData });
+    const previous = await prisma.activity.findUnique({ where: { id }, select: { assignedToId: true } });
+    const updated = await prisma.activity.update({ where: { id }, data: updateData });
+
+    // Notifie le missionnaire uniquement si l'affectation vient de changer (nouvelle ou différente)
+    if (updated.assignedToId && updated.assignedToId !== previous?.assignedToId) {
+        await prisma.notification.create({
+            data: {
+                title: "Nouvelle affectation",
+                message: `Vous avez été affecté(e) à l'activité "${updated.title}" le ${updated.date.toLocaleDateString("fr-FR")}.`,
+                type: "info",
+                targetUserId: updated.assignedToId,
+            },
+        });
+    }
+
     revalidatePath("/admin/activities");
 }
 

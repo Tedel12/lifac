@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X, History } from "lucide-react";
+import { X, History, LocateFixed, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { createSchool, updateSchool } from "@/actions/school-actions";
 import { getAvailableDonations, assignDonationsToSchool, getSchoolDonationsHistory } from "@/actions/admin-actions";
@@ -25,31 +25,39 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate, isReadOnly = fa
   const [formData, setFormData] = useState(school || {
     code: "",
     name: "",
-    type: "", 
-    sector: "", 
-    country: "Bénin", 
+    countryCode: "BJ",
     department: "",
     commune: "",
-    district: "", 
-    neighborhood: "", 
     address: "",
-    latitude: 0, 
-    longitude: 0, 
+    latitude: null as number | null,
+    longitude: null as number | null,
     estimatedStudents: 0,
-    directorName: "", 
-    directorFunction: "", 
-    directorPhone: "", 
-    directorWhatsApp: "", 
-    directorEmail: "", 
-    contactName: "", 
-    contactFunction: "", 
-    contactPhone: "", 
-    contactWhatsApp: "", 
-    contactEmail: "", 
-    activityDate: null, 
-    activityTime: "", 
-    status: SchoolStatus.NON_CONFIRMEE
+    responsibleName: "",
+    phone: "",
+    status: SchoolStatus.NON_CONFIRMEE,
   });
+  const [locating, setLocating] = useState(false);
+  const [locateError, setLocateError] = useState<string | null>(null);
+
+  const handleUseCurrentPosition = () => {
+    if (!navigator.geolocation) {
+      setLocateError("Géolocalisation non disponible sur cet appareil.");
+      return;
+    }
+    setLocating(true);
+    setLocateError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setFormData((prev: any) => ({ ...prev, latitude: pos.coords.latitude, longitude: pos.coords.longitude }));
+        setLocating(false);
+      },
+      () => {
+        setLocateError("Impossible d'obtenir votre position. Vérifiez les autorisations du navigateur.");
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   useEffect(() => {
     if (isOpen && school) {
@@ -110,42 +118,67 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate, isReadOnly = fa
                
                <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-1"><Label>Code</Label><Input value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} /></div>
-                   <div className="space-y-1"><Label>Nom</Label><Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} /></div>
-               </div>
-               
-               <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-1"><Label>Type</Label><Input value={formData.type} onChange={(e) => setFormData({...formData, type: e.target.value})} /></div>
-                 <div className="space-y-1"><Label>Secteur</Label><Input value={formData.sector} onChange={(e) => setFormData({...formData, sector: e.target.value})} /></div>
+                   <div className="space-y-1"><Label>Nom de l'école</Label><Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} /></div>
                </div>
 
                <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-1"><Label>Pays</Label><Input value={formData.country} onChange={(e) => setFormData({...formData, country: e.target.value})} /></div>
+                 <div className="space-y-1"><Label>Code pays</Label><Input value={formData.countryCode} onChange={(e) => setFormData({...formData, countryCode: e.target.value})} placeholder="BJ" /></div>
                  <div className="space-y-1"><Label>Département</Label><Input value={formData.department} onChange={(e) => setFormData({...formData, department: e.target.value})} /></div>
                </div>
-               
-               <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-1"><Label>Commune</Label><Input value={formData.commune} onChange={(e) => setFormData({...formData, commune: e.target.value})} /></div>
-                 <div className="space-y-1"><Label>District</Label><Input value={formData.district} onChange={(e) => setFormData({...formData, district: e.target.value})} /></div>
-               </div>
+
+               <div className="space-y-1"><Label>Commune</Label><Input value={formData.commune} onChange={(e) => setFormData({...formData, commune: e.target.value})} /></div>
 
                <div className="space-y-1"><Label>Adresse complète</Label><Input value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} /></div>
-               
-               <div className="space-y-1"><Label>Directeur / Responsable</Label><Input value={formData.directorName} onChange={(e) => setFormData({...formData, directorName: e.target.value})} /></div>
-               
+
+               <div className="space-y-1">
+                 <Label>Coordonnées GPS</Label>
+                 <div className="grid grid-cols-2 gap-4">
+                   <Input
+                     type="number"
+                     step="any"
+                     placeholder="Latitude"
+                     value={formData.latitude ?? ""}
+                     onChange={(e) => setFormData({...formData, latitude: e.target.value ? parseFloat(e.target.value) : null})}
+                   />
+                   <Input
+                     type="number"
+                     step="any"
+                     placeholder="Longitude"
+                     value={formData.longitude ?? ""}
+                     onChange={(e) => setFormData({...formData, longitude: e.target.value ? parseFloat(e.target.value) : null})}
+                   />
+                 </div>
+                 <button
+                   type="button"
+                   onClick={handleUseCurrentPosition}
+                   disabled={locating}
+                   className="flex items-center gap-1.5 text-xs font-medium text-lifac-red-600 hover:text-lifac-red-700 mt-1.5 disabled:opacity-50"
+                 >
+                   {locating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LocateFixed className="h-3.5 w-3.5" />}
+                   {locating ? "Localisation..." : "Utiliser ma position actuelle"}
+                 </button>
+                 {locateError && <p className="text-xs text-red-600 mt-1">{locateError}</p>}
+                 {(formData.latitude == null || formData.longitude == null) && (
+                   <p className="text-xs text-amber-600 mt-1">
+                     Sans coordonnées GPS, l&apos;itinéraire et la validation de présence ne fonctionneront pas pour le missionnaire affecté.
+                   </p>
+                 )}
+               </div>
+
                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1"><Label>Téléphone</Label><Input value={formData.directorPhone} onChange={(e) => setFormData({...formData, directorPhone: e.target.value})} /></div>
-                  <div className="space-y-1"><Label>Email</Label><Input value={formData.directorEmail} onChange={(e) => setFormData({...formData, directorEmail: e.target.value})} /></div>
+                  <div className="space-y-1"><Label>Responsable</Label><Input value={formData.responsibleName} onChange={(e) => setFormData({...formData, responsibleName: e.target.value})} /></div>
+                  <div className="space-y-1"><Label>Téléphone</Label><Input value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} /></div>
                </div>
 
                <div className="space-y-1">
                  <Label>Effectif estimé</Label>
-                 <Input 
-                    type="number" 
-                    value={formData.estimatedStudents ?? ""} 
-                    onChange={(e) => setFormData({...formData, estimatedStudents: e.target.value ? parseInt(e.target.value) : 0})} 
+                 <Input
+                    type="number"
+                    value={formData.estimatedStudents ?? ""}
+                    onChange={(e) => setFormData({...formData, estimatedStudents: e.target.value ? parseInt(e.target.value) : 0})}
                  />
                </div>
-               
+
                {!isReadOnly && (
                  <div className="flex gap-2 pt-4">
                    <Button onClick={handleSubmit}>Sauvegarder</Button>
