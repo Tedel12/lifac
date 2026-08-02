@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { CampaignStatus, CampaignType } from "@prisma/client";
+import { logAudit } from "@/lib/audit-log";
 
 function slugify(title: string): string {
   return title
@@ -44,7 +45,7 @@ export async function getCampaigns(params?: { search?: string; status?: Campaign
 
 export async function createCampaign(data: any) {
   const slug = await generateUniqueSlug(data.title);
-  await prisma.campaign.create({
+  const created = await prisma.campaign.create({
     data: {
       title: data.title,
       slug,
@@ -62,6 +63,7 @@ export async function createCampaign(data: any) {
       isFeatured: !!data.isFeatured,
     },
   });
+  await logAudit("CAMPAIGN_CREATE", "Campaign", created.id, undefined, { title: data.title });
   revalidatePath("/admin/campaigns");
   revalidatePath("/campaigns");
 }
@@ -91,6 +93,7 @@ export async function updateCampaign(id: string, data: any) {
 
 export async function deleteCampaign(id: string) {
   await prisma.campaign.delete({ where: { id } });
+  await logAudit("CAMPAIGN_DELETE", "Campaign", id);
   revalidatePath("/admin/campaigns");
   revalidatePath("/campaigns");
 }

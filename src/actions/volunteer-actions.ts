@@ -76,7 +76,36 @@ export async function getPrayerWall() {
     where: { isPublic: true },
     orderBy: { createdAt: "desc" },
     take: 30,
+    include: {
+      intercessions: {
+        orderBy: { createdAt: "desc" },
+        take: 3,
+        select: { intercessorName: true, createdAt: true },
+      },
+    },
   });
+}
+
+// Enregistre une intercession ("j'ai prié") du missionnaire connecté sur une demande de prière
+export async function markPrayed(prayerRequestId: string) {
+  const agentId = await requireAgentId();
+  const agent = await prisma.user.findUnique({ where: { id: agentId }, select: { name: true } });
+
+  await prisma.$transaction([
+    prisma.prayerIntercession.create({
+      data: {
+        prayerRequestId,
+        intercessorId: agentId,
+        intercessorName: agent?.name ?? "Missionnaire",
+      },
+    }),
+    prisma.prayerRequest.update({
+      where: { id: prayerRequestId },
+      data: { prayerCount: { increment: 1 } },
+    }),
+  ]);
+
+  revalidatePath("/volunteer/prayer");
 }
 
 export async function getMyProfile() {

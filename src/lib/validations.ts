@@ -138,5 +138,6 @@ export const prayerRequestSchema = z.object({
   authorEmail: z.string().email().optional().or(z.literal("")),
   title: z.string().min(3).max(200),
   content: z.string().min(10).max(1000),
+  category: z.enum(["PROTECTION", "SALUT", "GUERISON", "DELIVRANCE", "AUTRE"]).default("AUTRE"),
   isPublic: z.boolean().default(true),
 });

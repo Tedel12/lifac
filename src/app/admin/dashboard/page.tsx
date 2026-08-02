@@ -1,4 +1,4 @@
-import { getDashboardStats } from "@/actions/dashboard";
+import { getDashboardStats, getExtendedDashboardMetrics } from "@/actions/dashboard";
 import { getNotifications } from "@/actions/admin-actions";
 import { getActivities } from "@/actions/activity-actions";
 import { prisma } from "@/lib/prisma";
@@ -8,7 +8,7 @@ import { AdminHeaderBar } from "@/components/admin/admin-header-bar";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  const [{ globalStats, moduleDistributions }, notifications, recentActivities, approvedAgg, activeCampaigns, upcomingEvents] =
+  const [{ globalStats, moduleDistributions }, notifications, recentActivities, approvedAgg, activeCampaigns, upcomingEvents, extendedMetrics] =
     await Promise.all([
       getDashboardStats(),
       getNotifications(),
@@ -16,6 +16,7 @@ export default async function AdminDashboardPage() {
       prisma.donation.aggregate({ _sum: { amount: true }, where: { status: "APPROVED" } }),
       prisma.campaign.count({ where: { status: "ACTIVE" } }),
       prisma.event.count({ where: { status: "UPCOMING" } }),
+      getExtendedDashboardMetrics(),
     ]);
 
   // Default values if database is empty
@@ -41,6 +42,7 @@ export default async function AdminDashboardPage() {
                 activeCampaigns,
                 upcomingEvents,
             }}
+            extendedMetrics={extendedMetrics}
         />
     </div>
   );

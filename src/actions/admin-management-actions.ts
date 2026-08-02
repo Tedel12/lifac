@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { Role } from "@prisma/client";
 import { getCurrentAdminId } from "@/actions/auth";
+import { logAudit } from "@/lib/audit-log";
 
 export async function getAdmins() {
   return prisma.user.findMany({
@@ -26,13 +27,14 @@ export async function createAdmin(data: { name: string; email: string; password:
         where: { id: existing.id },
         data: { name: data.name, password: hashedPassword, isActive: true },
       });
+      await logAudit("ADMIN_REACTIVATE", "User", existing.id, undefined, { name: data.name, email: data.email });
       revalidatePath("/admin/admins");
       return;
     }
     throw new Error("Un compte existe déjà avec cet email.");
   }
 
-  await prisma.user.create({
+  const created = await prisma.user.create({
     data: {
       name: data.name,
       email: data.email,
@@ -40,6 +42,7 @@ export async function createAdmin(data: { name: string; email: string; password:
       role: Role.ADMIN,
     },
   });
+  await logAudit("ADMIN_CREATE", "User", created.id, undefined, { name: data.name, email: data.email });
   revalidatePath("/admin/admins");
 }
 
@@ -49,6 +52,7 @@ export async function deleteAdmin(id: string) {
     throw new Error("Vous ne pouvez pas désactiver votre propre compte");
   }
   await prisma.user.update({ where: { id }, data: { isActive: false } });
+  await logAudit("ADMIN_DEACTIVATE", "User", id);
   revalidatePath("/admin/admins");
 }
 

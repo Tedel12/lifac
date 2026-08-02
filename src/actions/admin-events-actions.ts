@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { EventStatus, EventType } from "@prisma/client";
+import { logAudit } from "@/lib/audit-log";
 
 function slugify(title: string): string {
   return title
@@ -57,7 +58,7 @@ export async function getEventById(id: string) {
 
 export async function createEvent(data: any) {
   const slug = await generateUniqueSlug(data.title);
-  await prisma.event.create({
+  const created = await prisma.event.create({
     data: {
       title: data.title,
       slug,
@@ -77,6 +78,7 @@ export async function createEvent(data: any) {
       isFeatured: !!data.isFeatured,
     },
   });
+  await logAudit("EVENT_CREATE", "Event", created.id, undefined, { title: data.title });
   revalidatePath("/admin/events");
   revalidatePath("/events");
 }
@@ -108,6 +110,7 @@ export async function updateEvent(id: string, data: any) {
 
 export async function deleteEvent(id: string) {
   await prisma.event.delete({ where: { id } });
+  await logAudit("EVENT_DELETE", "Event", id);
   revalidatePath("/admin/events");
   revalidatePath("/events");
 }

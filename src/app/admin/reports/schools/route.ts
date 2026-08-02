@@ -16,10 +16,12 @@ export async function GET(req: NextRequest) {
 
   const from = req.nextUrl.searchParams.get("from");
   const to = req.nextUrl.searchParams.get("to");
-  const city = req.nextUrl.searchParams.get("city");
+  const agentId = req.nextUrl.searchParams.get("agentId");
+  const commune = req.nextUrl.searchParams.get("commune");
+  const department = req.nextUrl.searchParams.get("department");
   const format = req.nextUrl.searchParams.get("format") ?? "csv";
 
-  const registrations = await prisma.eventRegistration.findMany({
+  const schools = await prisma.school.findMany({
     where: {
       ...(from || to
         ? {
@@ -29,30 +31,33 @@ export async function GET(req: NextRequest) {
             },
           }
         : {}),
-      ...(city ? { city: { contains: city, mode: "insensitive" } } : {}),
+      ...(agentId ? { agentId } : {}),
+      ...(commune ? { commune: { contains: commune, mode: "insensitive" } } : {}),
+      ...(department ? { department: { contains: department, mode: "insensitive" } } : {}),
     },
     orderBy: { createdAt: "desc" },
-    include: { event: { select: { title: true } } },
+    include: { agent: { select: { name: true } } },
   });
 
-  const headers = ["Participant", "Téléphone", "Email", "Événement", "Ville", "N° Participant", "Statut", "Date d'inscription"];
-  const dataRows = registrations.map((r) => [
-    r.fullName,
-    r.phone,
-    r.email ?? "",
-    r.event.title,
-    r.city ?? "",
-    r.participantNumber ?? "",
-    r.status,
-    r.createdAt.toISOString().slice(0, 10),
+  const headers = ["Code", "Nom", "Commune", "Département", "Responsable", "Téléphone", "Missionnaire", "Statut", "Effectif estimé"];
+  const dataRows = schools.map((s) => [
+    s.code,
+    s.name,
+    s.commune,
+    s.department,
+    s.responsibleName,
+    s.phone,
+    s.agent?.name ?? "",
+    s.status,
+    String(s.estimatedStudents ?? ""),
   ]);
 
   if (format === "pdf") {
-    const pdfBytes = await generateSimplePdfTable("Inscriptions aux événements — LiFAC", headers, dataRows);
+    const pdfBytes = await generateSimplePdfTable("Écoles — LiFAC", headers, dataRows);
     return new NextResponse(Buffer.from(pdfBytes), {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="inscriptions-lifac.pdf"`,
+        "Content-Disposition": `attachment; filename="ecoles-lifac.pdf"`,
       },
     });
   }
@@ -60,7 +65,7 @@ export async function GET(req: NextRequest) {
   return new NextResponse(toCsv([headers, ...dataRows]), {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="inscriptions-lifac.csv"`,
+      "Content-Disposition": `attachment; filename="ecoles-lifac.csv"`,
     },
   });
 }

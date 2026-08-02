@@ -40,3 +40,33 @@ export function generateDonationReference(): string {
   const randomPart = Math.random().toString(36).slice(2, 7).toUpperCase();
   return `LIFAC-${datePart}-${randomPart}`;
 }
+
+// Distance à vol d'oiseau entre deux points GPS (formule de Haversine), en mètres.
+export function haversineDistanceMeters(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number {
+  const R = 6371000; // rayon terrestre en mètres
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+export function googleMapsDirectionsUrl(lat: number, lng: number): string {
+  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+}
+
+export const PRAYER_CATEGORY_LABELS: Record<string, string> = {
+  PROTECTION: "Protection",
+  SALUT: "Salut",
+  GUERISON: "Guérison",
+  DELIVRANCE: "Délivrance",
+  AUTRE: "Autre",
+};

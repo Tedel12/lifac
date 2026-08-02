@@ -221,8 +221,19 @@ export async function POST(request: NextRequest) {
   // 8. Revalidation des pages affichant les compteurs
   await revalidateAfterDonation(donation.campaign?.slug);
 
+  // Notification à l'équipe si le don vient d'être approuvé
+  if (newStatus === "APPROVED" && donation.status !== "APPROVED") {
+    const amountXof = Number(donation.amount) / 100;
+    await prisma.notification.create({
+      data: {
+        title: "Nouveau don confirmé",
+        message: `${donation.isAnonymous ? "Un donateur anonyme" : donation.donorName ?? "Un donateur"} a donné ${amountXof.toLocaleString("fr-FR")} XOF.`,
+        type: "success",
+      },
+    });
+  }
+
   // TODO : envoyer email de reçu au donateur si APPROVED
-  // TODO : notifier l'équipe LiFAC si don > seuil
 
   return NextResponse.json({ received: true });
 }

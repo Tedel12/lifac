@@ -164,6 +164,7 @@ model User {
   schoolAssignments  SchoolAssignmentHistory[]
   assignedSchools   School[]
   assignedActivities Activity[] @relation("ActivityAssignee")
+  prayerIntercessions PrayerIntercession[]
 
   @@index([email])
   @@index([role])
@@ -660,6 +661,14 @@ model Testimony {
 }
 
 // ---------- DEMANDES DE PRIÈRE ----------
+enum PrayerCategory {
+  PROTECTION
+  SALUT
+  GUERISON
+  DELIVRANCE
+  AUTRE
+}
+
 model PrayerRequest {
   id       String  @id @default(uuid())
   authorId String?
@@ -670,6 +679,7 @@ model PrayerRequest {
 
   title      String
   content    String  @db.Text
+  category   PrayerCategory @default(AUTRE)
   isPublic   Boolean @default(true)
   isAnswered Boolean @default(false)
 
@@ -678,8 +688,27 @@ model PrayerRequest {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  intercessions PrayerIntercession[]
+
   @@index([isPublic, createdAt])
+  @@index([category])
   @@map("prayer_requests")
+}
+
+// Historique des intercessions ("j'ai prié") sur une demande de prière
+model PrayerIntercession {
+  id              String        @id @default(uuid())
+  prayerRequestId String
+  prayerRequest   PrayerRequest @relation(fields: [prayerRequestId], references: [id], onDelete: Cascade)
+
+  intercessorId   String?
+  intercessor     User?   @relation(fields: [intercessorId], references: [id], onDelete: SetNull)
+  intercessorName String // libellé affiché même si l'utilisateur est supprimé
+
+  createdAt DateTime @default(now())
+
+  @@index([prayerRequestId])
+  @@map("prayer_intercessions")
 }
 
 // ---------- MÉDIAS ----------

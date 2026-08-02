@@ -557,6 +557,8 @@
     "logout": "Logout",
     "missionaries": "Missionaries",
     "admins": "Administrators",
+    "media": "Media Library",
+    "auditLog": "Audit Log",
     "connectedAs": "Logged in as",
     "sectionOverview": "Overview",
     "sectionContent": "Content",

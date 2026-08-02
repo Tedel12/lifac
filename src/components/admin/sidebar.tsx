@@ -24,6 +24,8 @@ import {
   HeartHandshake,
   Users2,
   Banknote,
+  Image as ImageIcon,
+  ClipboardList,
 } from "lucide-react";
 import { logoutAdmin } from "@/actions/auth";
 import { useTranslations } from "next-intl";
@@ -52,6 +54,7 @@ export function AdminSidebar({ adminName }: { adminName?: string | null }) {
         { name: t("events"), href: "/admin/events", icon: PartyPopper },
         { name: t("campaigns"), href: "/admin/campaigns", icon: Banknote },
         { name: t("donations"), href: "/admin/donations", icon: HeartHandshake },
+        { name: t("media"), href: "/admin/media", icon: ImageIcon },
       ],
     },
     {
@@ -74,6 +77,7 @@ export function AdminSidebar({ adminName }: { adminName?: string | null }) {
       label: t("sectionSystem"),
       items: [
         { name: t("reports"), href: "/admin/reports", icon: FileBarChart },
+        { name: t("auditLog"), href: "/admin/audit-log", icon: ClipboardList },
         { name: t("settings"), href: "/admin/settings", icon: Settings },
       ],
     },

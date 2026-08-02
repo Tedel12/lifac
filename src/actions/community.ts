@@ -282,6 +282,14 @@ export async function registerForEvent(
   revalidatePath(`/events/${event.slug}`);
   revalidatePath("/events");
 
+  await prisma.notification.create({
+    data: {
+      title: "Nouvelle inscription à un événement",
+      message: `${data.fullName} s'est inscrit(e) à un événement.`,
+      type: "success",
+    },
+  });
+
   return {
     success: true,
     message: "Inscription confirmée ! Nous vous enverrons les détails par SMS.",
@@ -350,6 +358,14 @@ export async function applyAsVolunteer(
     };
   }
 
+  await prisma.notification.create({
+    data: {
+      title: "Nouvelle candidature missionnaire",
+      message: `${data.fullName} a soumis une candidature à examiner.`,
+      type: "info",
+    },
+  });
+
   return {
     success: true,
     messageKey: "success.volunteer",
@@ -388,6 +404,14 @@ export async function sendContactMessage(
     return { success: false, errorKey: "forms.error" };
   }
 
+  await prisma.notification.create({
+    data: {
+      title: "Nouveau message de contact",
+      message: `${data.fullName} — ${data.subject}`,
+      type: "info",
+    },
+  });
+
   return {
     success: true,
     messageKey: "forms.success",
@@ -403,6 +427,7 @@ export async function submitPrayerRequest(input: {
   authorEmail?: string;
   title: string;
   content: string;
+  category?: "PROTECTION" | "SALUT" | "GUERISON" | "DELIVRANCE" | "AUTRE";
   isPublic?: boolean;
 }): Promise<ActionResult> {
   const parsed = prayerRequestSchema.safeParse(input);
@@ -422,7 +447,15 @@ export async function submitPrayerRequest(input: {
         authorEmail: data.authorEmail || null,
         title: data.title,
         content: data.content,
+        category: data.category,
         isPublic: data.isPublic,
+      },
+    });
+    await prisma.notification.create({
+      data: {
+        title: "Nouvelle demande de prière",
+        message: `${data.authorName} — ${data.title}`,
+        type: "info",
       },
     });
   } catch (e) {

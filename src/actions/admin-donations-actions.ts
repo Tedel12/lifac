@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { PaymentStatus } from "@prisma/client";
+import { logAudit } from "@/lib/audit-log";
 
 export async function getDonations(params?: {
   search?: string;
@@ -63,6 +64,8 @@ export async function updateDonationStatus(id: string, status: PaymentStatus) {
       },
     });
   }
+
+  await logAudit("DONATION_STATUS_UPDATE", "Donation", id, { status: donation.status }, { status });
 
   revalidatePath("/admin/donations");
   revalidatePath("/admin/dashboard");

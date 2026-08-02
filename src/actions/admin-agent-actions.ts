@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { Role } from "@prisma/client";
+import { logAudit } from "@/lib/audit-log";
 
 export async function getAgents() {
   return await prisma.user.findMany({
@@ -28,7 +29,7 @@ export async function createAgent(data: any) {
   }
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
-  await prisma.user.create({
+  const created = await prisma.user.create({
     data: {
       email: data.email,
       name: data.name,
@@ -37,16 +38,20 @@ export async function createAgent(data: any) {
       role: Role.VOLUNTEER,
     },
   });
+  await logAudit("AGENT_CREATE", "User", created.id, undefined, { name: data.name, email: data.email });
   revalidatePath("/admin/agents");
 }
 
 export async function deleteAgent(id: string) {
+  const existing = await prisma.user.findUnique({ where: { id }, select: { name: true, email: true } });
   await prisma.user.delete({ where: { id } });
+  await logAudit("AGENT_DELETE", "User", id, existing ?? undefined, undefined);
   revalidatePath("/admin/agents");
 }
 
 export async function updateAgent(id: string, data: any) {
   await prisma.user.update({ where: { id }, data });
+  await logAudit("AGENT_UPDATE", "User", id, undefined, data);
   revalidatePath("/admin/agents");
 }
 
@@ -67,10 +72,12 @@ export async function approveVolunteerApplication(volunteerId: string, password:
     prisma.user.update({ where: { id: volunteer.userId }, data: { password: hashedPassword, isActive: true } }),
     prisma.volunteer.update({ where: { id: volunteerId }, data: { status: "APPROVED", approvedAt: new Date() } }),
   ]);
+  await logAudit("VOLUNTEER_APPLICATION_APPROVE", "Volunteer", volunteerId);
   revalidatePath("/admin/agents");
 }
 
 export async function rejectVolunteerApplication(volunteerId: string) {
   await prisma.volunteer.update({ where: { id: volunteerId }, data: { status: "REJECTED" } });
+  await logAudit("VOLUNTEER_APPLICATION_REJECT", "Volunteer", volunteerId);
   revalidatePath("/admin/agents");
 }

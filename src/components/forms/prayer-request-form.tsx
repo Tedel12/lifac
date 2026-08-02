@@ -5,6 +5,9 @@ import { Loader2, CheckCircle2, AlertCircle, HandHeart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { submitPrayerRequest } from "@/actions/community";
+import { PRAYER_CATEGORY_LABELS } from "@/lib/utils";
+
+const CATEGORY_OPTIONS = Object.keys(PRAYER_CATEGORY_LABELS) as Array<keyof typeof PRAYER_CATEGORY_LABELS>;
 
 export function PrayerRequestForm() {
   const [isPending, startTransition] = useTransition();
@@ -14,6 +17,7 @@ export function PrayerRequestForm() {
     title: "",
     content: "",
   });
+  const [category, setCategory] = useState<string>("AUTRE");
   const [isPublic, setIsPublic] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<
@@ -37,6 +41,7 @@ export function PrayerRequestForm() {
         authorEmail: formData.authorEmail || undefined,
         title: formData.title,
         content: formData.content,
+        category: category as any,
         isPublic,
       });
 
@@ -48,6 +53,7 @@ export function PrayerRequestForm() {
 
       setSuccess(result.message || "Demande reçue.");
       setFormData({ authorName: "", authorEmail: "", title: "", content: "" });
+      setCategory("AUTRE");
       setIsPublic(false);
     });
   }
@@ -107,6 +113,22 @@ export function PrayerRequestForm() {
           onChange={(e) => update("title", e.target.value)}
           required
         />
+      </div>
+
+      <div>
+        <Label htmlFor="category">Catégorie</Label>
+        <select
+          id="category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full h-10 rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-lifac-blue-900"
+        >
+          {CATEGORY_OPTIONS.map((key) => (
+            <option key={key} value={key}>
+              {PRAYER_CATEGORY_LABELS[key]}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>

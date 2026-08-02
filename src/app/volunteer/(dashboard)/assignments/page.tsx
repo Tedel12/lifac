@@ -3,6 +3,7 @@ import { MapPin, Calendar, Phone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { getMySchools, getMyActivities } from "@/actions/volunteer-actions";
+import { SchoolItinerary } from "./school-itinerary";
 
 export const dynamic = "force-dynamic";
 
@@ -54,6 +55,7 @@ export default async function VolunteerAssignmentsPage() {
                   <span className="inline-block mt-1 px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">
                     {school.status}
                   </span>
+                  <SchoolItinerary latitude={school.latitude} longitude={school.longitude} />
                 </CardContent>
               </Card>
             ))}
