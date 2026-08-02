@@ -161,8 +161,9 @@ model User {
   sessions         Session[] // sessions NextAuth (connexion)
   accounts         Account[]
   scannedAttendances Attendance[] @relation("AttendanceScanner")
-  schoolAssignments  SchoolAssignmentHistory[] 
+  schoolAssignments  SchoolAssignmentHistory[]
   assignedSchools   School[]
+  assignedActivities Activity[] @relation("ActivityAssignee")
 
   @@index([email])
   @@index([role])
@@ -550,7 +551,9 @@ model Activity {
   endTime   String?
 
   // Responsable
-  responsibleName String?
+  responsibleName String? // affichage libre / legacy
+  assignedToId     String? // missionnaire (User role VOLUNTEER) responsable, source de vérité
+  assignedTo       User?   @relation("ActivityAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
 
   // Église / organisation partenaire (texte libre pour l'instant)
   partnerChurch String?
@@ -574,6 +577,7 @@ model Activity {
   @@index([type])
   @@index([status])
   @@index([date])
+  @@index([assignedToId])
   @@map("activities")
 }
 

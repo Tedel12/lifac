@@ -43,12 +43,11 @@ export async function loginAdmin(email: string, password: string) {
 export async function loginAgent(email: string, password: string) {
   const user = await prisma.user.findUnique({ where: { email } });
 
-  if (user && user.role === "VOLUNTEER" && user.password && await bcrypt.compare(password, user.password)) {
-    (await cookies()).set("admin_token", "authorized_agent", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24,
-    });
+  if (user && user.role === "VOLUNTEER" && user.isActive && user.password && await bcrypt.compare(password, user.password)) {
+    const cookieStore = await cookies();
+    cookieStore.set("admin_token", "authorized_agent", ADMIN_COOKIE_OPTIONS);
+    cookieStore.set("agent_id", user.id, ADMIN_COOKIE_OPTIONS);
+    cookieStore.set("agent_display_name", user.name || user.email, ADMIN_COOKIE_OPTIONS);
     return { success: true, role: "VOLUNTEER" };
   }
   return { success: false, error: "Identifiants invalides ou accès non autorisé" };
@@ -59,6 +58,8 @@ export async function logoutAdmin() {
   cookieStore.delete("admin_token");
   cookieStore.delete("admin_display_name");
   cookieStore.delete("admin_id");
+  cookieStore.delete("agent_id");
+  cookieStore.delete("agent_display_name");
 }
 
 export async function isAdminAuthenticated() {
@@ -90,4 +91,16 @@ export async function getCurrentAdminId() {
   const cookieStore = await cookies();
   if (cookieStore.get("admin_token")?.value !== "authorized") return null;
   return cookieStore.get("admin_id")?.value || null;
+}
+
+export async function getCurrentAgentName() {
+  const cookieStore = await cookies();
+  if (cookieStore.get("admin_token")?.value !== "authorized_agent") return null;
+  return cookieStore.get("agent_display_name")?.value || "Missionnaire";
+}
+
+export async function getCurrentAgentId() {
+  const cookieStore = await cookies();
+  if (cookieStore.get("admin_token")?.value !== "authorized_agent") return null;
+  return cookieStore.get("agent_id")?.value || null;
 }

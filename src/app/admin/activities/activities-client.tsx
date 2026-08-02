@@ -145,6 +145,7 @@ export default function ActivitiesPage({
                                 <th className="px-6 py-4">Type</th>
                                 <th className="px-6 py-4">Date</th>
                                 <th className="px-6 py-4">Lieu</th>
+                                <th className="px-6 py-4">Missionnaire</th>
                                 <th className="px-6 py-4">Statut</th>
                                 <th className="px-6 py-4 text-center">Actions</th>
                             </tr>
@@ -158,6 +159,7 @@ export default function ActivitiesPage({
                                         <td className="px-6 py-4">{ACTIVITY_TYPE_LABELS[activity.type] ?? activity.type}</td>
                                         <td className="px-6 py-4">{new Date(activity.date).toLocaleDateString("fr-FR")}</td>
                                         <td className="px-6 py-4">{activity.commune || "—"}</td>
+                                        <td className="px-6 py-4">{activity.assignedTo?.name ?? "—"}</td>
                                         <td className="px-6 py-4">
                                             <span
                                                 className={`px-2 py-1 rounded-full text-xs ${STATUS_COLORS[activity.status] ?? "bg-gray-100 text-gray-700"
@@ -180,7 +182,7 @@ export default function ActivitiesPage({
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={7} className="text-center p-6 text-gray-500">
+                                    <td colSpan={8} className="text-center p-6 text-gray-500">
                                         {t("empty")}
                                     </td>
                                 </tr>

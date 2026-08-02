@@ -22,7 +22,11 @@ export async function getActivities(params?: {
     if (params?.type && (params.type as any) !== "ALL") {
         where.type = params.type;
     }
-    return prisma.activity.findMany({ where, orderBy: { date: "desc" } });
+    return prisma.activity.findMany({
+        where,
+        orderBy: { date: "desc" },
+        include: { assignedTo: { select: { id: true, name: true } } },
+    });
 }
 
 // Génère un code séquentiel par année, ex: "ACT-2026-00001"

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { createActivity, updateActivity } from "@/actions/activity-actions";
+import { getAgents } from "@/actions/admin-agent-actions";
 import { ActivityStatus, ActivityType } from "@prisma/client";
 
 const ACTIVITY_TYPE_LABELS: Record<string, string> = {
@@ -32,31 +33,41 @@ const ACTIVITY_STATUS_LABELS: Record<string, string> = {
 };
 
 export function ActivityModal({ isOpen, onClose, activity, onUpdate }: any) {
-    const [formData, setFormData] = useState(
-        activity
-            ? { ...activity, date: activity.date ? new Date(activity.date).toISOString().slice(0, 10) : "" }
-            : {
-                type: ActivityType.CRUSADE,
-                title: "",
-                status: ActivityStatus.PLANNED,
-                country: "Bénin",
-                commune: "",
-                address: "",
-                date: "",
-                startTime: "",
-                endTime: "",
-                responsibleName: "",
-                partnerChurch: "",
-                contactName: "",
-                contactPhone: "",
-                estimatedParticipants: 0,
-                actualParticipants: 0,
-                decisionsForChrist: 0,
-                biblesDistributed: 0,
-                newContacts: 0,
-                notes: "",
-            }
-    );
+    const [agents, setAgents] = useState<{ id: string; name: string | null; email: string }[]>([]);
+
+    useEffect(() => {
+        getAgents().then((data: any) => setAgents(data));
+    }, []);
+
+    const [formData, setFormData] = useState(() => {
+        if (activity) {
+            // On exclut la relation `assignedTo` (objet imbriqué) : seul `assignedToId` (scalaire) est modifiable.
+            const { assignedTo, ...rest } = activity;
+            return { ...rest, date: activity.date ? new Date(activity.date).toISOString().slice(0, 10) : "" };
+        }
+        return {
+            type: ActivityType.CRUSADE,
+            title: "",
+            status: ActivityStatus.PLANNED,
+            country: "Bénin",
+            commune: "",
+            address: "",
+            date: "",
+            startTime: "",
+            endTime: "",
+            responsibleName: "",
+            assignedToId: "",
+            partnerChurch: "",
+            contactName: "",
+            contactPhone: "",
+            estimatedParticipants: 0,
+            actualParticipants: 0,
+            decisionsForChrist: 0,
+            biblesDistributed: 0,
+            newContacts: 0,
+            notes: "",
+        };
+    });
 
     if (!isOpen) return null;
 
@@ -65,10 +76,11 @@ export function ActivityModal({ isOpen, onClose, activity, onUpdate }: any) {
             alert("Le titre et la date sont obligatoires");
             return;
         }
+        const payload = { ...formData, assignedToId: formData.assignedToId || null };
         if (activity) {
-            await updateActivity(activity.id, formData);
+            await updateActivity(activity.id, payload);
         } else {
-            await createActivity(formData);
+            await createActivity(payload);
         }
         onUpdate && onUpdate();
         onClose();
@@ -164,13 +176,28 @@ export function ActivityModal({ isOpen, onClose, activity, onUpdate }: any) {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
-                                <Label>Responsable / coordinateur</Label>
-                                <Input value={formData.responsibleName ?? ""} onChange={(e) => setFormData({ ...formData, responsibleName: e.target.value })} />
+                                <Label>Missionnaire responsable</Label>
+                                <select
+                                    className="w-full border rounded-md px-3 py-2 text-sm"
+                                    value={formData.assignedToId ?? ""}
+                                    onChange={(e) => setFormData({ ...formData, assignedToId: e.target.value })}
+                                >
+                                    <option value="">— Non assigné —</option>
+                                    {agents.map((a) => (
+                                        <option key={a.id} value={a.id}>
+                                            {a.name || a.email}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="space-y-1">
-                                <Label>Église / organisation partenaire</Label>
-                                <Input value={formData.partnerChurch ?? ""} onChange={(e) => setFormData({ ...formData, partnerChurch: e.target.value })} />
+                                <Label>Responsable (nom libre, affichage)</Label>
+                                <Input value={formData.responsibleName ?? ""} onChange={(e) => setFormData({ ...formData, responsibleName: e.target.value })} />
                             </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label>Église / organisation partenaire</Label>
+                            <Input value={formData.partnerChurch ?? ""} onChange={(e) => setFormData({ ...formData, partnerChurch: e.target.value })} />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">

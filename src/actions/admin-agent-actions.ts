@@ -49,3 +49,28 @@ export async function updateAgent(id: string, data: any) {
   await prisma.user.update({ where: { id }, data });
   revalidatePath("/admin/agents");
 }
+
+export async function getPendingApplications() {
+  return prisma.volunteer.findMany({
+    where: { status: "PENDING" },
+    include: { user: { select: { id: true, name: true, email: true, phone: true, city: true } } },
+    orderBy: { joinedAt: "desc" },
+  });
+}
+
+export async function approveVolunteerApplication(volunteerId: string, password: string) {
+  const volunteer = await prisma.volunteer.findUnique({ where: { id: volunteerId } });
+  if (!volunteer) throw new Error("Candidature introuvable");
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await prisma.$transaction([
+    prisma.user.update({ where: { id: volunteer.userId }, data: { password: hashedPassword, isActive: true } }),
+    prisma.volunteer.update({ where: { id: volunteerId }, data: { status: "APPROVED", approvedAt: new Date() } }),
+  ]);
+  revalidatePath("/admin/agents");
+}
+
+export async function rejectVolunteerApplication(volunteerId: string) {
+  await prisma.volunteer.update({ where: { id: volunteerId }, data: { status: "REJECTED" } });
+  revalidatePath("/admin/agents");
+}
