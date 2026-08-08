@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { getActivities } from "@/actions/activity-actions";
-import { getDashboardStats } from "@/actions/dashboard";
 import { prisma } from "@/lib/prisma";
 import { ACTIVITY_TYPES_ORDER, ACTIVITY_TYPE_META } from "@/lib/activity-types";
 import { Button } from "@/components/ui/button";
@@ -34,15 +33,25 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ActivitiesPage() {
-  const [activities, { globalStats }, testimony] = await Promise.all([
+  const [activities, testimony, soulsAgg, crusadesCount, schoolsCount, volunteersCount] = await Promise.all([
     getActivities(),
-    getDashboardStats(),
     prisma.testimony.findFirst({
       where: { isApproved: true, isFeatured: true },
       orderBy: { createdAt: "desc" },
       select: { authorName: true, authorRole: true, authorAvatar: true, content: true },
     }),
+    prisma.activity.aggregate({ _sum: { decisionsForChrist: true } }),
+    prisma.activity.count({ where: { type: "CRUSADE" } }),
+    prisma.school.count(),
+    prisma.user.count({ where: { role: "VOLUNTEER", isActive: true } }),
   ]);
+
+  const impactStats = {
+    totalSoulsWon: soulsAgg._sum.decisionsForChrist ?? 0,
+    totalCrusades: crusadesCount,
+    schoolsVisited: schoolsCount,
+    totalVolunteers: volunteersCount,
+  };
 
   const now = new Date();
   const upcoming = activities
@@ -55,7 +64,7 @@ export default async function ActivitiesPage() {
     <div>
       <Hero />
       <ActivityGrid />
-      <ImpactBanner globalStats={globalStats} />
+      <ImpactBanner stats={impactStats} />
       <ProcessSteps />
       <GalleryVideoTestimony testimony={testimony} />
       <ServeAndUpcoming activities={recentField} hasUpcoming={upcoming.length > 0} />
@@ -165,16 +174,16 @@ async function ActivityGrid() {
 }
 
 async function ImpactBanner({
-  globalStats,
+  stats: statsData,
 }: {
-  globalStats: { totalSoulsWon: number; totalCrusades: number; schoolsVisited: number; totalVolunteers: number } | null;
+  stats: { totalSoulsWon: number; totalCrusades: number; schoolsVisited: number; totalVolunteers: number };
 }) {
   const t = await getTranslations("activitiesPage");
   const stats = [
-    { icon: HeartHandshake, value: globalStats?.totalSoulsWon ?? 50000, label: t("impactSouls"), suffix: "+" },
-    { icon: Flame, value: globalStats?.totalCrusades ?? 45, label: t("impactCrusades"), suffix: "+" },
-    { icon: GraduationCap, value: globalStats?.schoolsVisited ?? 785, label: t("impactSchools"), suffix: "+" },
-    { icon: Users, value: globalStats?.totalVolunteers ?? 300, label: t("impactVolunteers"), suffix: "+" },
+    { icon: HeartHandshake, value: statsData.totalSoulsWon, label: t("impactSouls"), suffix: "+" },
+    { icon: Flame, value: statsData.totalCrusades, label: t("impactCrusades"), suffix: "+" },
+    { icon: GraduationCap, value: statsData.schoolsVisited, label: t("impactSchools"), suffix: "+" },
+    { icon: Users, value: statsData.totalVolunteers, label: t("impactVolunteers"), suffix: "+" },
   ];
   return (
     <section className="relative bg-white py-14 lg:py-16 overflow-hidden border-y border-gray-100">

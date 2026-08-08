@@ -17,11 +17,11 @@ export default async function TestimonialsPage() {
 
   return (
     <div className="bg-white min-h-screen">
-      <section className="bg-gradient-to-br from-lifac-navy-900 to-lifac-navy-950 text-white py-16 lg:py-24">
+      <section className="bg-white py-16 lg:py-24 border-b border-gray-100">
         <div className="container mx-auto px-4 lg:px-8 text-center max-w-3xl">
-          <HeartHandshake className="h-12 w-12 text-lifac-red-500 mx-auto mb-4" />
-          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">Témoignages</h1>
-          <p className="text-lg text-white/80">
+          <HeartHandshake className="h-12 w-12 text-lifac-red-600 mx-auto mb-4" />
+          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 text-lifac-navy-900">Témoignages</h1>
+          <p className="text-lg text-lifac-navy-600">
             Des vies transformées par la puissance de l'Évangile, à travers le ministère de LiFAC.
           </p>
         </div>
