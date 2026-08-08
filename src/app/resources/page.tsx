@@ -23,7 +23,7 @@ const GALLERY_IMAGES = [
   "/activities/crusade.jpg",
   "/activities/youth-crusade.jpg",
   "/activities/pop-up-crusade.jpg",
-  "/activities/market-outreach.jpg",
+  "/activities/market.jpg",
   "/activities/personal-evangelism.jpg",
   "/activities/night-of-hope.jpg",
   "/activities/humanitarian-action.jpg",

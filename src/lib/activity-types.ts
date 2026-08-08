@@ -58,7 +58,7 @@ export const ACTIVITY_TYPE_META: Record<ActivityType, ActivityTypeMeta> = {
   MARKET_OUTREACH: {
     type: ActivityType.MARKET_OUTREACH,
     slug: "evangelisation-marche",
-    image: "/activities/market-outreach.jpg",
+    image: "/activities/market.jpg",
     icon: ShoppingBag,
     labelKey: "marketOutreach",
   },
