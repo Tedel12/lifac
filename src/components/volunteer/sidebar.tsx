@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
-import { Home, Calendar, FileText, UserPlus, Flame, Bot, User, LogOut, Menu, X } from "lucide-react";
+import { Home, Calendar, FileText, UserPlus, Flame, Bot, User, LogOut, Menu, X, School } from "lucide-react";
 import { logoutAdmin } from "@/actions/auth";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ export function AgentSidebar({ agentName }: { agentName?: string | null }) {
   const menuItems = [
     { name: t("home"), href: "/volunteer/dashboard", icon: Home },
     { name: t("assignments"), href: "/volunteer/assignments", icon: Calendar },
+    { name: t("schools"), href: "/volunteer/schools", icon: School },
     { name: t("reports"), href: "/volunteer/reports", icon: FileText },
     { name: t("converts"), href: "/volunteer/converts", icon: UserPlus },
     { name: t("prayer"), href: "/volunteer/prayer", icon: Flame },

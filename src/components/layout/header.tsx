@@ -51,7 +51,7 @@ export function Header() {
     { label: t("about"), href: "/about" },
     { label: t("activities"), href: "/activities" },
     { label: t("events"), href: "/events" },
-    { label: t("testimonies"), href: "/#testimonies" },
+    { label: t("testimonies"), href: "/testimonials" },
     { label: t("resources"), href: "/resources" },
     { label: t("contact"), href: "/contact" },
   ];

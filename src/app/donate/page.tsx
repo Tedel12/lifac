@@ -338,14 +338,14 @@ function FinancialContact() {
         </p>
 
         <div className="max-w-3xl mx-auto bg-[#F4F5F7] rounded-2xl p-8 space-y-4">
-          <div className="flex items-center justify-center gap-3 text-lifac-navy-700">
+          <a href="mailto:info@lifac.org" className="flex items-center justify-center gap-3 text-lifac-navy-700 hover:text-lifac-red-600 transition-colors">
             <Mail className="h-5 w-5 text-lifac-red-600" />
-            finance@lifac-world.org
-          </div>
-          <div className="flex items-center justify-center gap-3 text-lifac-navy-700">
+            info@lifac.org
+          </a>
+          <a href="tel:+2290140131359" className="flex items-center justify-center gap-3 text-lifac-navy-700 hover:text-lifac-red-600 transition-colors">
             <Phone className="h-5 w-5 text-lifac-red-600" />
-            +229 61 00 00 00 (Intendance)
-          </div>
+            +229 01 40 13 13 59
+          </a>
         </div>
       </div>
     </section>

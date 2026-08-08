@@ -10,16 +10,9 @@ import {
   Users,
   Mic,
   ArrowRight,
-  Flame,
-  GraduationCap,
-  HandHeart,
-  Cross,
-  Sparkles,
-  Store,
-  MessageCircle,
-  Tent,
   Quote,
 } from "lucide-react";
+import { ACTIVITY_TYPES_ORDER, ACTIVITY_TYPE_META } from "@/lib/activity-types";
 
 export const revalidate = 300;
 export const dynamic = "force-dynamic";
@@ -28,29 +21,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("events");
   return { title: t("title"), description: t("subtitle") };
 }
-
-const EVENT_TYPE_ICONS: Record<string, typeof Flame> = {
-  CRUSADE: Flame,
-  POP_UP_CRUSADE: Sparkles,
-  SCHOOL_OUTREACH: GraduationCap,
-  MARKET_OUTREACH: Store,
-  ONE_ON_ONE: MessageCircle,
-  YOUTH_CAMP: Tent,
-  TRAINING: GraduationCap,
-  HUMANITARIAN_MISSION: HandHeart,
-  PRAYER_MEETING: Cross,
-};
-
-const EVENT_TYPES_ORDER = [
-  "CRUSADE",
-  "POP_UP_CRUSADE",
-  "SCHOOL_OUTREACH",
-  "MARKET_OUTREACH",
-  "YOUTH_CAMP",
-  "TRAINING",
-  "HUMANITARIAN_MISSION",
-  "PRAYER_MEETING",
-] as const;
 
 export default async function EventsPage({
   searchParams,
@@ -84,6 +54,7 @@ export default async function EventsPage({
   const upcoming = allUpcoming.filter((e) => e.id !== featured?.id).slice(0, 6);
   const cities = Array.from(new Set(allUpcoming.map((e) => e.city).filter(Boolean))) as string[];
   const expectedAttendance = allUpcoming.reduce((sum, e) => sum + (e.maxAttendees ?? 0), 0);
+  const speakersCount = new Set(allUpcoming.map((e) => e.organizerId).filter(Boolean)).size;
 
   return (
     <div>
@@ -92,10 +63,11 @@ export default async function EventsPage({
         citiesCount={cities.length}
         eventsCount={yearCount}
         attendance={expectedAttendance}
+        speakersCount={speakersCount}
       />
       {featured && <FeaturedEvent event={featured} />}
       {upcoming.length > 0 && <UpcomingEvents events={upcoming} />}
-      <EventCategories activeType={type} />
+      <EventCategories />
       {allUpcoming.length > 0 && <CalendarList events={allUpcoming.slice(0, 6)} />}
       {cities.length > 0 && <CitiesList cities={cities} />}
       <TestimonyBanner testimony={testimony} />
@@ -145,17 +117,19 @@ async function StatsBar({
   citiesCount,
   eventsCount,
   attendance,
+  speakersCount,
 }: {
   citiesCount: number;
   eventsCount: number;
   attendance: number;
+  speakersCount: number;
 }) {
   const t = await getTranslations("eventsPage");
   const items = [
     { icon: MapPin, value: citiesCount > 0 ? `${citiesCount}+` : "5+", label: t("statLocations") },
     { icon: Calendar, value: `${eventsCount || 20}+`, label: t("statEvents") },
     { icon: Users, value: attendance > 0 ? `${attendance.toLocaleString("fr-FR")}+` : "50K+", label: t("statAttendance") },
-    { icon: Mic, value: t("statSpeakersValue"), label: t("statSpeakers") },
+    { icon: Mic, value: `${speakersCount > 0 ? speakersCount : 1}+`, label: t("statSpeakers") },
   ];
   return (
     <section className="bg-[#F4F5F7] py-8 lg:py-10">
@@ -285,9 +259,9 @@ async function UpcomingEvents({ events }: { events: Awaited<ReturnType<typeof pr
   );
 }
 
-async function EventCategories({ activeType }: { activeType?: string }) {
+async function EventCategories() {
   const t = await getTranslations("eventsPage");
-  const tt = await getTranslations("eventTypeLabels");
+  const tt = await getTranslations("activityTypes");
   return (
     <section className="bg-white py-16 lg:py-20">
       <div className="container mx-auto px-4 lg:px-6">
@@ -298,22 +272,20 @@ async function EventCategories({ activeType }: { activeType?: string }) {
           </h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {EVENT_TYPES_ORDER.map((et) => {
-            const Icon = EVENT_TYPE_ICONS[et];
-            const active = activeType === et;
+          {ACTIVITY_TYPES_ORDER.filter((type) => type !== "OTHER").map((type) => {
+            const meta = ACTIVITY_TYPE_META[type];
+            const Icon = meta.icon;
             return (
               <Link
-                key={et}
-                href={active ? "/events" : `/events?type=${et}`}
-                className={`rounded-2xl p-5 text-center border transition-all hover:-translate-y-1 hover:shadow-md ${
-                  active ? "bg-lifac-red-600 border-lifac-red-600" : "bg-[#F4F5F7] border-transparent hover:border-lifac-red-600/30"
-                }`}
+                key={type}
+                href={`/activities/type/${meta.slug}`}
+                className="rounded-2xl p-5 text-center border border-transparent bg-[#F4F5F7] hover:border-lifac-red-600/30 transition-all hover:-translate-y-1 hover:shadow-md"
               >
-                <div className={`h-12 w-12 rounded-full flex items-center justify-center mx-auto mb-3 ${active ? "bg-white/20" : "bg-white"}`}>
-                  <Icon className={`h-5 w-5 ${active ? "text-white" : "text-lifac-red-600"}`} />
+                <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center mx-auto mb-3">
+                  <Icon className="h-5 w-5 text-lifac-red-600" />
                 </div>
-                <span className={`text-xs font-bold uppercase tracking-wide ${active ? "text-white" : "text-lifac-navy-800"}`}>
-                  {tt(et)}
+                <span className="text-xs font-bold uppercase tracking-wide text-lifac-navy-800">
+                  {tt(`${meta.labelKey}.label`)}
                 </span>
               </Link>
             );

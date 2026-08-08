@@ -78,9 +78,9 @@ export function VolunteerForm() {
 
   if (success) {
     return (
-      <div className="text-center py-8 space-y-3">
+      <div className="text-center py-8 space-y-3 animate-fade-in">
         <CheckCircle2 className="h-16 w-16 text-emerald-500 mx-auto" />
-        <h3 className="font-display text-xl font-bold text-lifac-blue-900">
+        <h3 className="font-display text-xl font-bold text-lifac-navy-900">
           Merci pour votre engagement !
         </h3>
         <p className="text-gray-600">{success}</p>
@@ -93,13 +93,14 @@ export function VolunteerForm() {
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="fullName">
-            Nom complet <span className="text-red-500">*</span>
+            Nom complet <span className="text-lifac-red-600">*</span>
           </Label>
           <Input
             id="fullName"
             value={formData.fullName}
             onChange={(e) => update("fullName", e.target.value)}
             required
+            className="focus-visible:ring-lifac-red-600"
           />
           {fieldErrors.fullName && (
             <p className="text-sm text-red-600 mt-1">{fieldErrors.fullName[0]}</p>
@@ -111,6 +112,7 @@ export function VolunteerForm() {
             id="city"
             value={formData.city}
             onChange={(e) => update("city", e.target.value)}
+            className="focus-visible:ring-lifac-red-600"
           />
         </div>
       </div>
@@ -118,7 +120,7 @@ export function VolunteerForm() {
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="email">
-            Email <span className="text-red-500">*</span>
+            Email <span className="text-lifac-red-600">*</span>
           </Label>
           <Input
             id="email"
@@ -126,6 +128,7 @@ export function VolunteerForm() {
             value={formData.email}
             onChange={(e) => update("email", e.target.value)}
             required
+            className="focus-visible:ring-lifac-red-600"
           />
           {fieldErrors.email && (
             <p className="text-sm text-red-600 mt-1">{fieldErrors.email[0]}</p>
@@ -133,7 +136,7 @@ export function VolunteerForm() {
         </div>
         <div>
           <Label htmlFor="phone">
-            Téléphone <span className="text-red-500">*</span>
+            Téléphone <span className="text-lifac-red-600">*</span>
           </Label>
           <Input
             id="phone"
@@ -142,6 +145,7 @@ export function VolunteerForm() {
             value={formData.phone}
             onChange={(e) => update("phone", e.target.value)}
             required
+            className="focus-visible:ring-lifac-red-600"
           />
           {fieldErrors.phone && (
             <p className="text-sm text-red-600 mt-1">{fieldErrors.phone[0]}</p>
@@ -151,7 +155,7 @@ export function VolunteerForm() {
 
       <div>
         <Label>
-          Domaines de compétence <span className="text-red-500">*</span>
+          Domaines de compétence <span className="text-lifac-red-600">*</span>
         </Label>
         <div className="grid grid-cols-2 gap-2 mt-2">
           {SKILLS_OPTIONS.map((skill) => (
@@ -160,10 +164,10 @@ export function VolunteerForm() {
               key={skill.value}
               onClick={() => toggleSkill(skill.value)}
               className={cn(
-                "px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all text-left",
+                "px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all duration-200 text-left",
                 skills.includes(skill.value)
-                  ? "border-lifac-gold-500 bg-lifac-gold-50 text-lifac-gold-700"
-                  : "border-gray-200 text-gray-700 hover:border-gray-300"
+                  ? "border-lifac-red-600 bg-lifac-red-50 text-lifac-red-700 shadow-sm"
+                  : "border-gray-200 text-gray-700 hover:border-lifac-red-600/40 hover:bg-gray-50"
               )}
             >
               {skill.label}
@@ -183,13 +187,14 @@ export function VolunteerForm() {
           placeholder="Ex : Soirs de semaine, weekends, vacances scolaires..."
           value={formData.availability}
           onChange={(e) => update("availability", e.target.value)}
+          className="focus-visible:ring-lifac-red-600"
         />
       </div>
 
       <div>
         <Label htmlFor="motivation">
           Pourquoi voulez-vous rejoindre LiFAC ?{" "}
-          <span className="text-red-500">*</span>
+          <span className="text-lifac-red-600">*</span>
         </Label>
         <Textarea
           id="motivation"
@@ -199,6 +204,7 @@ export function VolunteerForm() {
           onChange={(e) => update("motivation", e.target.value)}
           maxLength={1000}
           required
+          className="focus-visible:ring-lifac-red-600"
         />
         <p className="text-xs text-gray-500 mt-1">
           {formData.motivation.length}/1000
@@ -209,7 +215,7 @@ export function VolunteerForm() {
       </div>
 
       {error && (
-        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
+        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl animate-fade-in">
           <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
           <p className="text-sm text-red-700">{error}</p>
         </div>

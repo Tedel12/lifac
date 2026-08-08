@@ -1,40 +1,18 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Cross, Megaphone, HandHeart, Flame, GraduationCap, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ActivityType } from "@prisma/client";
+import { ACTIVITY_TYPE_META } from "@/lib/activity-types";
 
-interface ActivityCard {
-  key: "crusades" | "evangelism" | "humanitarian" | "prayer" | "training";
-  icon: React.ReactNode;
-  image: string;
-}
-
-const cards: ActivityCard[] = [
-  {
-    key: "crusades",
-    icon: <Cross className="h-5 w-5 text-white" />,
-    image: "/activities/crusade.jpg",
-  },
-  {
-    key: "evangelism",
-    icon: <Megaphone className="h-5 w-5 text-white" />,
-    image: "/activities/market-outreach.jpg",
-  },
-  {
-    key: "humanitarian",
-    icon: <HandHeart className="h-5 w-5 text-white" />,
-    image: "/activities/humanitarian-action.jpg",
-  },
-  {
-    key: "prayer",
-    icon: <Flame className="h-5 w-5 text-white" />,
-    image: "/activities/night-of-hope.jpg",
-  },
-  {
-    key: "training",
-    icon: <GraduationCap className="h-5 w-5 text-white" />,
-    image: "/activities/evangelism-training.jpg",
-  },
+// Ordre demandé par le client (identique à /activities) : les 5 premiers types
+// mis en avant sur la page d'accueil.
+const HOME_ACTIVITY_TYPES: ActivityType[] = [
+  ActivityType.CRUSADE,
+  ActivityType.YOUTH_CRUSADE,
+  ActivityType.POP_UP_CRUSADE,
+  ActivityType.MARKET_OUTREACH,
+  ActivityType.ONE_ON_ONE,
 ];
 
 export function ActivitiesSection() {
@@ -53,8 +31,8 @@ export function ActivitiesSection() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5">
-          {cards.map((card) => (
-            <ActivityCard key={card.key} cardKey={card.key} icon={card.icon} image={card.image} />
+          {HOME_ACTIVITY_TYPES.map((type) => (
+            <ActivityCard key={type} type={type} />
           ))}
         </div>
 
@@ -71,28 +49,22 @@ export function ActivitiesSection() {
   );
 }
 
-function ActivityCard({
-  cardKey,
-  icon,
-  image,
-}: {
-  cardKey: ActivityCard["key"];
-  icon: React.ReactNode;
-  image: string;
-}) {
-  const t = useTranslations("activities.cards");
+function ActivityCard({ type }: { type: ActivityType }) {
+  const t = useTranslations("activityTypes");
+  const meta = ACTIVITY_TYPE_META[type];
+  const Icon = meta.icon;
 
   return (
     <Link
-      href="/activities"
-      aria-label={t(`${cardKey}.title`)}
+      href={`/activities/type/${meta.slug}`}
+      aria-label={t(`${meta.labelKey}.label`)}
       className="group rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-600/40 transition-all duration-300 hover:-translate-y-1 block shadow-sm"
     >
       <div className="relative">
         <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={image}
+            src={meta.image}
             alt=""
             aria-hidden="true"
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -102,17 +74,17 @@ function ActivityCard({
 
         <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-10">
           <div className="h-12 w-12 rounded-full bg-red-600 flex items-center justify-center shadow-lg shadow-red-600/40 ring-4 ring-white">
-            {icon}
+            <Icon className="h-5 w-5 text-white" />
           </div>
         </div>
       </div>
 
       <div className="pt-10 pb-6 px-5 text-center min-h-[160px]">
         <h3 className="font-display text-sm font-bold text-gray-900 tracking-wider uppercase mb-2 break-words">
-          {t(`${cardKey}.title`)}
+          {t(`${meta.labelKey}.label`)}
         </h3>
         <p className="text-xs text-gray-600 leading-relaxed">
-          {t(`${cardKey}.desc`)}
+          {t(`${meta.labelKey}.shortDesc`)}
         </p>
       </div>
     </Link>

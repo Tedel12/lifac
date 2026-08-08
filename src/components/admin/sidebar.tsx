@@ -26,6 +26,7 @@ import {
   Banknote,
   Image as ImageIcon,
   ClipboardList,
+  Quote,
 } from "lucide-react";
 import { logoutAdmin } from "@/actions/auth";
 import { useTranslations } from "next-intl";
@@ -55,6 +56,7 @@ export function AdminSidebar({ adminName }: { adminName?: string | null }) {
         { name: t("campaigns"), href: "/admin/campaigns", icon: Banknote },
         { name: t("donations"), href: "/admin/donations", icon: HeartHandshake },
         { name: t("media"), href: "/admin/media", icon: ImageIcon },
+        { name: t("testimonials"), href: "/admin/testimonials", icon: Quote },
       ],
     },
     {

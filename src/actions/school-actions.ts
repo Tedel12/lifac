@@ -28,6 +28,13 @@ export async function updateSchool(id: string, data: any) {
   revalidatePath("/admin/schools");
 }
 
+// Changement de statut uniquement (utilisé par l'admin, qui ne peut plus modifier
+// les autres informations d'une école une fois qu'un missionnaire peut en être l'auteur).
+export async function updateSchoolStatus(id: string, status: SchoolStatus) {
+  await prisma.school.update({ where: { id }, data: { status } });
+  revalidatePath("/admin/schools");
+}
+
 export async function deleteSchool(id: string) {
   await prisma.school.delete({ where: { id } });
   revalidatePath("/admin/schools");

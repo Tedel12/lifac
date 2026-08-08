@@ -180,9 +180,9 @@
     "infos": "PRACTICAL INFO",
     "infosDesc": "Have questions about a specific event or want to organize a tour stop in your city?",
     "offices": "OFFICES",
-    "officesAddress": "Abomey-Calavi, Benin",
+    "officesAddress": "Zopah, Abomey-Calavi, Benin",
     "hotline": "HOTLINE",
-    "hotlineNumber": "+229 61 00 00 00"
+    "hotlineNumber": "+229 01 62 93 00 01"
   },
   "eventTypeLabels": {
     "CRUSADE": "Crusades",
@@ -220,7 +220,7 @@
     "joinGroup": "JOIN THE GROUP",
     "joinGroupHelp": "Join our community on WhatsApp",
     "newsletter": "Subscribe to newsletter",
-    "address": "Abomey-Calavi Canton 1234 Zopah, Benin",
+    "address": "Zopah, Abomey-Calavi, Benin",
     "rights": "© 2025 LiFAC — Light For All Center. All rights reserved.",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
@@ -302,7 +302,7 @@
   "aboutPage": {
     "heroSubtitle": "A Generation on fire for Jesus-Christ",
     "identityTitle": "IDENTITY & PASSION",
-    "identitySubtitle": "League for Information and Training for Christian Action",
+    "identitySubtitle": "Light For All Center",
     "identityHeading": "IGNITE A FLAME",
     "identityLabel": "OUR IDENTITY",
     "identitySloganLabel": "Our slogan:",
@@ -319,7 +319,7 @@
     "fieldEvangelismDesc": "Mass campaigns and outdoor crusades.",
     "fieldTrainingTitle": "TRAINING",
     "fieldTrainingDesc": "Seminars and ongoing training for leaders.",
-    "fieldHumanitarianTitle": "HUMANITAIRE",
+    "fieldHumanitarianTitle": "HUMANITARIAN",
     "fieldHumanitarianDesc": "Support for orphans and the needy.",
     "joinTitle": "JOIN US",
     "joinDesc": "Let's ignite this fire for our generation together."
@@ -558,6 +558,7 @@
     "missionaries": "Missionaries",
     "admins": "Administrators",
     "media": "Media Library",
+    "testimonials": "Testimonials",
     "auditLog": "Audit Log",
     "connectedAs": "Logged in as",
     "sectionOverview": "Overview",
@@ -569,6 +570,7 @@
   "agentSidebar": {
     "home": "Home",
     "assignments": "My Assignments",
+    "schools": "Schools",
     "reports": "Reports",
     "converts": "New Converts",
     "prayer": "Intercession",

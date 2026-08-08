@@ -165,6 +165,7 @@ model User {
   assignedSchools   School[]
   assignedActivities Activity[] @relation("ActivityAssignee")
   prayerIntercessions PrayerIntercession[]
+  createdSchools    School[] @relation("SchoolCreator")
   personalNotifications Notification[]
 
   @@index([email])
@@ -850,6 +851,12 @@ model School {
   agent             User?    @relation(fields: [agentId], references: [id])
   assignmentHistory SchoolAssignmentHistory[]
 
+  // Missionnaire ayant ajouté cette école (null = ajoutée par un admin) — détermine qui a
+  // le droit de la modifier côté missionnaire.
+  createdById String?
+  createdBy   User?   @relation("SchoolCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([createdById])
   @@map("schools")
   }
 

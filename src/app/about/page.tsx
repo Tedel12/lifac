@@ -1,7 +1,10 @@
 import { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
-import { Flame, Wind, Globe, Shield, Star, Heart, Users, Quote } from "lucide-react";
+import { Flame, Wind, Globe, Shield, Star, Heart, Users, Quote, ArrowRight, Mail, Phone, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("about");
@@ -85,17 +88,8 @@ function IdentitySection() {
           </div>
 
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border-2 border-lifac-red-600/60">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-lifac-red-600 to-lifac-red-900" />
-            <svg className="absolute inset-0 w-full h-full opacity-40" viewBox="0 0 400 300">
-              <g fill="#000" opacity="0.6">
-                <path d="M0 270 Q 100 240 200 260 T 400 250 L 400 300 L 0 300 Z" />
-              </g>
-              <g fill="#FFA500" opacity="0.7">
-                <ellipse cx="80" cy="100" rx="40" ry="80" />
-                <ellipse cx="200" cy="80" rx="50" ry="90" />
-                <ellipse cx="320" cy="100" rx="40" ry="80" />
-              </g>
-            </svg>
+            <Image src="/activities/crusade.jpg" alt="" fill className="object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-lifac-navy-950/50 to-transparent" />
           </div>
         </div>
       </div>
@@ -339,9 +333,9 @@ function ValueCard({ icon, title, desc }: { icon: React.ReactNode; title: string
 function FieldActivities() {
   const tp = useTranslations("aboutPage");
   const items = [
-    { title: tp("fieldEvangelismTitle"), desc: tp("fieldEvangelismDesc") },
-    { title: tp("fieldTrainingTitle"), desc: tp("fieldTrainingDesc") },
-    { title: tp("fieldHumanitarianTitle"), desc: tp("fieldHumanitarianDesc") },
+    { title: tp("fieldEvangelismTitle"), desc: tp("fieldEvangelismDesc"), image: "/activities/personal-evangelism.jpg" },
+    { title: tp("fieldTrainingTitle"), desc: tp("fieldTrainingDesc"), image: "/activities/evangelism-training.jpg" },
+    { title: tp("fieldHumanitarianTitle"), desc: tp("fieldHumanitarianDesc"), image: "/activities/humanitarian-action.jpg" },
   ];
   return (
     <section className="bg-white py-16 lg:py-24">
@@ -355,18 +349,12 @@ function FieldActivities() {
 
         <div className="grid md:grid-cols-3 gap-5 max-w-6xl mx-auto">
           {items.map((item) => (
-            <div key={item.title} className="bg-[#F4F5F7] rounded-2xl overflow-hidden border border-gray-100">
-              <div className="aspect-[16/10] bg-gradient-to-br from-lifac-navy-700 to-lifac-navy-900 relative overflow-hidden border border-lifac-red-600/40">
-                <svg className="absolute inset-0 w-full h-full opacity-50" viewBox="0 0 200 130">
-                  <g fill="#020617">
-                    <path d="M0 110 Q 50 90 100 100 T 200 105 L 200 130 L 0 130 Z" />
-                    <circle cx="40" cy="105" r="9" />
-                    <circle cx="80" cy="100" r="11" />
-                    <circle cx="120" cy="105" r="10" />
-                    <circle cx="160" cy="100" r="9" />
-                  </g>
-                  <ellipse cx="100" cy="40" rx="80" ry="40" fill="#DC2626" opacity="0.3" />
-                </svg>
+            <div
+              key={item.title}
+              className="bg-[#F4F5F7] rounded-2xl overflow-hidden border border-gray-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
+            >
+              <div className="aspect-[16/10] relative overflow-hidden border-b border-lifac-red-600/40">
+                <Image src={item.image} alt="" fill className="object-cover" />
               </div>
               <div className="p-5 text-center">
                 <h3 className="font-bold text-lifac-navy-900 tracking-wider mb-2">{item.title}</h3>
@@ -403,14 +391,34 @@ function JoinUs() {
         <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 tracking-tight">
           {tp("joinTitle")}
         </h2>
-        <p className="text-lifac-navy-600 max-w-xl mx-auto mb-10">
+        <p className="text-white/70 max-w-xl mx-auto mb-10">
           {tp("joinDesc")}
         </p>
-        <div className="max-w-2xl mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-3 text-lifac-navy-700">
-          <div>🌐 www.lifac-world.org</div>
-          <div>✉ contact@lifac-world.org</div>
-          <div>📞 +229 (0) 50 123 4567</div>
-          <div>📘 @LifacWorldOfficial</div>
+
+        <Link href="/volunteer">
+          <Button variant="default" size="lg" className="uppercase tracking-wider mb-12">
+            {tp("joinTitle")}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </Link>
+
+        <div className="max-w-2xl mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-8 grid sm:grid-cols-3 gap-6 text-left">
+          <a href="mailto:info@lifac.org" className="flex items-start gap-3 group">
+            <Mail className="h-5 w-5 text-lifac-red-600 shrink-0 mt-0.5" />
+            <span className="text-sm text-lifac-navy-700 group-hover:text-lifac-red-600 transition-colors break-all">
+              info@lifac.org
+            </span>
+          </a>
+          <a href="tel:+2290140131359" className="flex items-start gap-3 group">
+            <Phone className="h-5 w-5 text-lifac-red-600 shrink-0 mt-0.5" />
+            <span className="text-sm text-lifac-navy-700 group-hover:text-lifac-red-600 transition-colors">
+              +229 01 40 13 13 59
+            </span>
+          </a>
+          <div className="flex items-start gap-3">
+            <MapPin className="h-5 w-5 text-lifac-red-600 shrink-0 mt-0.5" />
+            <span className="text-sm text-lifac-navy-700">Zopah, Abomey-Calavi, Bénin</span>
+          </div>
         </div>
       </div>
     </section>

@@ -141,3 +141,9 @@ export const prayerRequestSchema = z.object({
   category: z.enum(["PROTECTION", "SALUT", "GUERISON", "DELIVRANCE", "AUTRE"]).default("AUTRE"),
   isPublic: z.boolean().default(true),
 });
+
+export const testimonySchema = z.object({
+  authorName: z.string().min(2).max(100),
+  authorRole: z.string().max(150).optional().or(z.literal("")),
+  content: z.string().min(20).max(1500),
+});

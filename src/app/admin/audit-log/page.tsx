@@ -19,6 +19,9 @@ const ACTION_LABELS: Record<string, string> = {
   EVENT_CREATE: "Création d'un événement",
   EVENT_DELETE: "Suppression d'un événement",
   DONATION_STATUS_UPDATE: "Changement de statut d'un don",
+  TESTIMONY_APPROVE: "Validation d'un témoignage",
+  TESTIMONY_REJECT: "Rejet d'un témoignage",
+  TESTIMONY_DELETE: "Suppression d'un témoignage",
 };
 
 export default async function AuditLogPage() {

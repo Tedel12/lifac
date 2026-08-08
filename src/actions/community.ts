@@ -11,6 +11,7 @@ import { randomBytes } from "crypto";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { uploadToCloudinary } from "@/lib/cloudinary";
+import { sendStaffNotificationEmail } from "@/lib/email";
 import {
   eventRegistrationSchema,
   volunteerApplicationSchema,
@@ -358,6 +359,22 @@ export async function applyAsVolunteer(
     };
   }
 
+  await sendStaffNotificationEmail({
+    subject: `Nouvelle candidature missionnaire — ${data.fullName}`,
+    replyTo: data.email,
+    html: `
+      <h2>Nouvelle candidature missionnaire</h2>
+      <p><strong>Nom :</strong> ${data.fullName}</p>
+      <p><strong>Email :</strong> ${data.email}</p>
+      <p><strong>Téléphone :</strong> ${data.phone}</p>
+      <p><strong>Ville :</strong> ${data.city || "—"}</p>
+      <p><strong>Compétences :</strong> ${data.skills?.join(", ") || "—"}</p>
+      <p><strong>Disponibilités :</strong> ${data.availability || "—"}</p>
+      <p><strong>Motivation :</strong><br/>${data.motivation}</p>
+      <p style="color:#888;font-size:12px;margin-top:24px;">À examiner et approuver depuis /admin/agents.</p>
+    `,
+  });
+
   await prisma.notification.create({
     data: {
       title: "Nouvelle candidature missionnaire",
@@ -403,6 +420,19 @@ export async function sendContactMessage(
     console.error("[sendContactMessage] Erreur :", e);
     return { success: false, errorKey: "forms.error" };
   }
+
+  await sendStaffNotificationEmail({
+    subject: `Nouveau message de contact — ${data.subject}`,
+    replyTo: data.email,
+    html: `
+      <h2>Nouveau message de contact</h2>
+      <p><strong>Nom :</strong> ${data.fullName}</p>
+      <p><strong>Email :</strong> ${data.email}</p>
+      <p><strong>Téléphone :</strong> ${data.phone || "—"}</p>
+      <p><strong>Sujet :</strong> ${data.subject}</p>
+      <p><strong>Message :</strong><br/>${data.message}</p>
+    `,
+  });
 
   await prisma.notification.create({
     data: {

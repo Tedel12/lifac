@@ -1,0 +1,89 @@
+import { Metadata } from "next";
+import { Quote, HeartHandshake } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { getApprovedTestimonies } from "@/actions/testimony-actions";
+import { TestimonyForm } from "@/components/forms/testimony-form";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Témoignages",
+  description:
+    "Découvrez les témoignages de vies transformées à travers le ministère de LiFAC, et partagez le vôtre.",
+};
+
+export default async function TestimonialsPage() {
+  const testimonies = await getApprovedTestimonies();
+
+  return (
+    <div className="bg-white min-h-screen">
+      <section className="bg-gradient-to-br from-lifac-navy-900 to-lifac-navy-950 text-white py-16 lg:py-24">
+        <div className="container mx-auto px-4 lg:px-8 text-center max-w-3xl">
+          <HeartHandshake className="h-12 w-12 text-lifac-red-500 mx-auto mb-4" />
+          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">Témoignages</h1>
+          <p className="text-lg text-white/80">
+            Des vies transformées par la puissance de l'Évangile, à travers le ministère de LiFAC.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-12 lg:py-20 bg-[#F4F5F7]">
+        <div className="container mx-auto px-4 lg:px-8 max-w-3xl">
+          <Card className="border-none shadow-sm">
+            <CardContent className="p-6 lg:p-8">
+              <h2 className="font-display text-2xl font-bold text-lifac-navy-900 mb-2">Partagez votre témoignage</h2>
+              <p className="text-sm text-gray-600 mb-6">
+                Dieu a fait quelque chose de spécial dans votre vie à travers LiFAC ? Racontez-le-nous.
+              </p>
+              <TestimonyForm />
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <section className="py-12 lg:py-20">
+        <div className="container mx-auto px-4 lg:px-8 max-w-4xl">
+          <h2 className="font-display text-2xl lg:text-3xl font-extrabold text-lifac-navy-900 text-center mb-10">
+            Ce que Dieu a fait
+          </h2>
+
+          {testimonies.length === 0 ? (
+            <Card className="border-none shadow-sm">
+              <CardContent className="p-8 text-center text-sm text-gray-500">
+                Aucun témoignage publié pour le moment — soyez le premier à partager le vôtre !
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-5">
+              {testimonies.map((t) => (
+                <Card
+                  key={t.id}
+                  className="border-none shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  <CardContent className="p-6 space-y-4">
+                    <Quote className="h-7 w-7 text-lifac-red-600/60" />
+                    <p className="text-lifac-navy-700 leading-relaxed italic">« {t.content} »</p>
+                    <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
+                      <div className="h-10 w-10 rounded-full bg-lifac-red-600 flex items-center justify-center text-white font-bold shrink-0">
+                        {t.authorAvatar ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={t.authorAvatar} alt={t.authorName} className="h-full w-full rounded-full object-cover" />
+                        ) : (
+                          t.authorName.charAt(0).toUpperCase()
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-bold text-lifac-navy-900 text-sm">{t.authorName}</p>
+                        {t.authorRole && <p className="text-xs text-gray-500">{t.authorRole}</p>}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}
