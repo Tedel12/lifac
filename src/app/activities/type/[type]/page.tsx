@@ -98,12 +98,12 @@ export default async function ActivityTypePage({
         </div>
       </section>
 
-      <section className="bg-lifac-navy-950 py-16 lg:py-20 text-white text-center">
+      <section className="bg-white py-16 lg:py-20 text-center border-t border-gray-100">
         <div className="container mx-auto px-4 lg:px-6 max-w-2xl">
-          <h2 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+          <h2 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-lifac-navy-900">
             {t("ctaEventsTitle")}
           </h2>
-          <p className="text-white/75 mb-8">{t("ctaEventsDesc")}</p>
+          <p className="text-lifac-navy-600 mb-8">{t("ctaEventsDesc")}</p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link href="/events">
               <Button variant="default" size="xl" className="uppercase tracking-wider">
@@ -114,7 +114,7 @@ export default async function ActivityTypePage({
               <Button
                 variant="outline"
                 size="xl"
-                className="uppercase tracking-wider border-white/40 bg-transparent text-white hover:bg-white hover:text-lifac-navy-950"
+                className="uppercase tracking-wider"
               >
                 {t("ctaVolunteer")}
               </Button>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
+import { MediaLightboxGallery } from "@/components/resources/media-lightbox-gallery";
 import {
   BookOpen,
   GraduationCap,
@@ -86,21 +87,7 @@ async function MediaGallery({ images }: { images: string[] }) {
             {t("galleryTitle")}
           </h2>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 lg:gap-4">
-          {images.map((src, i) => (
-            <div
-              key={src + i}
-              className="group relative aspect-square rounded-2xl overflow-hidden shadow-sm"
-            >
-              <Image
-                src={src}
-                alt=""
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-            </div>
-          ))}
-        </div>
+        <MediaLightboxGallery images={images} />
       </div>
     </section>
   );

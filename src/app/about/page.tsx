@@ -371,13 +371,13 @@ function FieldActivities() {
 function VerseSection() {
   const t = useTranslations("about");
   return (
-    <section className="bg-lifac-navy-950 py-20 lg:py-24 text-white text-center">
+    <section className="bg-white py-20 lg:py-24 text-center border-y border-gray-100">
       <div className="container mx-auto px-4 lg:px-6 max-w-4xl">
         <Quote className="h-12 w-12 text-lifac-red-600 mx-auto mb-6 opacity-60" />
-        <blockquote className="font-display text-2xl md:text-3xl lg:text-4xl italic font-bold text-white leading-relaxed mb-4">
+        <blockquote className="font-display text-2xl md:text-3xl lg:text-4xl italic font-bold text-lifac-navy-900 leading-relaxed mb-4">
           {t("verse")}
         </blockquote>
-        <p className="text-lifac-red-500 font-semibold">{t("verseRef")}</p>
+        <p className="text-lifac-red-600 font-semibold">{t("verseRef")}</p>
       </div>
     </section>
   );
