@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { SchoolStatus } from "@prisma/client";
+import { logAudit } from "@/lib/audit-log";
 
 export async function getSchools(params?: { search?: string; status?: SchoolStatus }) {
   const where: any = {};
@@ -36,6 +37,8 @@ export async function updateSchoolStatus(id: string, status: SchoolStatus) {
 }
 
 export async function deleteSchool(id: string) {
+  const existing = await prisma.school.findUnique({ where: { id }, select: { name: true, code: true } });
   await prisma.school.delete({ where: { id } });
+  await logAudit("SCHOOL_DELETE", "School", id, existing ?? undefined, undefined);
   revalidatePath("/admin/schools");
 }

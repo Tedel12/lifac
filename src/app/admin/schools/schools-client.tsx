@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, Plus, UserPlus, List, Eye, ChevronDown, ArrowUpDown, School as SchoolIcon, MapPinned, UserCheck, Clock } from "lucide-react";
+import { Search, Plus, UserPlus, List, Eye, ChevronDown, ArrowUpDown, School as SchoolIcon, MapPinned, UserCheck, Clock, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getSchools, updateSchoolStatus } from "@/actions/school-actions";
+import { getSchools, updateSchoolStatus, deleteSchool } from "@/actions/school-actions";
 import { assignSchoolToAgent, getAssignmentHistory } from "@/actions/agent-actions";
 import { SchoolStatus } from "@prisma/client";
 import { SchoolModal } from "@/components/admin/school-modal";
@@ -24,7 +24,7 @@ const STATUS_LABELS: Record<SchoolStatus, string> = {
 
 export default function SchoolsPage({ schools: initialSchools }: { schools: any[] }) {
   const t = useTranslations("adminSchools");
-  const [allSchools] = useState(initialSchools); // baseline non filtré, pour les statistiques
+  const [allSchools, setAllSchools] = useState(initialSchools); // baseline non filtré, pour les statistiques
   const [schools, setSchools] = useState(initialSchools);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<SchoolStatus | "ALL">("ALL");
@@ -91,6 +91,13 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
   const handleAssign = (school: any) => {
     setSelectedSchool(school);
     setIsAgentModalOpen(true);
+  };
+
+  const handleDelete = async (school: any) => {
+    if (!confirm(`Supprimer définitivement l'école "${school.name}" ? Cette action est irréversible.`)) return;
+    setSchools((prev) => prev.filter((s) => s.id !== school.id));
+    setAllSchools((prev) => prev.filter((s) => s.id !== school.id));
+    await deleteSchool(school.id);
   };
 
   const performAssignment = async (agentId: string) => {
@@ -252,6 +259,7 @@ export default function SchoolsPage({ schools: initialSchools }: { schools: any[
                     <div className="flex justify-center gap-1">
                         <Button variant="ghost" size="sm" className="text-emerald-600 text-xs gap-1" onClick={() => handleAssign(school)} title={t("actions.assign")}><UserPlus size={14} /></Button>
                         <Button variant="ghost" size="sm" className="text-slate-600 text-xs gap-1" onClick={() => handleView(school)} title={t("actions.view")}><Eye size={14} /></Button>
+                        <Button variant="ghost" size="sm" className="text-lifac-red-600 text-xs gap-1" onClick={() => handleDelete(school)} title="Supprimer"><Trash2 size={14} /></Button>
                     </div>
                   </td>
                 </tr>

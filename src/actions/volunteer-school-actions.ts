@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { SchoolStatus } from "@prisma/client";
 import { getCurrentAgentId } from "@/actions/auth";
+import { logAudit } from "@/lib/audit-log";
 
 async function requireAgentId(): Promise<string> {
   const id = await getCurrentAgentId();
@@ -83,6 +84,28 @@ export async function updateMySchool(
     throw new Error("Vous ne pouvez modifier que les écoles que vous avez vous-même ajoutées.");
   }
   await prisma.school.update({ where: { id }, data });
+  revalidatePath("/volunteer/schools");
+  revalidatePath("/admin/schools");
+}
+
+// Suppression réservée aux écoles créées par le missionnaire lui-même, et uniquement
+// si l'admin lui a explicitement accordé la permission (User.canDeleteSchools).
+export async function deleteMySchool(id: string) {
+  const agentId = await requireAgentId();
+  const [agent, school] = await Promise.all([
+    prisma.user.findUnique({ where: { id: agentId }, select: { canDeleteSchools: true } }),
+    prisma.school.findUnique({ where: { id }, select: { createdById: true, name: true } }),
+  ]);
+
+  if (!agent?.canDeleteSchools) {
+    throw new Error("Vous n'avez pas la permission de supprimer des écoles.");
+  }
+  if (!school || school.createdById !== agentId) {
+    throw new Error("Vous ne pouvez supprimer que les écoles que vous avez vous-même ajoutées.");
+  }
+
+  await prisma.school.delete({ where: { id } });
+  await logAudit("SCHOOL_DELETE", "School", id, { name: school.name, deletedBy: "missionnaire" }, undefined);
   revalidatePath("/volunteer/schools");
   revalidatePath("/admin/schools");
 }

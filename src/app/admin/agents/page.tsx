@@ -7,6 +7,7 @@ import {
   getPendingApplications,
   approveVolunteerApplication,
   rejectVolunteerApplication,
+  setAgentCanDeleteSchools,
 } from "@/actions/admin-agent-actions";
 import { AgentModal } from "@/components/admin/agent-modal";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import { Eye, Pencil, Trash2, Plus, Check, X, Clock } from "lucide-react";
+import { Eye, Pencil, Trash2, Plus, Check, X, Clock, School } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AgentsPage() {
@@ -53,6 +54,17 @@ export default function AgentsPage() {
       await loadApplications();
       toast.success("Candidature rejetée");
     }
+  };
+
+  const handleToggleDeletePermission = async (agent: any) => {
+    const next = !agent.canDeleteSchools;
+    setAgents((prev) => prev.map((a) => (a.id === agent.id ? { ...a, canDeleteSchools: next } : a)));
+    await setAgentCanDeleteSchools(agent.id, next);
+    toast.success(
+      next
+        ? `${agent.name} peut désormais supprimer les écoles qu'il a ajoutées.`
+        : `Droit de suppression d'écoles retiré à ${agent.name}.`
+    );
   };
 
   return (
@@ -117,6 +129,7 @@ export default function AgentsPage() {
                   <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-gray-400">Missionnaire</th>
                   <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-gray-400">Contact</th>
                   <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-gray-400">Statut</th>
+                  <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-gray-400">Permissions</th>
                   <th className="px-5 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
                 </tr>
               </thead>
@@ -139,6 +152,21 @@ export default function AgentsPage() {
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Actif
                       </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleDeletePermission(agent)}
+                        title="Autoriser ce missionnaire à supprimer les écoles qu'il a ajoutées"
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
+                          agent.canDeleteSchools
+                            ? "bg-lifac-red-50 text-lifac-red-700 hover:bg-lifac-red-100"
+                            : "bg-gray-100 text-gray-400 hover:bg-gray-200"
+                        }`}
+                      >
+                        <School className="h-3.5 w-3.5" />
+                        {agent.canDeleteSchools ? "Suppr. écoles autorisée" : "Suppr. écoles refusée"}
+                      </button>
                     </td>
                     <td className="px-5 py-3.5">
                       <div className="flex justify-end gap-1.5">

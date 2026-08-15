@@ -22,6 +22,9 @@ const ACTION_LABELS: Record<string, string> = {
   TESTIMONY_APPROVE: "Validation d'un témoignage",
   TESTIMONY_REJECT: "Rejet d'un témoignage",
   TESTIMONY_DELETE: "Suppression d'un témoignage",
+  AGENT_PERMISSION_UPDATE: "Modification des permissions d'un missionnaire",
+  SCHOOL_DELETE: "Suppression d'une école",
+  SCHOOL_CREATE: "Création d'une école",
 };
 
 export default async function AuditLogPage() {

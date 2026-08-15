@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, MapPin, Phone, Users, Pencil, Eye, X, LocateFixed, Loader2 } from "lucide-react";
+import { Plus, MapPin, Phone, Users, Pencil, Eye, X, LocateFixed, Loader2, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { SchoolStatus } from "@prisma/client";
-import { createMySchool, updateMySchool } from "@/actions/volunteer-school-actions";
+import { createMySchool, updateMySchool, deleteMySchool } from "@/actions/volunteer-school-actions";
 import { toast } from "sonner";
 
 const STATUS_LABELS: Record<SchoolStatus, string> = {
@@ -25,7 +25,15 @@ const STATUS_COLORS: Record<SchoolStatus, string> = {
   EXECUTEE: "bg-emerald-100 text-emerald-700",
 };
 
-export function SchoolsList({ schools: initialSchools, currentAgentId }: { schools: any[]; currentAgentId: string | null }) {
+export function SchoolsList({
+  schools: initialSchools,
+  currentAgentId,
+  canDeleteSchools,
+}: {
+  schools: any[];
+  currentAgentId: string | null;
+  canDeleteSchools: boolean;
+}) {
   const [schools, setSchools] = useState(initialSchools);
   const [modalSchool, setModalSchool] = useState<any>(null);
   const [modalMode, setModalMode] = useState<"create" | "edit" | "view">("create");
@@ -54,6 +62,17 @@ export function SchoolsList({ schools: initialSchools, currentAgentId }: { schoo
       setSchools((prev) => [newSchool, ...prev]);
     } else if (updatedId && updatedData) {
       setSchools((prev) => prev.map((s) => (s.id === updatedId ? { ...s, ...updatedData } : s)));
+    }
+  };
+
+  const handleDelete = async (school: any) => {
+    if (!confirm(`Supprimer définitivement l'école "${school.name}" ? Cette action est irréversible.`)) return;
+    try {
+      await deleteMySchool(school.id);
+      setSchools((prev) => prev.filter((s) => s.id !== school.id));
+      toast.success("École supprimée");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erreur lors de la suppression");
     }
   };
 
@@ -97,9 +116,22 @@ export function SchoolsList({ schools: initialSchools, currentAgentId }: { schoo
                   {isMine && <p className="text-[11px] text-lifac-red-600 font-medium">Ajoutée par vous</p>}
                   <div className="flex gap-2 pt-2">
                     {isMine ? (
-                      <Button size="sm" variant="outline" className="flex-1" onClick={() => openEdit(school)}>
-                        <Pencil className="h-3.5 w-3.5 mr-1.5" /> Modifier
-                      </Button>
+                      <>
+                        <Button size="sm" variant="outline" className="flex-1" onClick={() => openEdit(school)}>
+                          <Pencil className="h-3.5 w-3.5 mr-1.5" /> Modifier
+                        </Button>
+                        {canDeleteSchools && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-lifac-red-600 hover:bg-lifac-red-50"
+                            onClick={() => handleDelete(school)}
+                            title="Supprimer"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                      </>
                     ) : (
                       <Button size="sm" variant="outline" className="flex-1" onClick={() => openView(school)}>
                         <Eye className="h-3.5 w-3.5 mr-1.5" /> Détails

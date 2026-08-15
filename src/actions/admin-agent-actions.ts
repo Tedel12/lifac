@@ -18,8 +18,16 @@ export async function getAgents() {
       email: true,
       phone: true,
       avatarUrl: true,
+      canDeleteSchools: true,
     }
   });
+}
+
+// Accorde/retire à un missionnaire le droit de supprimer les écoles qu'il a lui-même ajoutées.
+export async function setAgentCanDeleteSchools(agentId: string, canDeleteSchools: boolean) {
+  await prisma.user.update({ where: { id: agentId }, data: { canDeleteSchools } });
+  await logAudit("AGENT_PERMISSION_UPDATE", "User", agentId, undefined, { canDeleteSchools });
+  revalidatePath("/admin/agents");
 }
 
 export async function createAgent(data: any) {
