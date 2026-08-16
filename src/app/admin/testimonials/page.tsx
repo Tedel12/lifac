@@ -7,15 +7,19 @@ import {
   rejectTestimony,
   deleteTestimony,
   toggleTestimonyFeatured,
+  getPendingComments,
+  approveComment,
+  deleteComment,
 } from "@/actions/testimony-actions";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, X, Trash2, Star, Clock } from "lucide-react";
+import { Check, X, Trash2, Star, Clock, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminTestimonialsPage() {
   const [testimonies, setTestimonies] = useState<any[]>([]);
+  const [pendingComments, setPendingComments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,9 +28,23 @@ export default function AdminTestimonialsPage() {
 
   const load = async () => {
     setLoading(true);
-    const data = await getAllTestimoniesAdmin();
+    const [data, comments] = await Promise.all([getAllTestimoniesAdmin(), getPendingComments()]);
     setTestimonies(data);
+    setPendingComments(comments);
     setLoading(false);
+  };
+
+  const handleApproveComment = async (id: string) => {
+    await approveComment(id);
+    toast.success("Commentaire validé");
+    load();
+  };
+
+  const handleDeleteComment = async (id: string) => {
+    if (!confirm("Supprimer ce commentaire ?")) return;
+    await deleteComment(id);
+    toast.success("Commentaire supprimé");
+    load();
   };
 
   const pending = testimonies.filter((t) => !t.isApproved);
@@ -67,6 +85,40 @@ export default function AdminTestimonialsPage() {
         <p className="text-sm text-gray-500">Chargement...</p>
       ) : (
         <>
+          {pendingComments.length > 0 && (
+            <div className="space-y-3 animate-fade-in">
+              <div className="flex items-center gap-2">
+                <MessageCircle className="h-4 w-4 text-lifac-red-600" />
+                <h2 className="font-display font-bold text-lifac-navy-900">
+                  Commentaires en attente ({pendingComments.length})
+                </h2>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {pendingComments.map((c) => (
+                  <Card key={c.id} className="border-l-4 border-amber-500 hover:shadow-lg transition-shadow duration-300">
+                    <CardContent className="p-5 space-y-3">
+                      <div>
+                        <p className="font-bold text-lifac-navy-900">{c.authorName}</p>
+                        <p className="text-[11px] text-gray-400">
+                          sur le témoignage de {c.testimony?.authorName ?? "—"}
+                        </p>
+                      </div>
+                      <p className="text-sm text-lifac-navy-700">{c.content}</p>
+                      <div className="flex gap-2 pt-1">
+                        <Button size="sm" onClick={() => handleApproveComment(c.id)}>
+                          <Check className="h-3.5 w-3.5 mr-1" /> Valider
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => handleDeleteComment(c.id)}>
+                          <Trash2 className="h-3.5 w-3.5 mr-1" /> Supprimer
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-lifac-red-600" />

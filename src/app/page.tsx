@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getPublicStats } from "@/lib/public-stats";
 import { Hero } from "@/components/sections/hero";
 import { StatsBar } from "@/components/sections/stats-bar";
 import { AboutSection } from "@/components/sections/about-section";
@@ -9,17 +10,10 @@ import { CtaSection } from "@/components/sections/cta-section";
 export const revalidate = 300;
 export const dynamic = "force-dynamic";
 
-const FALLBACK_STATS = {
-  totalSoulsWon: 32500,
-  schoolsVisited: 785,
-  marketOutreach: 350,
-  totalCrusades: 45,
-};
-
 async function getLandingData() {
   try {
     const [stats, testimonies, upcomingEvents] = await Promise.all([
-      prisma.globalStats.findFirst({ orderBy: { updatedAt: "desc" } }),
+      getPublicStats(),
       prisma.testimony.findMany({
         where: { isApproved: true, isFeatured: true },
         orderBy: { createdAt: "desc" },
@@ -48,21 +42,10 @@ async function getLandingData() {
       }),
     ]);
 
-    return {
-      stats: stats
-        ? {
-          totalSoulsWon: stats.totalSoulsWon,
-          schoolsVisited: stats.schoolsVisited,
-          marketOutreach: stats.marketOutreach,
-          totalCrusades: stats.totalCrusades,
-        }
-        : FALLBACK_STATS,
-      testimonies,
-      upcomingEvents,
-    };
+    return { stats, testimonies, upcomingEvents };
   } catch (e) {
     console.error("[HomePage] Erreur de récupération des données :", e);
-    return { stats: FALLBACK_STATS, testimonies: [], upcomingEvents: [] };
+    return { stats: await getPublicStats(), testimonies: [], upcomingEvents: [] };
   }
 }
 

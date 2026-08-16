@@ -21,6 +21,7 @@ datasource db {
 
 enum Role {
   ADMIN // Accès complet (équipe LiFAC)
+  EVANGELIST // Mêmes modules qu'un admin, sauf la gestion des comptes — créé par un admin
   EDITOR // Création/édition de contenu (campagnes, événements)
   VOLUNTEER // Bénévole assigné à des événements
   DONOR // Donateur enregistré
@@ -168,6 +169,8 @@ model User {
   assignedSchools   School[]
   assignedActivities Activity[] @relation("ActivityAssignee")
   prayerIntercessions PrayerIntercession[]
+  schoolVisits       SchoolVisit[] @relation("SchoolVisitAgent")
+  aiMessages         AiMessage[]   @relation("AiMessageUser")
   createdSchools    School[] @relation("SchoolCreator")
   personalNotifications Notification[]
 
@@ -564,6 +567,10 @@ model Activity {
   assignedToId     String? // missionnaire (User role VOLUNTEER) responsable, source de vérité
   assignedTo       User?   @relation("ActivityAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
 
+  // École où se déroule l'activité (permet d'attribuer les décisions pour Christ par école)
+  schoolId String?
+  school   School? @relation("SchoolActivities", fields: [schoolId], references: [id], onDelete: SetNull)
+
   // Église / organisation partenaire (texte libre pour l'instant)
   partnerChurch String?
 
@@ -587,6 +594,7 @@ model Activity {
   @@index([status])
   @@index([date])
   @@index([assignedToId])
+  @@index([schoolId])
   @@map("activities")
 }
 
@@ -661,11 +669,47 @@ model Testimony {
   isApproved Boolean @default(false)
   isFeatured Boolean @default(false)
 
+  likeCount Int @default(0)
+
+  comments TestimonyComment[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([isApproved, isFeatured])
   @@map("testimonies")
+}
+
+// Commentaire public sur un témoignage — modéré avant affichage, comme le témoignage lui-même.
+model TestimonyComment {
+  id          String    @id @default(uuid())
+  testimonyId String
+  testimony   Testimony @relation(fields: [testimonyId], references: [id], onDelete: Cascade)
+
+  authorName String
+  content    String  @db.Text
+  isApproved Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([testimonyId, isApproved])
+  @@map("testimony_comments")
+}
+
+// Historique de conversation avec l'assistant IA, conservé entre les sessions
+// pour que le missionnaire retrouve son fil après un refresh ou une reconnexion.
+model AiMessage {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation("AiMessageUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  role    String // "user" | "assistant"
+  content String @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@map("ai_messages")
 }
 
 // ---------- DEMANDES DE PRIÈRE ----------
@@ -834,16 +878,33 @@ enum SchoolStatus {
   EXECUTEE
 }
 
+enum SchoolType {
+  PRIMAIRE
+  SECONDAIRE
+  PRIMAIRE_SECONDAIRE
+  PUBLIQUE_PRIMAIRE
+  PUBLIQUE_SECONDAIRE
+  PRIVEE_PRIMAIRE
+  PRIVEE_SECONDAIRE
+  PRIVEE_PRIMAIRE_SECONDAIRE
+  UNIVERSITAIRE_PRIVEE
+  UNIVERSITAIRE_PUBLIQUE
+}
+
 model School {
   id                String       @id @default(uuid())
   countryCode       String       @default("BJ") // Code Pays
+  country           String       @default("Bénin") // Pays (libellé affiché / filtrable)
   code              String       @unique // Code école
   name              String // Nom école
   address           String // Adresse
   commune           String // Commune
   department        String // Département
-  responsibleName   String // Responsable
-  phone             String // Téléphone
+  schoolType        SchoolType? // Type d'établissement
+  founderName       String? // Fondateur ou directeur
+  founderPhone      String? // Téléphone du fondateur / directeur
+  responsibleName   String // Personne à contacter
+  phone             String // Téléphone de la personne à contacter
   estimatedStudents Int          @default(0) // Effectif estimé
   latitude          Float? // Latitude
   longitude         Float? // Longitude
@@ -853,6 +914,8 @@ model School {
   agentId           String?
   agent             User?    @relation(fields: [agentId], references: [id])
   assignmentHistory SchoolAssignmentHistory[]
+  visits            SchoolVisit[]
+  activities        Activity[] @relation("SchoolActivities")
 
   // Missionnaire ayant ajouté cette école (null = ajoutée par un admin) — détermine qui a
   // le droit de la modifier côté missionnaire.
@@ -860,8 +923,30 @@ model School {
   createdBy   User?   @relation("SchoolCreator", fields: [createdById], references: [id], onDelete: SetNull)
 
   @@index([createdById])
+  @@index([country])
   @@map("schools")
   }
+
+// Trace d'un déplacement terrain : départ déclenché par "M'y rendre", arrivée confirmée
+// par le bouton "Je suis arrivé" avec la position GPS réelle du missionnaire.
+model SchoolVisit {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  agentId  String
+  agent    User   @relation("SchoolVisitAgent", fields: [agentId], references: [id], onDelete: Cascade)
+
+  departedAt DateTime  @default(now())
+  arrivedAt  DateTime?
+
+  arrivalLatitude  Float?
+  arrivalLongitude Float?
+  distanceMeters   Float? // écart entre la position d'arrivée et les coordonnées de l'école
+
+  @@index([schoolId])
+  @@index([agentId])
+  @@map("school_visits")
+}
 
 
   model SchoolAssignmentHistory {

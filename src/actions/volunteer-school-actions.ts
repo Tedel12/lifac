@@ -88,6 +88,45 @@ export async function updateMySchool(
   revalidatePath("/admin/schools");
 }
 
+// --- Suivi des déplacements terrain (bouton "M'y rendre" puis "Je suis arrivé") ---
+
+export async function startSchoolVisit(schoolId: string) {
+  const agentId = await requireAgentId();
+  const visit = await prisma.schoolVisit.create({
+    data: { schoolId, agentId },
+    select: { id: true, departedAt: true },
+  });
+  return { id: visit.id, departedAt: visit.departedAt.toISOString() };
+}
+
+export async function arriveAtSchool(
+  visitId: string,
+  position: { latitude: number; longitude: number; distanceMeters: number }
+) {
+  const agentId = await requireAgentId();
+  const visit = await prisma.schoolVisit.findUnique({ where: { id: visitId }, select: { agentId: true } });
+  if (!visit || visit.agentId !== agentId) {
+    throw new Error("Déplacement introuvable.");
+  }
+
+  const updated = await prisma.schoolVisit.update({
+    where: { id: visitId },
+    data: {
+      arrivedAt: new Date(),
+      arrivalLatitude: position.latitude,
+      arrivalLongitude: position.longitude,
+      distanceMeters: position.distanceMeters,
+    },
+    select: { departedAt: true, arrivedAt: true },
+  });
+
+  revalidatePath("/volunteer/assignments");
+  return {
+    departedAt: updated.departedAt.toISOString(),
+    arrivedAt: updated.arrivedAt!.toISOString(),
+  };
+}
+
 // Suppression réservée aux écoles créées par le missionnaire lui-même, et uniquement
 // si l'admin lui a explicitement accordé la permission (User.canDeleteSchools).
 export async function deleteMySchool(id: string) {

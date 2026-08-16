@@ -1,8 +1,9 @@
 import { Metadata } from "next";
-import { Quote, HeartHandshake } from "lucide-react";
+import { HeartHandshake } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getApprovedTestimonies } from "@/actions/testimony-actions";
 import { TestimonyForm } from "@/components/forms/testimony-form";
+import { TestimonyCard } from "@/components/testimonials/testimony-card";
 
 export const dynamic = "force-dynamic";
 
@@ -54,31 +55,9 @@ export default async function TestimonialsPage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid sm:grid-cols-2 gap-5">
+            <div className="grid sm:grid-cols-2 gap-5 items-start">
               {testimonies.map((t) => (
-                <Card
-                  key={t.id}
-                  className="border-none shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
-                >
-                  <CardContent className="p-6 space-y-4">
-                    <Quote className="h-7 w-7 text-lifac-red-600/60" />
-                    <p className="text-lifac-navy-700 leading-relaxed italic">« {t.content} »</p>
-                    <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
-                      <div className="h-10 w-10 rounded-full bg-lifac-red-600 flex items-center justify-center text-white font-bold shrink-0">
-                        {t.authorAvatar ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={t.authorAvatar} alt={t.authorName} className="h-full w-full rounded-full object-cover" />
-                        ) : (
-                          t.authorName.charAt(0).toUpperCase()
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-bold text-lifac-navy-900 text-sm">{t.authorName}</p>
-                        {t.authorRole && <p className="text-xs text-gray-500">{t.authorRole}</p>}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <TestimonyCard key={t.id} testimony={t} />
               ))}
             </div>
           )}

@@ -125,13 +125,18 @@ export async function getExtendedDashboardMetrics() {
   sixMonthsAgo.setDate(1);
   sixMonthsAgo.setHours(0, 0, 0, 0);
 
-  const [aggAllTime, partnerChurchesCount, activeAgentsCount, eventAttendanceCount, recentActivities] = await Promise.all([
+  const [aggAllTime, partnerChurchesCount, activeAgentsCount, eventAttendanceCount, schoolDecisionsAgg, recentActivities] = await Promise.all([
     prisma.activity.aggregate({
       _sum: { decisionsForChrist: true, newContacts: true, actualParticipants: true },
     }),
     prisma.partnerChurch.count({ where: { isActive: true } }),
     prisma.user.count({ where: { role: "VOLUNTEER", isActive: true } }),
     prisma.attendance.count({ where: { status: "PRESENT" } }),
+    // Décisions pour Christ enregistrées lors d'activités menées dans les écoles
+    prisma.activity.aggregate({
+      where: { schoolId: { not: null } },
+      _sum: { decisionsForChrist: true },
+    }),
     prisma.activity.findMany({
       where: { date: { gte: sixMonthsAgo } },
       select: {
@@ -197,6 +202,7 @@ export async function getExtendedDashboardMetrics() {
     // "Attendance total" (module 2 du cahier des charges) : participants comptés sur les
     // activités de terrain + présences scannées/pointées aux événements enregistrés.
     attendanceTotal: (aggAllTime._sum.actualParticipants ?? 0) + eventAttendanceCount,
+    schoolDecisions: schoolDecisionsAgg._sum.decisionsForChrist ?? 0,
     monthlyEvolution: monthBuckets,
     geoDistribution,
     efficiencyRate,

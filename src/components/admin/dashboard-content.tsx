@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RefreshCw, HeartHandshake, Target, PartyPopper, Sparkles, UserPlus, Church, Users, TrendingUp, MapPin, Gauge, CalendarClock, Wallet } from "lucide-react";
+import { RefreshCw, HeartHandshake, Target, PartyPopper, Sparkles, UserPlus, Church, Users, TrendingUp, MapPin, Gauge, CalendarClock, Wallet, School } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { formatAmountXof } from "@/lib/fedapay";
@@ -24,6 +24,7 @@ interface DashboardContentProps {
     partnerChurchesCount: number;
     activeAgentsCount: number;
     attendanceTotal: number;
+    schoolDecisions: number;
     monthlyEvolution: { key: string; label: string; activities: number; decisions: number }[];
     geoDistribution: { commune: string; count: number }[];
     efficiencyRate: number;
@@ -152,7 +153,7 @@ export default function DashboardContent({
       </div>
 
       {/* KPIs ministère (attendance, décisions pour Christ, convertis, églises partenaires, agents actifs) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
         <Card>
           <CardContent className="p-5">
             <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 mb-3">
@@ -160,6 +161,15 @@ export default function DashboardContent({
             </div>
             <p className="text-xs text-gray-500 uppercase tracking-wider">Attendance total</p>
             <p className="font-display text-2xl font-bold text-lifac-navy-900 mt-1">{extendedMetrics.attendanceTotal}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-teal-50 mb-3">
+              <School className="h-5 w-5 text-teal-600" />
+            </div>
+            <p className="text-xs text-gray-500 uppercase tracking-wider">Décisions (écoles)</p>
+            <p className="font-display text-2xl font-bold text-lifac-navy-900 mt-1">{extendedMetrics.schoolDecisions}</p>
           </CardContent>
         </Card>
         <Card>

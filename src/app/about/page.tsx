@@ -3,8 +3,44 @@ import Link from "next/link";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
-import { Flame, Wind, Globe, Shield, Star, Heart, Users, Quote, ArrowRight, Mail, Phone, MapPin } from "lucide-react";
+import { Flame, Wind, Globe, Shield, Star, Heart, Users, Quote, ArrowRight, Mail, Phone, MapPin, Megaphone, GraduationCap, Sprout } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ActivityType } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { getPublicStats, type PublicStats } from "@/lib/public-stats";
+import { ACTIVITY_TYPE_META } from "@/lib/activity-types";
+import { formatNumber } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
+
+// 4 activités phares affichées dans le tableau, dans l'ordre voulu par le client.
+const FEATURED_ACTIVITY_TYPES: ActivityType[] = [
+  ActivityType.CRUSADE,
+  ActivityType.YOUTH_CRUSADE,
+  ActivityType.POP_UP_CRUSADE,
+  ActivityType.MARKET_OUTREACH,
+];
+
+async function getAboutData() {
+  const [stats, grouped] = await Promise.all([
+    getPublicStats(),
+    prisma.activity.groupBy({
+      by: ["type"],
+      where: { type: { in: FEATURED_ACTIVITY_TYPES } },
+      _count: { _all: true },
+      _sum: { decisionsForChrist: true },
+    }),
+  ]);
+
+  const byType = new Map(grouped.map((g) => [g.type, g]));
+  const activityRows = FEATURED_ACTIVITY_TYPES.map((type) => ({
+    type,
+    count: byType.get(type)?._count._all ?? 0,
+    decisions: byType.get(type)?._sum.decisionsForChrist ?? 0,
+  }));
+
+  return { stats, activityRows };
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("about");
@@ -14,15 +50,17 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { stats, activityRows } = await getAboutData();
+
   return (
     <div className="bg-white">
       <AboutHero />
       <IdentitySection />
       <VisionPillars />
       <MissionDomains />
-      <KeyFigures />
-      <GrowthTable />
+      <KeyFigures stats={stats} />
+      <ActivitiesTable rows={activityRows} />
       <CoreValues />
       <FieldActivities />
       <VerseSection />
@@ -105,7 +143,7 @@ function VisionPillars() {
         <div className="flex items-center gap-3 mb-12">
           <div className="h-8 w-1 bg-lifac-red-600 rounded-full" />
           <h2 className="font-display text-2xl lg:text-3xl font-extrabold text-lifac-navy-900">
-            {t("pillars.visionTitle")}
+            {t("visionTitle")}
           </h2>
         </div>
 
@@ -154,23 +192,11 @@ function PillarCard({
 function MissionDomains() {
   const tp = useTranslations("aboutPage");
   const domains = [
-    { label: tp("missionEvangelism"), percent: 40, color: "#DC2626" },
-    { label: tp("missionLeadership"), percent: 30, color: "#F87171" },
-    { label: tp("missionSocial"), percent: 20, color: "#7F1D1D" },
-    { label: tp("missionUnity"), percent: 10, color: "#475569" },
+    { title: tp("missionEvangelism"), desc: tp("missionEvangelismDesc"), icon: Megaphone },
+    { title: tp("missionLeadership"), desc: tp("missionLeadershipDesc"), icon: GraduationCap },
+    { title: tp("missionSocial"), desc: tp("missionSocialDesc"), icon: Users },
+    { title: tp("missionUnity"), desc: tp("missionUnityDesc"), icon: Sprout },
   ];
-
-  // Pie chart values (cumulative)
-  let cumulative = 0;
-  const segments = domains.map((d) => {
-    const start = cumulative;
-    cumulative += d.percent;
-    return {
-      ...d,
-      start: (start / 100) * 2 * Math.PI,
-      end: (cumulative / 100) * 2 * Math.PI,
-    };
-  });
 
   return (
     <section className="bg-white py-16 lg:py-24">
@@ -182,51 +208,34 @@ function MissionDomains() {
           </h2>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center max-w-4xl mx-auto">
-          {/* Pie */}
-          <div className="flex justify-center">
-            <svg viewBox="-1 -1 2 2" className="w-60 h-60 -rotate-90">
-              {segments.map((s) => {
-                const x1 = Math.cos(s.start);
-                const y1 = Math.sin(s.start);
-                const x2 = Math.cos(s.end);
-                const y2 = Math.sin(s.end);
-                const large = s.end - s.start > Math.PI ? 1 : 0;
-                return (
-                  <path
-                    key={s.label}
-                    d={`M 0 0 L ${x1} ${y1} A 1 1 0 ${large} 1 ${x2} ${y2} Z`}
-                    fill={s.color}
-                    stroke="#F4F5F7"
-                    strokeWidth="0.015"
-                  />
-                );
-              })}
-            </svg>
-          </div>
-
-          {/* Legend */}
-          <div className="space-y-4">
-            {domains.map((d) => (
-              <div key={d.label} className="flex items-center gap-3">
-                <span
-                  className="h-4 w-4 rounded-sm shrink-0"
-                  style={{ backgroundColor: d.color }}
-                />
-                <span className="text-lifac-navy-700">
-                  {d.label} ({d.percent}%)
-                </span>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
+          {domains.map((d) => (
+            <div
+              key={d.title}
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
+            >
+              <div className="h-12 w-12 rounded-full bg-lifac-red-600 shadow-md shadow-lifac-red-600/30 flex items-center justify-center mb-4">
+                <d.icon className="h-5 w-5 text-white" />
               </div>
-            ))}
-          </div>
+              <h3 className="font-bold text-lifac-navy-900 mb-2">{d.title}</h3>
+              <p className="text-sm text-lifac-navy-600 leading-relaxed">{d.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-function KeyFigures() {
+function KeyFigures({ stats }: { stats: PublicStats }) {
   const tp = useTranslations("aboutPage");
+  const figures = [
+    { value: stats.soulsWon, label: tp("figuresSouls") },
+    { value: stats.humanitarian, label: tp("figuresActions") },
+    { value: stats.schoolsVisited, label: tp("figuresSchools") },
+    { value: stats.missionaries, label: tp("figuresMissionaries") },
+  ];
+
   return (
     <section className="bg-[#F4F5F7] py-16 lg:py-20">
       <div className="container mx-auto px-4 lg:px-6">
@@ -237,28 +246,30 @@ function KeyFigures() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-10 max-w-4xl mx-auto text-center">
-          <div>
-            <div className="font-display text-6xl md:text-7xl lg:text-8xl font-extrabold text-lifac-red-500 leading-none mb-3">
-              32,500+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 max-w-5xl mx-auto text-center">
+          {figures.map((f) => (
+            <div key={f.label}>
+              <div className="font-display text-5xl md:text-6xl font-extrabold text-lifac-red-500 leading-none mb-3">
+                {formatNumber(f.value)}
+              </div>
+              <div className="text-lifac-navy-900 font-bold text-sm">{f.label}</div>
             </div>
-            <div className="text-lifac-navy-900 font-bold">{tp("figuresSouls")}</div>
-          </div>
-          <div>
-            <div className="font-display text-6xl md:text-7xl lg:text-8xl font-extrabold text-lifac-red-500 leading-none mb-3">
-              100+
-            </div>
-            <div className="text-lifac-navy-900 font-bold">{tp("figuresActions")}</div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-function GrowthTable() {
-  const t = useTranslations("about.growth");
-  const rows = t.raw("rows") as { label: string; result: string; goal: string }[];
+// Remplace l'ancien tableau "Développement & Croissance" (objectifs statiques écrits en dur)
+// par les 4 activités phares et leurs chiffres réels issus de la base.
+function ActivitiesTable({
+  rows,
+}: {
+  rows: { type: ActivityType; count: number; decisions: number }[];
+}) {
+  const tp = useTranslations("aboutPage");
+  const tTypes = useTranslations("activityTypes");
 
   return (
     <section className="bg-white py-16 lg:py-24">
@@ -266,28 +277,33 @@ function GrowthTable() {
         <div className="flex items-center gap-3 mb-10">
           <div className="h-8 w-1 bg-lifac-red-600 rounded-full" />
           <h2 className="font-display text-2xl lg:text-3xl font-extrabold uppercase text-lifac-navy-900">
-            {t("title")}
+            {tp("activitiesTableTitle")}
           </h2>
         </div>
 
         <div className="max-w-5xl mx-auto rounded-xl overflow-hidden border border-gray-100">
           <div className="grid grid-cols-3 bg-lifac-red-600 text-white font-bold text-sm">
-            <div className="px-5 py-3.5">{t("indicator")}</div>
-            <div className="px-5 py-3.5">{t("result")}</div>
-            <div className="px-5 py-3.5">{t("goal")}</div>
+            <div className="px-5 py-3.5">{tp("activitiesTableActivity")}</div>
+            <div className="px-5 py-3.5">{tp("activitiesTableCount")}</div>
+            <div className="px-5 py-3.5">{tp("activitiesTableDecisions")}</div>
           </div>
-          {rows.map((row, i) => (
-            <div
-              key={row.label}
-              className={`grid grid-cols-3 text-sm border-t border-gray-100 ${
-                i % 2 === 0 ? "bg-[#F4F5F7]" : ""
-              }`}
-            >
-              <div className="px-5 py-4 text-lifac-navy-700">{row.label}</div>
-              <div className="px-5 py-4 text-lifac-navy-600">{row.result}</div>
-              <div className="px-5 py-4 text-lifac-navy-600">{row.goal}</div>
-            </div>
-          ))}
+          {rows.map((row, i) => {
+            const meta = ACTIVITY_TYPE_META[row.type];
+            return (
+              <div
+                key={row.type}
+                className={`grid grid-cols-3 text-sm border-t border-gray-100 ${
+                  i % 2 === 0 ? "bg-[#F4F5F7]" : ""
+                }`}
+              >
+                <div className="px-5 py-4 text-lifac-navy-700 font-medium">
+                  {tTypes(`${meta.labelKey}.label`)}
+                </div>
+                <div className="px-5 py-4 text-lifac-navy-600">{formatNumber(row.count)}</div>
+                <div className="px-5 py-4 text-lifac-navy-600">{formatNumber(row.decisions)}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

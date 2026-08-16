@@ -1,28 +1,20 @@
 import { useTranslations } from "next-intl";
 import { Flame, Cross, GraduationCap, HandHeart } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
+import type { PublicStats } from "@/lib/public-stats";
 
-interface StatsBarProps {
-  stats: {
-    totalSoulsWon: number;
-    schoolsVisited: number;
-    marketOutreach: number;
-    totalCrusades: number;
-  };
-}
-
-export function StatsBar({ stats }: StatsBarProps) {
+export function StatsBar({ stats }: { stats: PublicStats }) {
   const t = useTranslations("stats");
 
   const items = [
     {
       icon: <Flame className="h-5 w-5 text-white" />,
-      value: `${formatNumber(stats.totalSoulsWon)}+`,
+      value: formatNumber(stats.soulsWon),
       label: t("soulsWon"),
     },
     {
       icon: <Cross className="h-5 w-5 text-white" />,
-      value: `${formatNumber(stats.totalCrusades)}+`,
+      value: formatNumber(stats.crusades),
       label: t("crusades"),
     },
     {
@@ -32,7 +24,7 @@ export function StatsBar({ stats }: StatsBarProps) {
     },
     {
       icon: <HandHeart className="h-5 w-5 text-white" />,
-      value: "100+",
+      value: formatNumber(stats.humanitarian),
       label: t("humanitarian"),
     },
   ];

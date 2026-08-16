@@ -32,6 +32,12 @@ export function Header() {
 
 
   const isHome = pathname === "/";
+  // Pages dont le haut de page est une photo/dégradé sombre : la barre blanche y reste
+  // lisible. Partout ailleurs (pages entièrement blanches) la barre passe en noir,
+  // sinon elle se fondrait dans le fond.
+  const DARK_HERO_ROUTES = ["/activities", "/events", "/resources", "/donate", "/volunteer", "/prayer", "/campaigns"];
+  const hasDarkHero = DARK_HERO_ROUTES.some((r) => pathname.startsWith(r));
+  const darkBar = !isHome && !hasDarkHero;
   const solid = scrolled || !isHome;
 
   useEffect(() => {
@@ -72,13 +78,15 @@ export function Header() {
           ? scrolled
             ? "fixed top-0 bg-transparent backdrop-blur-md shadow-lg border-b border-white/5 animate-fade-in"
             : "absolute top-0"
-          : "sticky top-0 bg-white shadow-sm border-b border-gray-100"
+          : darkBar
+            ? "sticky top-0 bg-lifac-navy-950 shadow-sm border-b border-white/10"
+            : "sticky top-0 bg-white shadow-sm border-b border-gray-100"
       )}
     >
       <div className="container mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-16 lg:h-20">
           <Link href="/" className="flex-shrink-0">
-            <Logo variant={isHome ? "white" : "default"} />
+            <Logo variant={isHome || darkBar ? "white" : "default"} />
           </Link>
 
           {/* Navigation desktop */}
@@ -93,7 +101,7 @@ export function Header() {
                     "text-[11px] font-bold tracking-[0.12em] uppercase transition-colors relative py-1",
                     active
                       ? "text-lifac-red-500"
-                      : isHome
+                      : isHome || darkBar
                         ? "text-white/85 hover:text-white"
                         : "text-lifac-navy-700 hover:text-lifac-red-600"
                   )}
@@ -111,13 +119,13 @@ export function Header() {
             <LanguageSwitcher />
             {auth.isAuthenticated ? (
               <Link href={dashboardUrl}>
-                <Button variant="outline" size="sm" className="rounded-full">
+                <Button variant="outline" size="sm" className={cn("rounded-full", (isHome || darkBar) && "border-white/30 bg-transparent text-white hover:bg-white hover:text-lifac-navy-950")}>
                   DASHBOARD
                 </Button>
               </Link>
             ) : (
               <Link href="/login">
-                <Button variant="outline" size="sm" className="rounded-full">
+                <Button variant="outline" size="sm" className={cn("rounded-full", (isHome || darkBar) && "border-white/30 bg-transparent text-white hover:bg-white hover:text-lifac-navy-950")}>
                   SE CONNECTER
                 </Button>
               </Link>
@@ -133,7 +141,7 @@ export function Header() {
             onClick={() => setMobileOpen(!mobileOpen)}
             className={cn(
               "lg:hidden p-2 rounded-lg transition-colors",
-              isHome ? "text-white hover:bg-white/10" : "text-lifac-navy-900 hover:bg-gray-100"
+              isHome || darkBar ? "text-white hover:bg-white/10" : "text-lifac-navy-900 hover:bg-gray-100"
             )}
             aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
           >
@@ -145,7 +153,7 @@ export function Header() {
           <nav
             className={cn(
               "lg:hidden pb-6 pt-2 animate-fade-in",
-              isHome ? "border-t border-white/10 bg-lifac-navy-950" : "border-t border-gray-100 bg-white"
+              isHome || darkBar ? "border-t border-white/10 bg-lifac-navy-950" : "border-t border-gray-100 bg-white"
             )}
           >
             <ul className="flex flex-col gap-1 pt-3">
@@ -160,7 +168,7 @@ export function Header() {
                         "block px-4 py-3 rounded-lg font-semibold text-sm transition-colors uppercase tracking-wider",
                         active
                           ? "text-lifac-red-500 bg-lifac-red-600/5"
-                          : isHome
+                          : isHome || darkBar
                             ? "text-white/85 hover:bg-white/5"
                             : "text-lifac-navy-700 hover:bg-gray-50"
                       )}
@@ -173,7 +181,7 @@ export function Header() {
               <li
                 className={cn(
                   "pt-3 mt-3 flex flex-col gap-2 px-4",
-                  isHome ? "border-t border-white/10" : "border-t border-gray-100"
+                  isHome || darkBar ? "border-t border-white/10" : "border-t border-gray-100"
                 )}
               >
                 <LanguageSwitcher className="self-start mb-2" />
