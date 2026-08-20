@@ -8,6 +8,7 @@ import {
   approveVolunteerApplication,
   rejectVolunteerApplication,
   setAgentCanDeleteSchools,
+  setAgentRole,
 } from "@/actions/admin-agent-actions";
 import { AgentModal } from "@/components/admin/agent-modal";
 import { Card, CardContent } from "@/components/ui/card";
@@ -56,6 +57,17 @@ export default function AgentsPage() {
     }
   };
 
+  const handleToggleRole = async (agent: any) => {
+    const next = agent.role === "EVANGELIST" ? "VOLUNTEER" : "EVANGELIST";
+    setAgents((prev) => prev.map((a) => (a.id === agent.id ? { ...a, role: next } : a)));
+    await setAgentRole(agent.id, next);
+    toast.success(
+      next === "EVANGELIST"
+        ? `${agent.name} est désormais évangéliste (droits étendus sur les écoles).`
+        : `${agent.name} est repassé missionnaire.`
+    );
+  };
+
   const handleToggleDeletePermission = async (agent: any) => {
     const next = !agent.canDeleteSchools;
     setAgents((prev) => prev.map((a) => (a.id === agent.id ? { ...a, canDeleteSchools: next } : a)));
@@ -70,7 +82,7 @@ export default function AgentsPage() {
   return (
     <div className="p-8 space-y-8">
       <AdminPageHeader
-        title="Gestion des Missionnaires"
+        title="Missionnaires & Évangélistes"
         action={
           <Button onClick={() => { setSelectedAgent(null); setModalOpen(true); }}>
             <Plus className="mr-2 h-4 w-4" /> Ajouter un missionnaire
@@ -149,9 +161,22 @@ export default function AgentsPage() {
                       <p className="text-xs text-gray-400">{agent.phone || "—"}</p>
                     </td>
                     <td className="px-5 py-3.5">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Actif
-                      </span>
+                      <div className="flex flex-col gap-1.5">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 w-fit">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Actif
+                        </span>
+                        <button
+                          onClick={() => handleToggleRole(agent)}
+                          title="Basculer entre missionnaire et évangéliste"
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium w-fit transition-colors ${
+                            agent.role === "EVANGELIST"
+                              ? "bg-purple-50 text-purple-700 hover:bg-purple-100"
+                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                          }`}
+                        >
+                          {agent.role === "EVANGELIST" ? "Évangéliste" : "Missionnaire"}
+                        </button>
+                      </div>
                     </td>
                     <td className="px-5 py-3.5">
                       <button

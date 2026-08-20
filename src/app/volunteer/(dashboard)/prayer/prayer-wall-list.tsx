@@ -1,10 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Flame, HandHeart } from "lucide-react";
+import { Flame, HandHeart, Plus, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { markPrayed } from "@/actions/volunteer-actions";
+import { Input, Label, Textarea } from "@/components/ui/input";
+import { markPrayed, createPrayerRequestFromField } from "@/actions/volunteer-actions";
+import { PRAYER_CATEGORY_LABELS } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface PrayerItem {
   id: string;
@@ -29,6 +32,7 @@ export function PrayerWallList({ requests }: { requests: PrayerItem[] }) {
   const [items, setItems] = useState(requests);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [formOpen, setFormOpen] = useState(false);
 
   const handlePray = (id: string) => {
     setPendingId(id);
@@ -45,14 +49,38 @@ export function PrayerWallList({ requests }: { requests: PrayerItem[] }) {
     });
   };
 
-  if (items.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-6 text-sm text-gray-500">Aucune demande de prière publique pour le moment.</CardContent>
-      </Card>
-    );
-  }
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button onClick={() => setFormOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" /> Ajouter une intercession
+        </Button>
+      </div>
 
+      {formOpen && <NewPrayerModal onClose={() => setFormOpen(false)} />}
+
+      {items.length === 0 ? (
+        <Card>
+          <CardContent className="p-6 text-sm text-gray-500">Aucune demande de prière publique pour le moment.</CardContent>
+        </Card>
+      ) : (
+        <PrayerGrid items={items} onPray={handlePray} isPending={isPending} pendingId={pendingId} />
+      )}
+    </div>
+  );
+}
+
+function PrayerGrid({
+  items,
+  onPray,
+  isPending,
+  pendingId,
+}: {
+  items: PrayerItem[];
+  onPray: (id: string) => void;
+  isPending: boolean;
+  pendingId: string | null;
+}) {
   return (
     <div className="grid sm:grid-cols-2 gap-4">
       {items.map((r) => (
@@ -82,7 +110,7 @@ export function PrayerWallList({ requests }: { requests: PrayerItem[] }) {
               variant="outline"
               className="w-full mt-1"
               disabled={isPending && pendingId === r.id}
-              onClick={() => handlePray(r.id)}
+              onClick={() => onPray(r.id)}
             >
               <HandHeart className="h-3.5 w-3.5 mr-1.5" />
               {isPending && pendingId === r.id ? "..." : "J'ai prié"}
@@ -90,6 +118,93 @@ export function PrayerWallList({ requests }: { requests: PrayerItem[] }) {
           </CardContent>
         </Card>
       ))}
+    </div>
+  );
+}
+
+function NewPrayerModal({ onClose }: { onClose: () => void }) {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [authorName, setAuthorName] = useState("");
+  const [category, setCategory] = useState("AUTRE");
+  const [isPublic, setIsPublic] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async () => {
+    setSaving(true);
+    try {
+      const result = await createPrayerRequestFromField({
+        title,
+        content,
+        authorName,
+        category: category as any,
+        isPublic,
+      });
+      if (!result.success) {
+        toast.error(result.error ?? "Erreur lors de l'enregistrement");
+        return;
+      }
+      toast.success("Demande de prière enregistrée");
+      onClose();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <Card className="w-full max-w-md relative max-h-[90vh] overflow-y-auto">
+        <button onClick={onClose} className="absolute top-2 right-2 p-2 hover:bg-gray-100 rounded-full">
+          <X size={18} />
+        </button>
+        <CardContent className="p-6 space-y-4">
+          <h3 className="font-bold text-lg text-lifac-navy-900">Ajouter une intercession</h3>
+
+          <div className="space-y-1">
+            <Label>Personne concernée</Label>
+            <Input
+              placeholder="Nom de la personne (ou laissez vide pour votre nom)"
+              value={authorName}
+              onChange={(e) => setAuthorName(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label>Sujet de prière</Label>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+          </div>
+
+          <div className="space-y-1">
+            <Label>Catégorie</Label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full h-10 rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-900"
+            >
+              {Object.entries(PRAYER_CATEGORY_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <Label>Détail de la demande</Label>
+            <Textarea rows={4} value={content} onChange={(e) => setContent(e.target.value)} maxLength={1000} />
+          </div>
+
+          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+            <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} className="h-4 w-4" />
+            Visible sur le mur de prière public
+          </label>
+
+          <div className="flex gap-2 pt-2">
+            <Button onClick={handleSubmit} disabled={saving}>
+              {saving ? "Enregistrement..." : "Enregistrer"}
+            </Button>
+            <Button variant="outline" onClick={onClose}>Annuler</Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

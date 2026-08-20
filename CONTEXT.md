@@ -1,6 +1,6 @@
 # LiFAC Platform — Contexte du projet
 
-> Fichier de contexte généré par inspection du code. Dernière mise à jour: 2026-08-02.
+> Fichier de contexte généré par inspection du code. Dernière mise à jour: 2026-08-20.
 > À tenir à jour à mesure que le projet évolue.
 
 **Description**: Plateforme web pour Light For All Center (LiFAC) — évangélisation et action humanitaire au Bénin. Gère campagnes de dons, événements/croisades, activités de terrain, missionnaires (bénévoles), écoles, présence (QR code), prière, témoignages, et un espace admin complet.
@@ -18,7 +18,7 @@
 
 ## Base de données (prisma/schema.prisma)
 23 modèles. Points clés (`School.createdById -> User` ajouté le 2026-08-08, voir Vague 6) :
-- `User` (Role: ADMIN, EDITOR, VOLUNTEER, DONOR, MEMBER) — les "missionnaires" (terme produit) = `User` role `VOLUNTEER`.
+- `User` (Role: ADMIN, EVANGELIST, EDITOR, VOLUNTEER, DONOR, MEMBER) — les "missionnaires" (terme produit) = `User` role `VOLUNTEER`.
 - `Campaign` / `CampaignUpdate` / `Donation` / `PaymentTransaction` — dons, montants en **BigInt centimes XOF**. `Campaign.currentAmount` s'incrémente automatiquement soit via le webhook FedaPay, soit via une confirmation manuelle admin (`updateDonationStatus`, voir plus bas) — les deux chemins restent cohérents.
 - `Event` / `EventRegistration` / `AttendanceSession` / `Attendance` — événements + présence QR. Désormais gérable de bout en bout depuis l'admin (`/admin/events`).
 - `Activity` — activités de terrain, modèle standalone (indépendant d'Event), code séquentiel type "ACT-2026-00001". `ActivityType` (8 types + OTHER) : CRUSADE, YOUTH_CRUSADE, POP_UP_CRUSADE, MARKET_OUTREACH, ONE_ON_ONE, NIGHT_OF_HOPE, HUMANITARIAN, TRAINING — ordre d'affichage fixé côté client dans `src/lib/activity-types.ts`. **`Activity.assignedToId -> User`** (2026-08-02, migration `20260802000000_activity_assignee`) : relation vers le missionnaire responsable, sélectionnable depuis `/admin/activities` (avant : `responsibleName` était un simple champ texte libre, sans lien réel — impossible de savoir "mes activités" côté missionnaire).
@@ -218,6 +218,71 @@ Retour utilisateur après vérification de la Vague 6 : `deleteSchool` existait 
 - **Admin** : bouton supprimer (icône corbeille) réapparu sur chaque ligne de `/admin/schools` (`schools-client.tsx`), avec confirmation + `logAudit("SCHOOL_DELETE", ...)`. Nouvelle colonne "Permissions" sur `/admin/agents` : un badge cliquable par missionnaire bascule `canDeleteSchools` (`setAgentCanDeleteSchools`, `admin-agent-actions.ts`).
 - **Missionnaire** : `deleteMySchool()` (`volunteer-school-actions.ts`) — double vérification serveur (permission accordée **et** école créée par ce missionnaire lui-même) avant suppression. Le bouton supprimer n'apparaît dans `/volunteer/schools` que si les deux conditions sont réunies côté client (mais la vraie garde est côté serveur).
 - Décision de portée (non demandée explicitement, choix par défaut) : la permission ne donne au missionnaire le droit de supprimer QUE ses propres écoles créées — jamais celles de l'admin ou d'un autre missionnaire, cohérent avec la règle déjà en place pour la modification (`updateMySchool`).
+
+## Vague 8 — Lot de 16 retours (2026-08-20)
+
+- **Statistiques unifiées et dynamiques** : nouveau `src/lib/public-stats.ts`, source unique de tous
+  les chiffres publics (âmes gagnées, croisades, écoles, actions humanitaires, missionnaires,
+  personnes touchées). Branché sur l'accueil, `/activities` et `/about`. Fin des totaux codés en dur
+  (32 500+, 785+, 45+...) et des divergences d'une page à l'autre.
+- **Slogan** unifié partout : « Pour que la Lumière brille pour Tous » / « Bringing Light To All
+  Nations » (hero, about, footer, FR + EN).
+- **Page À propos** : correction du bug de traduction `about.pillars.pillars.visionTitle` (double
+  préfixe, la clé ne résolvait pas) ; chiffres clés dynamiques ; camembert « Domaines de mission »
+  remplacé par 4 cartes descriptives (Évangélisation / Formation / Mobilisation / Implantation) —
+  décision assumée avec l'utilisateur : aucune donnée réelle ne permettait des pourcentages
+  honnêtes ; tableau « Développement & Croissance » (objectifs statiques) remplacé par les 4
+  activités phares et leurs vrais compteurs.
+- **Témoignages** : bouton cœur (like) + commentaires publics, modérés avant affichage (nouveau
+  modèle `TestimonyComment`, `Testimony.likeCount`). File de modération des commentaires côté admin.
+  Email à `info@lifac.org` à chaque témoignage soumis.
+- **Emails** : `src/lib/email.ts` (Resend) branché sur candidature bénévole, contact et témoignages.
+- **Header** : barre noire sur les pages entièrement blanches (`/about`, `/contact`,
+  `/testimonials`) ; les pages à hero photo sombre gardent la barre blanche (liste
+  `DARK_HERO_ROUTES` dans `header.tsx`).
+- **Suivi terrain GPS** : « M'y rendre » enregistre l'heure de départ et ouvre Google Maps, « Je suis
+  arrivé » enregistre l'heure d'arrivée + la position GPS réelle + l'écart à l'école (nouveau modèle
+  `SchoolVisit`).
+- **Écoles** : nouveaux champs `country`, `schoolType` (enum 10 valeurs), `founderName`,
+  `founderPhone` ; « Responsable » renommé « Personne à contacter ». Formulaires admin et
+  missionnaire mis à jour.
+- **Dashboard missionnaire — écoles en tableau** : vue tableau complète (code, type, adresse, pays,
+  fondateur, contact, effectif, statut, date), filtres de statut en boutons, tris par date / adresse
+  / pays, départage par effectif décroissant, bloc de statistiques. Une école passée au statut
+  `EXECUTEE` est verrouillée côté missionnaire (icône cadenas) : seul un admin ou un évangéliste
+  peut encore la modifier.
+- **Nouveau profil Évangéliste** (`Role.EVANGELIST`) : profil de type missionnaire (même espace
+  `/volunteer`, pas d'accès à `/admin`) mais avec des droits étendus — il peut créer, modifier et
+  supprimer **toutes** les écoles, y compris celles des autres et celles déjà exécutées. Créé par un
+  admin depuis `/admin/agents` (sélecteur de profil dans le modal + bascule par badge dans le
+  tableau). Cookie `agent_role`, helpers `getCurrentAgentRole()` / `isEvangelist()`.
+- **Intercessions** : missionnaires et évangélistes peuvent remonter une demande de prière depuis le
+  terrain (`createPrayerRequestFromField`) ; nouvelle page admin `/admin/prayer` (liste, création,
+  marquage « exaucée », suppression).
+- **Assistant IA persistant** : nouveau modèle `AiMessage`, la conversation survit au refresh et à
+  la reconnexion, avec un bouton « Effacer la conversation ».
+- **Dashboard admin** : nouvelle statistique « Décisions (écoles) », rendue possible par le nouveau
+  lien `Activity.schoolId → School`.
+- **Procédure de mise en ligne** : `DEPLOIEMENT.md` à la racine (Vercel + DNS Hostinger, variables
+  d'environnement, passage FedaPay en live, checklist de vérification, points de sécurité).
+
+### Bug latent important découvert et corrigé
+La migration `20260725170357_activity_type_extend` **n'avait jamais été appliquée en base** :
+l'enum PostgreSQL `ActivityType` ne contenait pas `YOUTH_CRUSADE`, `HUMANITARIAN` ni `TRAINING`,
+alors que le code Prisma les utilisait. Toute requête filtrant sur ces types plantait
+(`invalid input value for enum`) — ce qui a fait tomber `/about` en 500 dès que les nouvelles
+statistiques les ont interrogés. Migration appliquée manuellement, enum désormais complet.
+C'est une conséquence directe de l'absence de table `_prisma_migrations` (voir Base de données) :
+**il faut vérifier l'état réel de la base avant de supposer qu'une migration du repo est appliquée.**
+
+### Migrations de cette vague (toutes appliquées manuellement)
+`20260810000000_evangelist_school_fields_testimony_social_ai`,
+`20260810010000_activity_school_link`,
+et rattrapage de `20260725170357_activity_type_extend`.
+
+### Comptes de démonstration
+- Évangéliste : `evangeliste@lifac.org` / `Evangeliste@LiFAC2026!` (à supprimer avant la mise en
+  production, cf. `DEPLOIEMENT.md`).
 
 ## Git
 Branche `main`. Historique récent (du plus ancien au plus récent) : refonte design pages publiques → dashboard admin complet → correction contexte → fix crash création admin/missionnaire → dashboard missionnaire → itinéraire GPS missionnaire → 6 modules du cahier des charges (dashboard KPIs, intercession, exports PDF/filtres, médiathèque, notifications auto, audit log) → Vague 5 (KPIs réels, photos activité/événement/participant, médiathèque cliquable, tableau missionnaires repensé, PDF stylés, page /donate refaite, chatbot IA, 7 nouveaux graphiques, notifications missionnaire, fix critique formulaire école/GPS) → Vague 6 (ordre activités home, adresse/coordonnées LiFAC partout, emails Resend candidature+contact, page About traductions/images/CTA, page Events intervenants+catégories, module Témoignages complet, écoles : stats/filtres-boutons/tri + missionnaires créateurs d'écoles) — à committer/pousser au moment de la rédaction de cette note.

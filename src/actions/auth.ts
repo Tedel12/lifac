@@ -25,7 +25,8 @@ export async function loginAdmin(email: string, password: string) {
     cookieStore.set("admin_token", "authorized", ADMIN_COOKIE_OPTIONS);
     cookieStore.set("admin_display_name", user.name || user.email, ADMIN_COOKIE_OPTIONS);
     cookieStore.set("admin_id", user.id, ADMIN_COOKIE_OPTIONS);
-    return { success: true, role: "ADMIN" };
+    cookieStore.set("admin_role", user.role, ADMIN_COOKIE_OPTIONS);
+    return { success: true, role: user.role };
   }
 
   // Super-admin de secours défini par variables d'environnement (compte seedé historique)
@@ -34,21 +35,32 @@ export async function loginAdmin(email: string, password: string) {
     cookieStore.set("admin_token", "authorized", ADMIN_COOKIE_OPTIONS);
     cookieStore.set("admin_display_name", "Administrateur", ADMIN_COOKIE_OPTIONS);
     cookieStore.set("admin_id", "env-admin", ADMIN_COOKIE_OPTIONS);
+    cookieStore.set("admin_role", Role.ADMIN, ADMIN_COOKIE_OPTIONS);
     return { success: true, role: "ADMIN" };
   }
 
   return { success: false, error: "Identifiants invalides" };
 }
 
+// Missionnaires et évangélistes se connectent au même espace terrain (/volunteer).
+// L'évangéliste est un profil de type missionnaire, mais avec des droits étendus
+// (voir isEvangelist / volunteer-school-actions).
 export async function loginAgent(email: string, password: string) {
   const user = await prisma.user.findUnique({ where: { email } });
 
-  if (user && user.role === "VOLUNTEER" && user.isActive && user.password && await bcrypt.compare(password, user.password)) {
+  if (
+    user &&
+    (user.role === Role.VOLUNTEER || user.role === Role.EVANGELIST) &&
+    user.isActive &&
+    user.password &&
+    (await bcrypt.compare(password, user.password))
+  ) {
     const cookieStore = await cookies();
     cookieStore.set("admin_token", "authorized_agent", ADMIN_COOKIE_OPTIONS);
     cookieStore.set("agent_id", user.id, ADMIN_COOKIE_OPTIONS);
     cookieStore.set("agent_display_name", user.name || user.email, ADMIN_COOKIE_OPTIONS);
-    return { success: true, role: "VOLUNTEER" };
+    cookieStore.set("agent_role", user.role, ADMIN_COOKIE_OPTIONS);
+    return { success: true, role: user.role };
   }
   return { success: false, error: "Identifiants invalides ou accès non autorisé" };
 }
@@ -58,8 +70,10 @@ export async function logoutAdmin() {
   cookieStore.delete("admin_token");
   cookieStore.delete("admin_display_name");
   cookieStore.delete("admin_id");
+  cookieStore.delete("admin_role");
   cookieStore.delete("agent_id");
   cookieStore.delete("agent_display_name");
+  cookieStore.delete("agent_role");
 }
 
 export async function isAdminAuthenticated() {
@@ -73,7 +87,7 @@ export async function isUserAuthenticated() {
   if (token === "authorized") {
     return {
       isAuthenticated: true,
-      role: "ADMIN",
+      role: cookieStore.get("admin_role")?.value || "ADMIN",
       name: cookieStore.get("admin_display_name")?.value || "Administrateur",
     };
   }
@@ -103,4 +117,17 @@ export async function getCurrentAgentId() {
   const cookieStore = await cookies();
   if (cookieStore.get("admin_token")?.value !== "authorized_agent") return null;
   return cookieStore.get("agent_id")?.value || null;
+}
+
+// Rôle du compte connecté à l'espace terrain ("VOLUNTEER" ou "EVANGELIST").
+export async function getCurrentAgentRole(): Promise<string | null> {
+  const cookieStore = await cookies();
+  if (cookieStore.get("admin_token")?.value !== "authorized_agent") return null;
+  return cookieStore.get("agent_role")?.value || Role.VOLUNTEER;
+}
+
+// Un évangéliste garde l'espace terrain d'un missionnaire, mais avec des droits
+// étendus proches de ceux d'un administrateur (toutes les écoles, pas seulement les siennes).
+export async function isEvangelist(): Promise<boolean> {
+  return (await getCurrentAgentRole()) === Role.EVANGELIST;
 }

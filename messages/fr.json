@@ -460,7 +460,14 @@
     "testimonyTitle": "Des Vies Changées pour Toujours",
     "serveTitle": "Où Nous Servons",
     "serveSubtitle": "LiFAC est présent dans plusieurs villes et communes du Bénin, avec une vision d'expansion continue à travers le pays.",
-    "serveCities": ["Cotonou", "Porto-Novo", "Abomey-Calavi", "Parakou", "Natitingou", "Savalou"],
+    "serveCities": [
+      "Cotonou",
+      "Porto-Novo",
+      "Abomey-Calavi",
+      "Parakou",
+      "Natitingou",
+      "Savalou"
+    ],
     "upcomingTitle": "Missions à Venir",
     "upcomingSubtitle": "Rejoignez-nous lors de nos prochaines sorties sur le terrain.",
     "upcomingEmpty": "Aucune mission à venir programmée pour le moment — revenez bientôt.",
@@ -468,13 +475,34 @@
     "processTitle": "Comment Nous Atteignons, Enseignons et Faisons des Disciples",
     "processSubtitle": "Une méthode éprouvée en 7 étapes, du premier contact jusqu'au disciple qui forme à son tour d'autres disciples.",
     "processSteps": [
-      { "title": "Prier", "desc": "Nous intercédons avant toute action, convaincus que rien ne se fait sans la conduite du Saint-Esprit." },
-      { "title": "Former", "desc": "Nous équipons nos missionnaires par des enseignements bibliques et pratiques solides." },
-      { "title": "Aller", "desc": "Nous allons vers les populations : écoles, marchés, quartiers, villages et places publiques." },
-      { "title": "Prêcher", "desc": "Nous annonçons clairement l'Évangile de Jésus-Christ avec un appel au salut." },
-      { "title": "Prier pour les malades", "desc": "Nous intercédons avec foi pour les malades et les personnes en difficulté." },
-      { "title": "Suivre", "desc": "Nous accompagnons chaque nouveau converti pour l'établir dans la foi." },
-      { "title": "Faire des disciples", "desc": "Nous formons des disciples capables de former à leur tour d'autres disciples." }
+      {
+        "title": "Prier",
+        "desc": "Nous intercédons avant toute action, convaincus que rien ne se fait sans la conduite du Saint-Esprit."
+      },
+      {
+        "title": "Former",
+        "desc": "Nous équipons nos missionnaires par des enseignements bibliques et pratiques solides."
+      },
+      {
+        "title": "Aller",
+        "desc": "Nous allons vers les populations : écoles, marchés, quartiers, villages et places publiques."
+      },
+      {
+        "title": "Prêcher",
+        "desc": "Nous annonçons clairement l'Évangile de Jésus-Christ avec un appel au salut."
+      },
+      {
+        "title": "Prier pour les malades",
+        "desc": "Nous intercédons avec foi pour les malades et les personnes en difficulté."
+      },
+      {
+        "title": "Suivre",
+        "desc": "Nous accompagnons chaque nouveau converti pour l'établir dans la foi."
+      },
+      {
+        "title": "Faire des disciples",
+        "desc": "Nous formons des disciples capables de former à leur tour d'autres disciples."
+      }
     ],
     "ctaTitle": "Ensemble, Portons la Lumière à Chaque Nation",
     "ctaDesc": "Que vous souhaitiez servir sur le terrain, soutenir financièrement ou devenir un partenaire d'œuvre, votre engagement change des vies.",
@@ -647,7 +675,8 @@
     "sectionContent": "Contenu",
     "sectionTeam": "Équipe",
     "sectionField": "Terrain",
-    "sectionSystem": "Système"
+    "sectionSystem": "Système",
+    "prayer": "Intercession"
   },
   "agentSidebar": {
     "home": "Accueil",

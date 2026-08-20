@@ -2,8 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { SchoolStatus } from "@prisma/client";
-import { getCurrentAgentId } from "@/actions/auth";
+import { SchoolStatus, SchoolType } from "@prisma/client";
+import { getCurrentAgentId, isEvangelist } from "@/actions/auth";
 import { logAudit } from "@/lib/audit-log";
 
 async function requireAgentId(): Promise<string> {
@@ -24,9 +24,13 @@ export async function getAllSchoolsReadOnly() {
 export async function createMySchool(data: {
   name: string;
   countryCode?: string;
+  country?: string;
   department: string;
   commune: string;
   address: string;
+  schoolType?: SchoolType | null;
+  founderName?: string | null;
+  founderPhone?: string | null;
   latitude?: number | null;
   longitude?: number | null;
   estimatedStudents?: number;
@@ -46,9 +50,13 @@ export async function createMySchool(data: {
       code,
       name: data.name,
       countryCode: data.countryCode || "BJ",
+      country: data.country || "Bénin",
       department: data.department,
       commune: data.commune,
       address: data.address,
+      schoolType: data.schoolType ?? null,
+      founderName: data.founderName || null,
+      founderPhone: data.founderPhone || null,
       latitude: data.latitude ?? null,
       longitude: data.longitude ?? null,
       estimatedStudents: data.estimatedStudents ?? 0,
@@ -67,9 +75,13 @@ export async function updateMySchool(
   id: string,
   data: Partial<{
     name: string;
+    country: string;
     department: string;
     commune: string;
     address: string;
+    schoolType: SchoolType | null;
+    founderName: string | null;
+    founderPhone: string | null;
     latitude: number | null;
     longitude: number | null;
     estimatedStudents: number;
@@ -79,10 +91,22 @@ export async function updateMySchool(
   }>
 ) {
   const agentId = await requireAgentId();
-  const school = await prisma.school.findUnique({ where: { id }, select: { createdById: true } });
-  if (!school || school.createdById !== agentId) {
-    throw new Error("Vous ne pouvez modifier que les écoles que vous avez vous-même ajoutées.");
+  const evangelist = await isEvangelist();
+  const school = await prisma.school.findUnique({ where: { id }, select: { createdById: true, status: true } });
+  if (!school) throw new Error("École introuvable.");
+
+  // L'évangéliste dispose de droits étendus : il peut modifier toutes les écoles,
+  // y compris celles déjà exécutées. Le missionnaire reste limité aux siennes.
+  if (!evangelist) {
+    if (school.createdById !== agentId) {
+      throw new Error("Vous ne pouvez modifier que les écoles que vous avez vous-même ajoutées.");
+    }
+    // Une fois l'activité exécutée dans l'école, la fiche est figée côté missionnaire.
+    if (school.status === SchoolStatus.EXECUTEE) {
+      throw new Error("Cette école a déjà été exécutée : seul un administrateur peut encore la modifier.");
+    }
   }
+
   await prisma.school.update({ where: { id }, data });
   revalidatePath("/volunteer/schools");
   revalidatePath("/admin/schools");
@@ -131,16 +155,23 @@ export async function arriveAtSchool(
 // si l'admin lui a explicitement accordé la permission (User.canDeleteSchools).
 export async function deleteMySchool(id: string) {
   const agentId = await requireAgentId();
+  const evangelist = await isEvangelist();
   const [agent, school] = await Promise.all([
     prisma.user.findUnique({ where: { id: agentId }, select: { canDeleteSchools: true } }),
     prisma.school.findUnique({ where: { id }, select: { createdById: true, name: true } }),
   ]);
 
-  if (!agent?.canDeleteSchools) {
-    throw new Error("Vous n'avez pas la permission de supprimer des écoles.");
-  }
-  if (!school || school.createdById !== agentId) {
-    throw new Error("Vous ne pouvez supprimer que les écoles que vous avez vous-même ajoutées.");
+  if (!school) throw new Error("École introuvable.");
+
+  // L'évangéliste peut supprimer n'importe quelle école ; le missionnaire a besoin de la
+  // permission accordée par un admin, et uniquement sur ses propres écoles.
+  if (!evangelist) {
+    if (!agent?.canDeleteSchools) {
+      throw new Error("Vous n'avez pas la permission de supprimer des écoles.");
+    }
+    if (school.createdById !== agentId) {
+      throw new Error("Vous ne pouvez supprimer que les écoles que vous avez vous-même ajoutées.");
+    }
   }
 
   await prisma.school.delete({ where: { id } });

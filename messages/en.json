@@ -32,12 +32,42 @@
     "upcomingLabel": "Upcoming event",
     "registerNow": "Register Now",
     "events": [
-      { "title": "FireCamp 2026", "date": "Nov 09 - Nov 14, 2026", "location": "AD Temple Universitaire", "time": "08:00 - 19:00" },
-      { "title": "Jésus au marché", "date": "July - August 2026", "location": "Various", "time": "TBD" },
-      { "title": "Youth Crusade", "date": "Sept - Dec 2026", "location": "Various", "time": "TBD" },
-      { "title": "Formation Evangélisation", "date": "July 07 - August 2026", "location": "AD Ste Rita Cotonou", "time": "19:30" },
-      { "title": "Croisade d'Evangélisation", "date": "August 2026", "location": "Tokpa Domè", "time": "19:00" },
-      { "title": "NIGHT OF THE HOLY SPIRIT", "date": "May 09, 2027", "location": "Campus UAC", "time": "18:00" }
+      {
+        "title": "FireCamp 2026",
+        "date": "Nov 09 - Nov 14, 2026",
+        "location": "AD Temple Universitaire",
+        "time": "08:00 - 19:00"
+      },
+      {
+        "title": "Jésus au marché",
+        "date": "July - August 2026",
+        "location": "Various",
+        "time": "TBD"
+      },
+      {
+        "title": "Youth Crusade",
+        "date": "Sept - Dec 2026",
+        "location": "Various",
+        "time": "TBD"
+      },
+      {
+        "title": "Formation Evangélisation",
+        "date": "July 07 - August 2026",
+        "location": "AD Ste Rita Cotonou",
+        "time": "19:30"
+      },
+      {
+        "title": "Croisade d'Evangélisation",
+        "date": "August 2026",
+        "location": "Tokpa Domè",
+        "time": "19:00"
+      },
+      {
+        "title": "NIGHT OF THE HOLY SPIRIT",
+        "date": "May 09, 2027",
+        "location": "Campus UAC",
+        "time": "18:00"
+      }
     ]
   },
   "stats": {
@@ -109,10 +139,26 @@
       "result": "Achieved",
       "goal": "2025 Goal",
       "rows": [
-        { "label": "Churches Planted", "result": "45+", "goal": "60" },
-        { "label": "Leaders Trained", "result": "785", "goal": "1000" },
-        { "label": "Christian Life Schools", "result": "785", "goal": "1200" },
-        { "label": "Countries Reached", "result": "15", "goal": "25" }
+        {
+          "label": "Churches Planted",
+          "result": "45+",
+          "goal": "60"
+        },
+        {
+          "label": "Leaders Trained",
+          "result": "785",
+          "goal": "1000"
+        },
+        {
+          "label": "Christian Life Schools",
+          "result": "785",
+          "goal": "1200"
+        },
+        {
+          "label": "Countries Reached",
+          "result": "15",
+          "goal": "25"
+        }
       ]
     },
     "verse": "\"Go therefore and make disciples of all nations, baptizing them in the name of the Father, the Son and the Holy Spirit.\"",
@@ -165,10 +211,30 @@
       }
     },
     "upcoming": [
-      { "date": "MAR 09", "title": "NIGHT OF THE HOLY SPIRIT", "location": "Parakou, Benin", "time": "6:00 PM" },
-      { "date": "JUN 23", "title": "IMPACT EVENING", "location": "Porto-Novo, Benin", "time": "7:00 PM" },
-      { "date": "OCT 06", "title": "EVANGELISM CRUSADE", "location": "Dakar, Senegal", "time": "6:00 PM" },
-      { "date": "DEC 15", "title": "LEADERSHIP CONFERENCE", "location": "Abidjan, Ivory Coast", "time": "9:00 AM" }
+      {
+        "date": "MAR 09",
+        "title": "NIGHT OF THE HOLY SPIRIT",
+        "location": "Parakou, Benin",
+        "time": "6:00 PM"
+      },
+      {
+        "date": "JUN 23",
+        "title": "IMPACT EVENING",
+        "location": "Porto-Novo, Benin",
+        "time": "7:00 PM"
+      },
+      {
+        "date": "OCT 06",
+        "title": "EVANGELISM CRUSADE",
+        "location": "Dakar, Senegal",
+        "time": "6:00 PM"
+      },
+      {
+        "date": "DEC 15",
+        "title": "LEADERSHIP CONFERENCE",
+        "location": "Abidjan, Ivory Coast",
+        "time": "9:00 AM"
+      }
     ],
     "table": {
       "date": "Date",
@@ -235,9 +301,18 @@
     "investDesc": "Your gifts are not just numbers. They enable the logistics of major crusades, the printing of Bibles and the funding of leadership schools. By contributing, you become a direct partner of the Holy Spirit for the salvation of nations.",
     "modes": {
       "title": "PAYMENT METHODS",
-      "card": { "title": "BANK CARD", "desc": "Secure online donation via our international partner platform." },
-      "transfer": { "title": "TRANSFER", "desc": "For regular or large donations. Bank details available." },
-      "mobile": { "title": "MOBILE MONEY", "desc": "Simple and fast for Africa. (Orange, MTN, Moov)." }
+      "card": {
+        "title": "BANK CARD",
+        "desc": "Secure online donation via our international partner platform."
+      },
+      "transfer": {
+        "title": "TRANSFER",
+        "desc": "For regular or large donations. Bank details available."
+      },
+      "mobile": {
+        "title": "MOBILE MONEY",
+        "desc": "Simple and fast for Africa. (Orange, MTN, Moov)."
+      }
     },
     "partnersTitle": "PARTNERSHIP LEVELS",
     "partners": {
@@ -245,19 +320,43 @@
       "frequency": "Frequency",
       "benefits": "Member Benefits",
       "rows": [
-        { "type": "One-time Gift", "freq": "Once", "benefit": "Impact report of the supported project" },
-        { "type": "\"Flame\" Partner", "freq": "Monthly", "benefit": "Exclusive newsletter & Prayer intentions" },
-        { "type": "\"Revival\" Partner", "freq": "Yearly", "benefit": "VIP access to events & Detailed financial report" }
+        {
+          "type": "One-time Gift",
+          "freq": "Once",
+          "benefit": "Impact report of the supported project"
+        },
+        {
+          "type": "\"Flame\" Partner",
+          "freq": "Monthly",
+          "benefit": "Exclusive newsletter & Prayer intentions"
+        },
+        {
+          "type": "\"Revival\" Partner",
+          "freq": "Yearly",
+          "benefit": "VIP access to events & Detailed financial report"
+        }
       ]
     },
     "verse": "\"Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.\"",
     "verseRef": "— 2 Corinthians 9:7",
     "processTitle": "DONATION PROCESS",
     "process": [
-      { "step": "CHOICE", "desc": "Select the project or general fund." },
-      { "step": "AMOUNT", "desc": "Determine your gift according to your heart." },
-      { "step": "PAYMENT", "desc": "Use one of our secure methods." },
-      { "step": "IMPACT", "desc": "Receive your confirmation and the impact generated." }
+      {
+        "step": "CHOICE",
+        "desc": "Select the project or general fund."
+      },
+      {
+        "step": "AMOUNT",
+        "desc": "Determine your gift according to your heart."
+      },
+      {
+        "step": "PAYMENT",
+        "desc": "Use one of our secure methods."
+      },
+      {
+        "step": "IMPACT",
+        "desc": "Receive your confirmation and the impact generated."
+      }
     ],
     "changeLife": "CHANGE A LIFE TODAY",
     "changeLifeDesc": "Your gift is a seed that will produce an eternal harvest."
@@ -361,7 +460,14 @@
     "testimonyTitle": "Lives Changed Forever",
     "serveTitle": "Where We Serve",
     "serveSubtitle": "LiFAC is present in several cities and communes across Benin, with a vision for continued expansion nationwide.",
-    "serveCities": ["Cotonou", "Porto-Novo", "Abomey-Calavi", "Parakou", "Natitingou", "Savalou"],
+    "serveCities": [
+      "Cotonou",
+      "Porto-Novo",
+      "Abomey-Calavi",
+      "Parakou",
+      "Natitingou",
+      "Savalou"
+    ],
     "upcomingTitle": "Upcoming Missions",
     "upcomingSubtitle": "Join us for our next outreach on the field.",
     "upcomingEmpty": "No upcoming mission scheduled at the moment — check back soon.",
@@ -369,13 +475,34 @@
     "processTitle": "How We Reach, Teach and Disciple",
     "processSubtitle": "A proven 7-step method, from first contact to disciples who train other disciples in turn.",
     "processSteps": [
-      { "title": "Pray", "desc": "We intercede before any action, convinced that nothing happens without the Holy Spirit's leading." },
-      { "title": "Train", "desc": "We equip our missionaries with solid biblical and practical teaching." },
-      { "title": "Go", "desc": "We go to the people: schools, markets, neighborhoods, villages and public squares." },
-      { "title": "Preach", "desc": "We clearly proclaim the Gospel of Jesus Christ with a call to salvation." },
-      { "title": "Pray for the sick", "desc": "We intercede in faith for the sick and those in difficulty." },
-      { "title": "Follow up", "desc": "We accompany every new convert to establish them in the faith." },
-      { "title": "Make disciples", "desc": "We train disciples able to train other disciples in turn." }
+      {
+        "title": "Pray",
+        "desc": "We intercede before any action, convinced that nothing happens without the Holy Spirit's leading."
+      },
+      {
+        "title": "Train",
+        "desc": "We equip our missionaries with solid biblical and practical teaching."
+      },
+      {
+        "title": "Go",
+        "desc": "We go to the people: schools, markets, neighborhoods, villages and public squares."
+      },
+      {
+        "title": "Preach",
+        "desc": "We clearly proclaim the Gospel of Jesus Christ with a call to salvation."
+      },
+      {
+        "title": "Pray for the sick",
+        "desc": "We intercede in faith for the sick and those in difficulty."
+      },
+      {
+        "title": "Follow up",
+        "desc": "We accompany every new convert to establish them in the faith."
+      },
+      {
+        "title": "Make disciples",
+        "desc": "We train disciples able to train other disciples in turn."
+      }
     ],
     "ctaTitle": "Together, Let's Bring Light to Every Nation",
     "ctaDesc": "Whether you want to serve in the field, support financially or become a partner, your commitment changes lives.",
@@ -575,7 +702,8 @@
     "sectionContent": "Content",
     "sectionTeam": "Team",
     "sectionField": "Field",
-    "sectionSystem": "System"
+    "sectionSystem": "System",
+    "prayer": "Intercession"
   },
   "agentSidebar": {
     "home": "Home",
@@ -596,10 +724,10 @@
     "allStatus": "All statuses",
     "filter": "Filter",
     "actions": {
-        "assign": "Assign",
-        "edit": "Edit",
-        "view": "View",
-        "delete": "Delete"
+      "assign": "Assign",
+      "edit": "Edit",
+      "view": "View",
+      "delete": "Delete"
     },
     "assignments": "School assignments"
   },

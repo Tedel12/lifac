@@ -57,6 +57,7 @@ export function AdminSidebar({ adminName }: { adminName?: string | null }) {
         { name: t("donations"), href: "/admin/donations", icon: HeartHandshake },
         { name: t("media"), href: "/admin/media", icon: ImageIcon },
         { name: t("testimonials"), href: "/admin/testimonials", icon: Quote },
+        { name: t("prayer"), href: "/admin/prayer", icon: Flame },
       ],
     },
     {

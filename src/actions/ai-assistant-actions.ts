@@ -91,9 +91,48 @@ export async function askAiAssistant(history: ChatMessage[]): Promise<{ success:
     if (!reply) {
       return { success: false, error: "Réponse vide de l'assistant. Réessayez." };
     }
+
+    // Persistance du fil : le missionnaire retrouve sa conversation après un refresh
+    // ou une reconnexion. Best-effort, ne doit pas faire échouer la réponse affichée.
+    const agentId = await getCurrentAgentId();
+    const lastUserMessage = [...history].reverse().find((m) => m.role === "user");
+    if (agentId && lastUserMessage) {
+      try {
+        await prisma.aiMessage.createMany({
+          data: [
+            { userId: agentId, role: "user", content: lastUserMessage.content },
+            { userId: agentId, role: "assistant", content: reply },
+          ],
+        });
+      } catch (e) {
+        console.error("[askAiAssistant] Historique non enregistré :", e);
+      }
+    }
+
     return { success: true, reply };
   } catch (e) {
     console.error("[askAiAssistant] Erreur :", e);
     return { success: false, error: "Erreur de connexion à l'assistant IA." };
   }
+}
+
+// Charge le fil de conversation persisté du missionnaire connecté.
+export async function getMyAiHistory(): Promise<ChatMessage[]> {
+  const agentId = await getCurrentAgentId();
+  if (!agentId) return [];
+
+  const messages = await prisma.aiMessage.findMany({
+    where: { userId: agentId },
+    orderBy: { createdAt: "asc" },
+    take: 100,
+    select: { role: true, content: true },
+  });
+
+  return messages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
+}
+
+export async function clearMyAiHistory() {
+  const agentId = await getCurrentAgentId();
+  if (!agentId) return;
+  await prisma.aiMessage.deleteMany({ where: { userId: agentId } });
 }

@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { createSchool, updateSchool } from "@/actions/school-actions";
 import { getAvailableDonations, assignDonationsToSchool, getSchoolDonationsHistory } from "@/actions/admin-actions";
 import { SchoolStatus } from "@prisma/client";
+import { SCHOOL_TYPE_LABELS } from "@/lib/school-labels";
 
 // Note: Ensure 'sonner' is installed. If not, replace with window.alert
 import { toast } from "sonner";
@@ -26,6 +27,10 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate, isReadOnly = fa
     code: "",
     name: "",
     countryCode: "BJ",
+    country: "Bénin",
+    schoolType: "",
+    founderName: "",
+    founderPhone: "",
     department: "",
     commune: "",
     address: "",
@@ -72,10 +77,12 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate, isReadOnly = fa
   if (!isOpen) return null;
 
   const handleSubmit = async () => {
+    // Le select renvoie "" quand aucun type n'est choisi : Prisma attend null pour un enum optionnel.
+    const payload = { ...formData, schoolType: formData.schoolType || null };
     if (school) {
-        await updateSchool(school.id, formData);
+        await updateSchool(school.id, payload);
     } else {
-        await createSchool(formData);
+        await createSchool(payload);
     }
     onUpdate && onUpdate();
     onClose();
@@ -121,14 +128,36 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate, isReadOnly = fa
                    <div className="space-y-1"><Label>Nom de l'école</Label><Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} /></div>
                </div>
 
-               <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-1"><Label>Code pays</Label><Input value={formData.countryCode} onChange={(e) => setFormData({...formData, countryCode: e.target.value})} placeholder="BJ" /></div>
-                 <div className="space-y-1"><Label>Département</Label><Input value={formData.department} onChange={(e) => setFormData({...formData, department: e.target.value})} /></div>
+               <div className="space-y-1">
+                 <Label>Type d&apos;établissement</Label>
+                 <select
+                   value={formData.schoolType ?? ""}
+                   onChange={(e) => setFormData({ ...formData, schoolType: e.target.value })}
+                   className="w-full h-10 rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-900"
+                 >
+                   <option value="">— Sélectionner —</option>
+                   {Object.entries(SCHOOL_TYPE_LABELS).map(([value, label]) => (
+                     <option key={value} value={value}>{label}</option>
+                   ))}
+                 </select>
                </div>
 
-               <div className="space-y-1"><Label>Commune</Label><Input value={formData.commune} onChange={(e) => setFormData({...formData, commune: e.target.value})} /></div>
+               <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-1"><Label>Code pays</Label><Input value={formData.countryCode} onChange={(e) => setFormData({...formData, countryCode: e.target.value})} placeholder="BJ" /></div>
+                 <div className="space-y-1"><Label>Pays</Label><Input value={formData.country ?? ""} onChange={(e) => setFormData({...formData, country: e.target.value})} /></div>
+               </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-1"><Label>Département</Label><Input value={formData.department} onChange={(e) => setFormData({...formData, department: e.target.value})} /></div>
+                 <div className="space-y-1"><Label>Commune</Label><Input value={formData.commune} onChange={(e) => setFormData({...formData, commune: e.target.value})} /></div>
+               </div>
 
                <div className="space-y-1"><Label>Adresse complète</Label><Input value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} /></div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-1"><Label>Fondateur / Directeur</Label><Input value={formData.founderName ?? ""} onChange={(e) => setFormData({...formData, founderName: e.target.value})} /></div>
+                 <div className="space-y-1"><Label>Téléphone du fondateur</Label><Input value={formData.founderPhone ?? ""} onChange={(e) => setFormData({...formData, founderPhone: e.target.value})} /></div>
+               </div>
 
                <div className="space-y-1">
                  <Label>Coordonnées GPS</Label>
@@ -166,7 +195,7 @@ export function SchoolModal({ isOpen, onClose, school, onUpdate, isReadOnly = fa
                </div>
 
                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1"><Label>Responsable</Label><Input value={formData.responsibleName} onChange={(e) => setFormData({...formData, responsibleName: e.target.value})} /></div>
+                  <div className="space-y-1"><Label>Personne à contacter</Label><Input value={formData.responsibleName} onChange={(e) => setFormData({...formData, responsibleName: e.target.value})} /></div>
                   <div className="space-y-1"><Label>Téléphone</Label><Input value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} /></div>
                </div>
 

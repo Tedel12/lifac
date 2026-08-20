@@ -9,7 +9,7 @@ import { logAudit } from "@/lib/audit-log";
 export async function getAgents() {
   return await prisma.user.findMany({
     where: {
-      role: Role.VOLUNTEER,
+      role: { in: [Role.VOLUNTEER, Role.EVANGELIST] },
       isActive: true
     },
     select: {
@@ -19,8 +19,17 @@ export async function getAgents() {
       phone: true,
       avatarUrl: true,
       canDeleteSchools: true,
-    }
+      role: true,
+    },
+    orderBy: { createdAt: "desc" },
   });
+}
+
+// Bascule un compte terrain entre missionnaire et évangéliste (droits étendus).
+export async function setAgentRole(agentId: string, role: "VOLUNTEER" | "EVANGELIST") {
+  await prisma.user.update({ where: { id: agentId }, data: { role: role as Role } });
+  await logAudit("AGENT_ROLE_UPDATE", "User", agentId, undefined, { role });
+  revalidatePath("/admin/agents");
 }
 
 // Accorde/retire à un missionnaire le droit de supprimer les écoles qu'il a lui-même ajoutées.
@@ -43,7 +52,7 @@ export async function createAgent(data: any) {
       name: data.name,
       phone: data.phone,
       password: hashedPassword,
-      role: Role.VOLUNTEER,
+      role: data.role === "EVANGELIST" ? Role.EVANGELIST : Role.VOLUNTEER,
     },
   });
   await logAudit("AGENT_CREATE", "User", created.id, undefined, { name: data.name, email: data.email });

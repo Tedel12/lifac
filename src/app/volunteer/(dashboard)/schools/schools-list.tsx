@@ -1,43 +1,72 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, MapPin, Phone, Users, Pencil, Eye, X, LocateFixed, Loader2, Trash2 } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Plus, Pencil, Eye, X, LocateFixed, Loader2, Trash2, Search, ArrowUpDown, Lock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
-import { SchoolStatus } from "@prisma/client";
+import { SchoolStatus, SchoolType } from "@prisma/client";
 import { createMySchool, updateMySchool, deleteMySchool } from "@/actions/volunteer-school-actions";
+import { SCHOOL_STATUS_LABELS as STATUS_LABELS, SCHOOL_STATUS_COLORS as STATUS_COLORS, SCHOOL_TYPE_LABELS } from "@/lib/school-labels";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-const STATUS_LABELS: Record<SchoolStatus, string> = {
-  NON_CONFIRMEE: "Non confirmée",
-  CONFIRMEE: "Confirmée",
-  AFFECTEE: "Affectée",
-  EN_COURS: "En cours",
-  EXECUTEE: "Exécutée",
-};
-
-const STATUS_COLORS: Record<SchoolStatus, string> = {
-  NON_CONFIRMEE: "bg-gray-100 text-gray-700",
-  CONFIRMEE: "bg-blue-100 text-blue-700",
-  AFFECTEE: "bg-amber-100 text-amber-700",
-  EN_COURS: "bg-purple-100 text-purple-700",
-  EXECUTEE: "bg-emerald-100 text-emerald-700",
-};
+type SortKey = "date" | "address" | "country";
 
 export function SchoolsList({
   schools: initialSchools,
   currentAgentId,
   canDeleteSchools,
+  isEvangelist = false,
 }: {
   schools: any[];
   currentAgentId: string | null;
   canDeleteSchools: boolean;
+  isEvangelist?: boolean;
 }) {
   const [schools, setSchools] = useState(initialSchools);
   const [modalSchool, setModalSchool] = useState<any>(null);
   const [modalMode, setModalMode] = useState<"create" | "edit" | "view">("create");
   const [modalOpen, setModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<SchoolStatus | "ALL">("ALL");
+  const [sortKey, setSortKey] = useState<SortKey>("date");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const displayedSchools = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    const filtered = schools.filter((s) => {
+      if (statusFilter !== "ALL" && s.status !== statusFilter) return false;
+      if (!term) return true;
+      return [s.name, s.code, s.commune, s.department, s.address, s.country]
+        .filter(Boolean)
+        .some((v: string) => v.toLowerCase().includes(term));
+    });
+
+    const dir = sortDir === "asc" ? 1 : -1;
+    return [...filtered].sort((a, b) => {
+      let cmp = 0;
+      if (sortKey === "date") {
+        cmp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      } else if (sortKey === "address") {
+        cmp = `${a.commune ?? ""} ${a.address ?? ""}`.localeCompare(`${b.commune ?? ""} ${b.address ?? ""}`, "fr");
+      } else {
+        cmp = (a.country ?? "").localeCompare(b.country ?? "", "fr");
+      }
+      // À égalité, la plus grande effectif remonte en premier.
+      if (cmp === 0) return (b.estimatedStudents ?? 0) - (a.estimatedStudents ?? 0);
+      return cmp * dir;
+    });
+  }, [schools, search, statusFilter, sortKey, sortDir]);
 
   const openCreate = () => {
     setModalSchool(null);
@@ -76,73 +105,172 @@ export function SchoolsList({
     }
   };
 
+  const statusButtons: (SchoolStatus | "ALL")[] = ["ALL", ...Object.values(SchoolStatus)];
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
+      {/* Statistiques */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "Écoles au total", value: schools.length },
+          { label: "Ajoutées par moi", value: schools.filter((s) => s.createdById === currentAgentId).length },
+          { label: "Exécutées", value: schools.filter((s) => s.status === SchoolStatus.EXECUTEE).length },
+          { label: "Élèves estimés", value: schools.reduce((n, s) => n + (s.estimatedStudents ?? 0), 0) },
+        ].map((stat) => (
+          <Card key={stat.label}>
+            <CardContent className="p-4">
+              <p className="text-[11px] text-gray-500 uppercase tracking-wider">{stat.label}</p>
+              <p className="font-display text-2xl font-bold text-lifac-navy-900 mt-1">{stat.value}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 justify-between">
+        <div className="relative flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Rechercher (nom, code, commune, adresse, pays)"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
         <Button onClick={openCreate}>
           <Plus className="h-4 w-4 mr-2" /> Ajouter une école
         </Button>
       </div>
 
-      {schools.length === 0 ? (
+      {/* Filtres de statut en boutons */}
+      <div className="flex flex-wrap gap-2">
+        {statusButtons.map((s) => (
+          <button
+            key={s}
+            onClick={() => setStatusFilter(s)}
+            className={cn(
+              "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+              statusFilter === s
+                ? "bg-lifac-red-600 text-white shadow-sm"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            )}
+          >
+            {s === "ALL" ? "Toutes" : STATUS_LABELS[s]}
+          </button>
+        ))}
+      </div>
+
+      {displayedSchools.length === 0 ? (
         <Card>
-          <CardContent className="p-6 text-sm text-gray-500">Aucune école enregistrée pour le moment.</CardContent>
+          <CardContent className="p-6 text-sm text-gray-500">Aucune école ne correspond à ces critères.</CardContent>
         </Card>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {schools.map((school) => {
-            const isMine = school.createdById === currentAgentId;
-            return (
-              <Card key={school.id} className="hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
-                <CardContent className="p-5 space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-bold text-lifac-navy-900">{school.name}</h3>
-                    <span className={`shrink-0 px-2 py-0.5 rounded-full text-[11px] font-medium ${STATUS_COLORS[school.status as SchoolStatus]}`}>
-                      {STATUS_LABELS[school.status as SchoolStatus]}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
-                    <MapPin className="h-3.5 w-3.5 text-lifac-red-600 shrink-0" />
-                    {school.commune}, {school.department}
-                  </p>
-                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
-                    <Phone className="h-3.5 w-3.5 text-lifac-red-600 shrink-0" />
-                    {school.phone}
-                  </p>
-                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
-                    <Users className="h-3.5 w-3.5 text-lifac-red-600 shrink-0" />
-                    {school.estimatedStudents ?? 0} élèves estimés
-                  </p>
-                  {isMine && <p className="text-[11px] text-lifac-red-600 font-medium">Ajoutée par vous</p>}
-                  <div className="flex gap-2 pt-2">
-                    {isMine ? (
-                      <>
-                        <Button size="sm" variant="outline" className="flex-1" onClick={() => openEdit(school)}>
-                          <Pencil className="h-3.5 w-3.5 mr-1.5" /> Modifier
-                        </Button>
-                        {canDeleteSchools && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-lifac-red-600 hover:bg-lifac-red-50"
-                            onClick={() => handleDelete(school)}
-                            title="Supprimer"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        )}
-                      </>
-                    ) : (
-                      <Button size="sm" variant="outline" className="flex-1" onClick={() => openView(school)}>
-                        <Eye className="h-3.5 w-3.5 mr-1.5" /> Détails
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        <Card className="overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50/80 border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-400">
+                  <th className="px-4 py-3 text-left font-bold">Code</th>
+                  <th className="px-4 py-3 text-left font-bold">École</th>
+                  <th className="px-4 py-3 text-left font-bold">Type</th>
+                  <th className="px-4 py-3 text-left font-bold">
+                    <button onClick={() => toggleSort("address")} className="inline-flex items-center gap-1 hover:text-lifac-navy-900">
+                      Adresse <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </th>
+                  <th className="px-4 py-3 text-left font-bold">
+                    <button onClick={() => toggleSort("country")} className="inline-flex items-center gap-1 hover:text-lifac-navy-900">
+                      Pays <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </th>
+                  <th className="px-4 py-3 text-left font-bold">Fondateur / Directeur</th>
+                  <th className="px-4 py-3 text-left font-bold">Contact</th>
+                  <th className="px-4 py-3 text-left font-bold">Effectif</th>
+                  <th className="px-4 py-3 text-left font-bold">Statut</th>
+                  <th className="px-4 py-3 text-left font-bold">
+                    <button onClick={() => toggleSort("date")} className="inline-flex items-center gap-1 hover:text-lifac-navy-900">
+                      Ajoutée le <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </th>
+                  <th className="px-4 py-3 text-right font-bold">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {displayedSchools.map((school) => {
+                  const isMine = school.createdById === currentAgentId;
+                  const isLocked = school.status === SchoolStatus.EXECUTEE;
+                  // L'évangéliste peut agir sur toutes les écoles, même exécutées.
+                  const canEdit = isEvangelist || (isMine && !isLocked);
+                  return (
+                    <tr key={school.id} className="hover:bg-gray-50/60 transition-colors">
+                      <td className="px-4 py-3 text-xs text-gray-500">{school.code}</td>
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-lifac-navy-900">{school.name}</p>
+                        {isMine && <p className="text-[11px] text-lifac-red-600">Ajoutée par vous</p>}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-600">
+                        {school.schoolType ? SCHOOL_TYPE_LABELS[school.schoolType as SchoolType] : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-600">
+                        {school.commune}, {school.department}
+                        <span className="block text-gray-400">{school.address}</span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-600">{school.country ?? "—"}</td>
+                      <td className="px-4 py-3 text-xs text-gray-600">
+                        {school.founderName ?? "—"}
+                        {school.founderPhone && <span className="block text-gray-400">{school.founderPhone}</span>}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-600">
+                        {school.responsibleName}
+                        <span className="block text-gray-400">{school.phone}</span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-600">{school.estimatedStudents ?? 0}</td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${STATUS_COLORS[school.status as SchoolStatus]}`}>
+                          {STATUS_LABELS[school.status as SchoolStatus]}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">
+                        {new Date(school.createdAt).toLocaleDateString("fr-FR")}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex justify-end gap-1">
+                          {canEdit ? (
+                            <>
+                              <button
+                                onClick={() => openEdit(school)}
+                                title="Modifier"
+                                className="p-2 rounded-lg text-gray-400 hover:text-lifac-red-600 hover:bg-lifac-red-50 transition-colors"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </button>
+                              {canDeleteSchools && (
+                                <button
+                                  onClick={() => handleDelete(school)}
+                                  title="Supprimer"
+                                  className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              )}
+                            </>
+                          ) : (
+                            <button
+                              onClick={() => openView(school)}
+                              title={isMine && isLocked ? "École exécutée — seul un administrateur peut la modifier" : "Voir les détails"}
+                              className="p-2 rounded-lg text-gray-400 hover:text-lifac-navy-900 hover:bg-gray-100 transition-colors"
+                            >
+                              {isMine && isLocked ? <Lock className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       )}
 
       {modalOpen && (
@@ -181,9 +309,13 @@ function SchoolFormModal({
   const [formData, setFormData] = useState(
     school || {
       name: "",
+      country: "Bénin",
       department: "",
       commune: "",
       address: "",
+      schoolType: "" as SchoolType | "",
+      founderName: "",
+      founderPhone: "",
       latitude: null as number | null,
       longitude: null as number | null,
       estimatedStudents: 0,
@@ -222,9 +354,13 @@ function SchoolFormModal({
       if (mode === "create") {
         await createMySchool({
           name: formData.name,
+          country: formData.country || "Bénin",
           department: formData.department,
           commune: formData.commune,
           address: formData.address,
+          schoolType: formData.schoolType ? (formData.schoolType as SchoolType) : null,
+          founderName: formData.founderName || null,
+          founderPhone: formData.founderPhone || null,
           latitude: formData.latitude,
           longitude: formData.longitude,
           estimatedStudents: formData.estimatedStudents,
@@ -237,9 +373,13 @@ function SchoolFormModal({
       } else {
         await updateMySchool(school.id, {
           name: formData.name,
+          country: formData.country || "Bénin",
           department: formData.department,
           commune: formData.commune,
           address: formData.address,
+          schoolType: formData.schoolType ? (formData.schoolType as SchoolType) : null,
+          founderName: formData.founderName || null,
+          founderPhone: formData.founderPhone || null,
           latitude: formData.latitude,
           longitude: formData.longitude,
           estimatedStudents: formData.estimatedStudents,
@@ -274,20 +414,53 @@ function SchoolFormModal({
               <Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
             </div>
 
+            <div className="space-y-1">
+              <Label>Type d&apos;établissement</Label>
+              <select
+                value={formData.schoolType ?? ""}
+                onChange={(e) => setFormData({ ...formData, schoolType: e.target.value })}
+                disabled={isReadOnly}
+                className="w-full h-10 rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-900 disabled:bg-gray-50"
+              >
+                <option value="">— Sélectionner —</option>
+                {Object.entries(SCHOOL_TYPE_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <Label>Pays</Label>
+                <Input value={formData.country ?? ""} onChange={(e) => setFormData({ ...formData, country: e.target.value })} />
+              </div>
               <div className="space-y-1">
                 <Label>Département</Label>
                 <Input value={formData.department} onChange={(e) => setFormData({ ...formData, department: e.target.value })} />
               </div>
-              <div className="space-y-1">
-                <Label>Commune</Label>
-                <Input value={formData.commune} onChange={(e) => setFormData({ ...formData, commune: e.target.value })} />
-              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label>Commune</Label>
+              <Input value={formData.commune} onChange={(e) => setFormData({ ...formData, commune: e.target.value })} />
             </div>
 
             <div className="space-y-1">
               <Label>Adresse complète</Label>
               <Input value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <Label>Fondateur / Directeur</Label>
+                <Input value={formData.founderName ?? ""} onChange={(e) => setFormData({ ...formData, founderName: e.target.value })} />
+              </div>
+              <div className="space-y-1">
+                <Label>Téléphone du fondateur</Label>
+                <Input value={formData.founderPhone ?? ""} onChange={(e) => setFormData({ ...formData, founderPhone: e.target.value })} />
+              </div>
             </div>
 
             {!isReadOnly && (
@@ -324,7 +497,7 @@ function SchoolFormModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <Label>Responsable</Label>
+                <Label>Personne à contacter</Label>
                 <Input value={formData.responsibleName} onChange={(e) => setFormData({ ...formData, responsibleName: e.target.value })} />
               </div>
               <div className="space-y-1">

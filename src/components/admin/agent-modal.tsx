@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 export function AgentModal({ isOpen, onClose, agent, onUpdate }: any) {
   const [formData, setFormData] = useState(
-    agent || { name: "", email: "", phone: "", password: "" }
+    agent || { name: "", email: "", phone: "", password: "", role: "VOLUNTEER" }
   );
 
   if (!isOpen) return null;
@@ -69,6 +69,21 @@ export function AgentModal({ isOpen, onClose, agent, onUpdate }: any) {
             <div className="space-y-1">
               <Label>Téléphone</Label>
               <Input value={formData.phone ?? ""} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+            </div>
+
+            <div className="space-y-1">
+              <Label>Profil</Label>
+              <select
+                value={formData.role ?? "VOLUNTEER"}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                className="w-full h-10 rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-900"
+              >
+                <option value="VOLUNTEER">Missionnaire</option>
+                <option value="EVANGELIST">Évangéliste (droits étendus)</option>
+              </select>
+              <p className="text-[11px] text-gray-400">
+                L&apos;évangéliste garde l&apos;espace terrain d&apos;un missionnaire, mais peut gérer toutes les écoles.
+              </p>
             </div>
 
             {!agent && (

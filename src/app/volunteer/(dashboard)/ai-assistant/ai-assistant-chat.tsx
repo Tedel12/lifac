@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from "react";
-import { Bot, Send, User, Sparkles, AlertTriangle } from "lucide-react";
+import { Bot, Send, User, Sparkles, AlertTriangle, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { askAiAssistant, type ChatMessage } from "@/actions/ai-assistant-actions";
+import { askAiAssistant, getMyAiHistory, clearMyAiHistory, type ChatMessage } from "@/actions/ai-assistant-actions";
 
 const SUGGESTIONS = [
   "Quelles sont mes activités à venir ?",
@@ -18,11 +18,25 @@ export function AiAssistantChat() {
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [loadingHistory, setLoadingHistory] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Restaure le fil de conversation persisté (survit au refresh et à la reconnexion).
+  useEffect(() => {
+    getMyAiHistory()
+      .then(setMessages)
+      .finally(() => setLoadingHistory(false));
+  }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, isPending]);
+
+  const handleClear = async () => {
+    if (!confirm("Effacer tout l'historique de conversation ?")) return;
+    await clearMyAiHistory();
+    setMessages([]);
+  };
 
   const send = (text: string) => {
     const trimmed = text.trim();
@@ -45,8 +59,22 @@ export function AiAssistantChat() {
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardContent className="p-0 flex flex-col h-[65vh]">
+        {messages.length > 0 && (
+          <div className="flex justify-end px-4 pt-3 shrink-0">
+            <button
+              onClick={handleClear}
+              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-lifac-red-600 transition-colors"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Effacer la conversation
+            </button>
+          </div>
+        )}
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4">
-          {messages.length === 0 && (
+          {loadingHistory && (
+            <p className="text-center text-sm text-gray-400 py-8">Chargement de votre conversation...</p>
+          )}
+          {!loadingHistory && messages.length === 0 && (
             <div className="text-center py-8">
               <div className="h-14 w-14 rounded-full bg-lifac-red-600/10 flex items-center justify-center mx-auto mb-4">
                 <Bot className="h-7 w-7 text-lifac-red-600" />

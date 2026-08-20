@@ -154,6 +154,47 @@ export async function getPrayerWall() {
   });
 }
 
+// Un missionnaire (ou évangéliste) remonte une demande de prière depuis le terrain.
+export async function createPrayerRequestFromField(input: {
+  title: string;
+  content: string;
+  category: "PROTECTION" | "SALUT" | "GUERISON" | "DELIVRANCE" | "AUTRE";
+  authorName: string;
+  isPublic: boolean;
+}): Promise<{ success: boolean; error?: string }> {
+  const agentId = await requireAgentId();
+  const title = input.title?.trim();
+  const content = input.content?.trim();
+
+  if (!title || title.length < 3) return { success: false, error: "Le sujet est trop court." };
+  if (!content || content.length < 10) return { success: false, error: "La demande est trop courte." };
+
+  const agent = await prisma.user.findUnique({ where: { id: agentId }, select: { name: true } });
+
+  await prisma.prayerRequest.create({
+    data: {
+      authorId: agentId,
+      authorName: input.authorName?.trim() || agent?.name || "Missionnaire",
+      title,
+      content,
+      category: input.category,
+      isPublic: input.isPublic,
+    },
+  });
+
+  await prisma.notification.create({
+    data: {
+      title: "Nouvelle demande de prière (terrain)",
+      message: `${agent?.name ?? "Un missionnaire"} a remonté : ${title}`,
+      type: "info",
+    },
+  });
+
+  revalidatePath("/volunteer/prayer");
+  revalidatePath("/prayer");
+  return { success: true };
+}
+
 // Enregistre une intercession ("j'ai prié") du missionnaire connecté sur une demande de prière
 export async function markPrayed(prayerRequestId: string) {
   const agentId = await requireAgentId();
